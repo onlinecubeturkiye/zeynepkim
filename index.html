@@ -327,6 +327,82 @@
   .verdict-highlight { font-family: 'Kalam', cursive; font-size: 1.3rem; color: var(--stamp); font-weight: 700; margin: 14px 0; }
   .verdict-footnote { font-size: 0.78rem; color: #8a7a5c; font-style: italic; }
 
+  /* Sonucu gör butonu */
+  .reveal-zone {
+    display: none;
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .reveal-zone.show { display: block; animation: dropIn 0.5s ease; }
+
+  .reveal-btn {
+    background: var(--stamp);
+    color: var(--paper);
+    border: none;
+    padding: 16px 34px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .reveal-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 26px rgba(0,0,0,0.4); }
+  .reveal-btn:active { transform: translateY(0) scale(0.98); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 6, 3, 0);
+    backdrop-filter: blur(0px);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    transition: background 0.4s ease, backdrop-filter 0.4s ease;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+    background: rgba(10, 6, 3, 0.75);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay .verdict-note {
+    display: block;
+    margin: 0;
+    transform: scale(0.85) rotate(-1deg);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .modal-overlay.show .verdict-note {
+    transform: scale(1) rotate(-1deg);
+    opacity: 1;
+  }
+
+  .modal-close {
+    margin-top: 18px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .modal-close:hover { transform: translateY(-2px); }
+
   footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', cursive; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
 
   .confetti-piece { position: fixed; top: -10px; z-index: 10; pointer-events: none; font-size: 1.4rem; animation: fall linear forwards; }
@@ -362,6 +438,10 @@
     .verdict-note { padding: 26px 20px; }
     .verdict-note h2 { font-size: 1.2rem; }
     .verdict-highlight { font-size: 1.1rem; }
+    .guess-box { padding: 22px 18px; }
+    .guess-title { font-size: 1rem; }
+    .guess-sub { font-size: 0.85rem; }
+    .guess-input { font-size: 0.9rem; }
   }
 
   @media (hover: none) {
@@ -394,12 +474,18 @@
 
   <div class="evidence-grid" id="evidenceGrid"></div>
 
+  <div class="reveal-zone" id="revealZone">
+    <button class="reveal-btn" id="revealBtn">🔍 Sonucu Gör</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
   <div class="verdict-note" id="verdictNote">
     <div class="verdict-stamp">DOSYA KAPANDI</div>
     <h2>Resmi Sonuç</h2>
     <p>Toplanan 5 kanıt dosyası incelendi, çapraz kontrol yapıldı ve tek bir mantıklı açıklamada birleşti:</p>
     <div class="verdict-highlight">Zeynep, %100 ihtimalle bir UZAYLI KEDİ'dir. 🐾🛸</div>
-    <p class="verdict-footnote">(Tamamen gayriresmi, bilimsel hiçbir dayanağı olmayan, saf eğlence amaçlı bir sonuçtur.)</p>
+    <button class="modal-close" id="modalClose">Kapat ✕</button>
   </div>
 </div>
 
@@ -414,7 +500,7 @@
     { tag: "Fiziksel Kanıt", title: "Sürekli Yanında Taşınan Kedi Maması",
       body: "Çantasında her zaman kedi maması bulundurduğu doğrulandı. Araştırma ekibinin asıl sorusu şu: bunu sadece kedilere mi veriyor, yoksa arada kendisi de mi tadına bakıyor? 🎒🥫" },
     { tag: "En Güçlü Kanıt", title: "Kedi Tipi Sevimlilik Refleksi",
-      body: "Ekip en çarpıcı bulguyu son dosyada kaydetti: Zeynep somurtsa bile, esneseceği anda bile, uykulu haliyle bile tıpkı bir kedi gibi anında 'aaa' dedirtiyor. Bu tepkinin bilinçli değil, tamamen refleksif ve kedi genlerine özgü olduğu düşünülüyor. 🐾😽" }
+      body: "Zeynep güldüğünde ortamın havası değişiyor, herkesi kendiliğinden gülümsetiyor. Tıpkı bir kedi gibi, varlığı bile ortamı güzelleştiriyor. Bu doğallıkta bir sevimlilik, sıradan bir insanda pek görülmüyor. 🐾😽" }
   ];
 
   const grid = document.getElementById('evidenceGrid');
@@ -470,11 +556,32 @@
 
     if (openedTotal === clueData.length) {
       setTimeout(() => {
-        verdictNote.classList.add('show');
-        verdictNote.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        polaroidPhoto.textContent = '👽🐱';
+        revealZone.classList.add('show');
+        revealZone.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 400);
     }
+  }
+
+  const revealZone = document.getElementById('revealZone');
+  const revealBtn = document.getElementById('revealBtn');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+
+  revealBtn.addEventListener('click', () => {
+    modalOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    polaroidPhoto.textContent = '👽🐱';
+    burstConfetti();
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  function closeModal() {
+    modalOverlay.classList.remove('show');
+    document.body.style.overflow = '';
   }
 
   function burstConfetti() {
