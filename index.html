@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛸🐱 GİZEMLİ DOSYA: ZEYNEP 🐱🛸</title>
+<style>
+  :root {
+    --purple-deep: #1a0b2e;
+    --purple-mid: #3d1e6d;
+    --pink-glow: #ff6ec7;
+    --green-alien: #39ff88;
+    --gold: #ffd166;
+    --starlight: #e0d4ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at top, var(--purple-mid) 0%, var(--purple-deep) 60%, #05010f 100%);
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    color: var(--starlight);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Yıldız arka plan */
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--green-alien);
+    color: var(--green-alien);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(57,255,136,0.3);
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(90deg, var(--pink-glow), var(--gold), var(--green-alien));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    text-shadow: 0 0 30px rgba(255,110,199,0.2);
+  }
+
+  .subtitle {
+    color: #b8a6e0;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .avatar-zone {
+    text-align: center;
+    margin: 30px 0 40px;
+    position: relative;
+  }
+
+  .avatar {
+    font-size: 5rem;
+    display: inline-block;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--pink-glow));
+    cursor: pointer;
+    user-select: none;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
+  }
+
+  .progress-wrap {
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    height: 14px;
+    margin: 0 auto 40px;
+    max-width: 500px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--pink-glow), var(--green-alien));
+    transition: width 0.6s ease;
+    box-shadow: 0 0 15px var(--green-alien);
+  }
+
+  .progress-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #b8a6e0;
+    margin-top: -30px;
+    margin-bottom: 40px;
+  }
+
+  .clue-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+    position: relative;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .clue-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.06), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+
+  .clue-card:hover::before {
+    transform: translateX(100%);
+  }
+
+  .clue-card.locked {
+    opacity: 0.55;
+  }
+
+  .clue-card.unlocked {
+    border-color: var(--green-alien);
+    box-shadow: 0 0 25px rgba(57,255,136,0.15);
+  }
+
+  .clue-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .clue-num {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--purple-mid);
+    border: 2px solid var(--pink-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .clue-card.unlocked .clue-num {
+    border-color: var(--green-alien);
+    background: rgba(57,255,136,0.15);
+  }
+
+  .clue-title {
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: var(--gold);
+  }
+
+  .clue-hint {
+    font-size: 0.8rem;
+    color: #9a89c4;
+    margin-top: 2px;
+  }
+
+  .clue-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, margin-top 0.5s ease;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--starlight);
+  }
+
+  .clue-card.unlocked .clue-body {
+    max-height: 300px;
+    margin-top: 14px;
+  }
+
+  .tap-msg {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--pink-glow);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .final-verdict {
+    display: none;
+    text-align: center;
+    margin-top: 50px;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(255,110,199,0.15), rgba(57,255,136,0.1));
+    border: 2px solid var(--gold);
+    border-radius: 24px;
+    animation: popIn 0.6s ease;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .final-verdict.show { display: block; }
+
+  .final-verdict h2 {
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .final-verdict p {
+    font-size: 1rem;
+    color: var(--starlight);
+    margin-bottom: 10px;
+  }
+
+  .emoji-row {
+    font-size: 2.5rem;
+    margin: 16px 0;
+    animation: wiggle 2s infinite;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.75rem;
+    color: #6b5a94;
+  }
+
+  .confetti {
+    position: fixed;
+    top: -10px;
+    z-index: 5;
+    pointer-events: none;
+    font-size: 1.5rem;
+    animation: fall linear forwards;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0.3;
+    }
+  }
+
+  /* ===== Responsive ayarlar ===== */
+
+  /* Geniş masaüstü ekranlar */
+  @media (min-width: 1000px) {
+    .container {
+      max-width: 850px;
+      padding-top: 60px;
+    }
+    h1 { font-size: 2.6rem; }
+    .clue-card { padding: 26px 30px; }
+    .clue-title { font-size: 1.15rem; }
+    .clue-body { font-size: 1rem; }
+  }
+
+  /* Tablet */
+  @media (max-width: 700px) {
+    .container { padding: 32px 16px 60px; }
+    h1 { font-size: 1.7rem; }
+    .subtitle { font-size: 0.9rem; }
+    .avatar { font-size: 4rem; }
+  }
+
+  /* Mobil telefonlar */
+  @media (max-width: 480px) {
+    .container { padding: 24px 12px 50px; }
+    .badge { font-size: 0.7rem; padding: 5px 12px; letter-spacing: 1px; }
+    h1 { font-size: 1.4rem; margin-bottom: 8px; }
+    .subtitle { font-size: 0.85rem; padding: 0 6px; }
+    .avatar { font-size: 3.2rem; }
+    .progress-wrap { max-width: 90%; height: 12px; }
+    .progress-text { font-size: 0.75rem; margin-top: -24px; margin-bottom: 30px; }
+    .clue-card { padding: 16px 16px; border-radius: 14px; margin-bottom: 14px; }
+    .clue-header { gap: 10px; }
+    .clue-num { width: 34px; height: 34px; font-size: 0.95rem; }
+    .clue-title { font-size: 0.92rem; }
+    .clue-hint { font-size: 0.72rem; }
+    .clue-body { font-size: 0.85rem; line-height: 1.5; }
+    .final-verdict { padding: 22px 16px; border-radius: 18px; }
+    .final-verdict h2 { font-size: 1.25rem; }
+    .final-verdict p { font-size: 0.88rem; }
+    .emoji-row { font-size: 2rem; }
+  }
+
+  /* Çok küçük ekranlar */
+  @media (max-width: 340px) {
+    h1 { font-size: 1.2rem; }
+    .avatar { font-size: 2.6rem; }
+  }
+
+  /* Dokunmatik cihazlarda hover parlama efektini kapat (performans) */
+  @media (hover: none) {
+    .clue-card::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="badge">🔒 Gizli Görev Dosyası</div>
+    <h1>Zeynep Gerçekten Kim?</h1>
+    <p class="subtitle">Elimize ulaşan istihbarata göre Zeynep göründüğü gibi biri değil. Aşağıdaki kanıtları tek tek aç ve kendi sonucuna sen ulaş... 👀</p>
+  </header>
+
+  <div class="avatar-zone">
+    <div class="avatar" id="avatar">🐱</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <p class="progress-text" id="progressText">0 / 5 kanıt açığa çıktı</p>
+
+  <div id="clues"></div>
+
+  <div class="final-verdict" id="verdict">
+    <div class="emoji-row">🛸🐱🛸</div>
+    <h2>SONUÇ AÇIKLANDI</h2>
+    <p>Toplanan tüm kanıtlar birleştirildiğinde bilim insanları hemfikir:</p>
+    <p style="font-size:1.3rem; color:var(--green-alien); font-weight:bold; margin:16px 0;">Zeynep, %100 ihtimalle bir UZAYLI KEDİ'dir. 🐾✨</p>
+    <p style="font-size:0.85rem; color:#b8a6e0;">(Resmi olmayan, tamamen bilimsel olmayan ve son derece eğlence amaçlı bir sonuçtur.)</p>
+  </div>
+
+  <footer>made with 💜 for a good laugh</footer>
+</div>
+
+<script>
+  // Yıldızları oluştur
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = Math.random() * 3 + 's';
+    starsContainer.appendChild(s);
+  }
+
+  const clueData = [
+    {
+      title: "Kanıt #1: Doğal Miyavlama Yeteneği",
+      hint: "Davranış Gözlemi",
+      body: "Zeynep'in gerektiğinde gayet ikna edici şekilde miyavlayabildiği bilimsel ekip tarafından defalarca doğrulandı. Normal bir insanın bu kadar başarılı olması istatistiksel olarak pek olası değil. 🐱🔊"
+    },
+    {
+      title: "Kanıt #2: Kedi Görünce Aktive Olan Refleks",
+      hint: "Sosyal Anomali",
+      body: "Ortamda bir kedi belirdiği anda Zeynep'in anında o yöne doğru koştuğu gözlemlendi. Bu tepki hızı, türler arası bir tanışıklığa işaret ediyor olabilir. 🏃‍♀️🐈"
+    },
+    {
+      title: "Kanıt #3: Bilinmeyen Dil — 'Zeynepçe'",
+      hint: "İletişim Anomalisi",
+      body: "Zeynep zaman zaman kimsenin tam olarak çözemediği kendine has bir dilde konuşuyor. Dilbilimciler buna resmi olarak 'Zeynepçe' adını verdi ve kökeninin Dünya dışı olabileceğini düşünüyor. 👽🗣️"
+    },
+    {
+      title: "Kanıt #4: Sürekli Yanında Taşınan Kedi Maması",
+      hint: "Fiziksel Kanıt",
+      body: "Zeynep'in çantasında sürekli kedi maması bulunduruyor olması dikkat çekici. Araştırma ekibinin kuşkusu: bunu sadece kedilere mi veriyor, yoksa... kendisi de mi tadına bakıyor? 🎒🥫"
+    },
+    {
+      title: "Kanıt #5: Kedi Tipi Sevimlilik Refleksi",
+      hint: "En Güçlü Kanıt — Dosya Tamamlanıyor",
+      body: "Araştırma ekibinin gözlemlediği en çarpıcı bulgu şu: Zeynep somurtsa bile, esneseceği anda bile, hatta uykulu haliyle bile tıpkı bir kedi gibi anında 'aaa' dedirtiyor. Uzmanlar bu tepkinin bilinçli değil, tamamen refleksif ve kedi genlerine özgü olduğunu düşünüyor. Sıradan bir insanda bu seviyede bir 'kedi şirinliği' görülmesi istatistiksel olarak pek olası değil. 🐾😽"
+    }
+  ];
+
+  const cluesContainer = document.getElementById('clues');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const verdict = document.getElementById('verdict');
+  const avatar = document.getElementById('avatar');
+
+  let unlockedCount = 0;
+
+  clueData.forEach((clue, index) => {
+    const card = document.createElement('div');
+    card.className = 'clue-card locked';
+    card.innerHTML = `
+      <div class="clue-header">
+        <div class="clue-num">${index + 1}</div>
+        <div>
+          <div class="clue-title">${clue.title}</div>
+          <div class="clue-hint">${clue.hint}</div>
+        </div>
+      </div>
+      <div class="clue-body">${clue.body}</div>
+      <div class="tap-msg">👆 Açmak için dokun</div>
+    `;
+
+    card.addEventListener('click', () => {
+      if (!card.classList.contains('unlocked')) {
+        card.classList.remove('locked');
+        card.classList.add('unlocked');
+        card.querySelector('.tap-msg').style.display = 'none';
+        unlockedCount++;
+        updateProgress();
+        spawnConfetti();
+      }
+    });
+
+    cluesContainer.appendChild(card);
+  });
+
+  function updateProgress() {
+    const pct = (unlockedCount / clueData.length) * 100;
+    progressBar.style.width = pct + '%';
+    progressText.textContent = `${unlockedCount} / ${clueData.length} kanıt açığa çıktı`;
+
+    if (unlockedCount === clueData.length) {
+      setTimeout(() => {
+        verdict.classList.add('show');
+        verdict.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        avatar.textContent = '👽🐱';
+      }, 500);
+    }
+  }
+
+  function spawnConfetti() {
+    const emojis = ['🐾','✨','🛸','⭐','💫'];
+    for (let i = 0; i < 12; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  avatar.addEventListener('click', () => {
+    avatar.style.transform = 'scale(1.3) rotate(20deg)';
+    setTimeout(() => { avatar.style.transform = ''; }, 300);
+  });
+</script>
+
+</body>
+</html>
