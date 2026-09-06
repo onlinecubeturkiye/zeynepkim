@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZKD-01 · Zeynep Gerçekten Kim?</title>
+<title>ZY-11 · Zeynep Gerçekten Kim?</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
@@ -166,6 +166,22 @@ h1 span { color: var(--stamp); }
 .lock-icon { position: absolute; top: 14px; right: 14px; font-size: 1.2rem; opacity: 0.7; }
 .evidence-card.locked .ev-toggle::after { content: '🔒 Kodu gir, aç'; }
 
+.done-stamp {
+  position: absolute; top: 12px; right: 12px;
+  border: 2px solid var(--pin-green);
+  color: var(--pin-green);
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  transform: rotate(-8deg);
+  opacity: 0.85;
+  z-index: 4;
+  background: rgba(247,240,220,0.6);
+}
+
 footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', cursive; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
 
 .confetti-piece { position: fixed; top: -10px; z-index: 10; pointer-events: none; font-size: 1.4rem; animation: fall linear forwards; }
@@ -181,7 +197,7 @@ footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', curs
 <body>
 <div class="board">
 
-  <div class="folder-tab">DOSYA NO: ZKD-01 • GİZLİ</div>
+  <div class="folder-tab">DOSYA NO: ZY-11 • GİZLİ</div>
 
   <header>
     <div class="case-number">// VAKA RAPORU — ERİŞİM: SADECE YAKIN ÇEVRE</div>
@@ -203,7 +219,7 @@ footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', curs
 
   <div class="evidence-grid" id="evidenceGrid"></div>
 
-  <footer class="credit">dosya ZKD-01 · gizlilik derecesi: sadece Zeynep 💛</footer>
+  <footer class="credit">dosya ZY-11 · gizlilik derecesi: sadece Zeynep 💛</footer>
 </div>
 
 <script>
@@ -224,7 +240,7 @@ const FULL_CODE = cases.map(c => c.code).join("");
 const finalCase = { tag:"Şifre Çözümü", title:"11. Vaka: Son Dosya", href:"vaka11.html", code: FULL_CODE };
 const allCases = [...cases, finalCase];
 
-const STORAGE_KEY = 'zkd01_unlocked';
+const STORAGE_KEY = 'zy11_unlocked';
 function getUnlocked() {
   try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[0]'); return v; }
   catch(e) { return [0]; }
@@ -243,11 +259,13 @@ function render() {
   grid.innerHTML = '';
   allCases.forEach((c, i) => {
     const isUnlocked = unlocked.includes(i);
+    const isCompleted = isUnlocked && unlocked.includes(i + 1);
     const card = document.createElement('div');
     card.className = isUnlocked ? 'evidence-card' : 'evidence-card locked';
     card.innerHTML = `
       <div class="pin"></div>
       ${!isUnlocked ? '<div class="lock-icon">🔒</div>' : ''}
+      ${isCompleted ? '<div class="done-stamp">TAMAMLANDI</div>' : ''}
       <div class="ev-tag">${c.tag}</div>
       <div class="ev-title">${c.title}</div>
       <div class="ev-toggle"></div>
@@ -263,7 +281,7 @@ function render() {
           unlocked.push(i);
           saveUnlocked(unlocked);
           burstConfetti();
-          window.location.href = c.href;
+          render();
         } else if (guess !== null) {
           alert('Yanlış kod, tekrar dene 🔍');
         }
