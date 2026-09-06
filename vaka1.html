@@ -198,6 +198,9 @@ h1 em { font-style: normal; color: var(--stamp); }
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
   animation: pop-in 0.15s ease;
 }
+.fleeing-cat.bomb {
+  filter: drop-shadow(0 0 6px rgba(230,57,70,0.9));
+}
 @keyframes pop-in { from { transform: scale(0); } to { transform: scale(1); } }
 .start-btn {
   background: var(--gold);
@@ -350,7 +353,7 @@ h1 em { font-style: normal; color: var(--stamp); }
 
     <div class="game-section">
       <div class="game-title">🐾 Mini Görev: Hırsız Kediyi Yakala</div>
-      <div class="game-sub">Kodu almadan önce zanlıyı yakala — 15 saniyede 10 kediye dokun.</div>
+      <div class="game-sub">Kodu almadan önce zanlıyı yakala — 15 saniyede 10 kediye dokun. Ama dikkat: aralara bomba 💣 karışıyor, ona basarsan oyun biter!</div>
       <div class="game-meta">
         <span>⏱ Süre: <b id="timeLeft">15</b>s</span>
         <span>🐱 Yakalanan: <b id="caughtCount">0</b> / 10</span>
@@ -432,9 +435,11 @@ function spawnCat() {
   const x = Math.random() * (areaW - catSize);
   const y = Math.random() * (areaH - catSize);
 
+  const isBomb = Math.random() < 0.22;
+
   const cat = document.createElement('button');
-  cat.className = 'fleeing-cat';
-  cat.textContent = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+  cat.className = isBomb ? 'fleeing-cat bomb' : 'fleeing-cat';
+  cat.textContent = isBomb ? '💣' : catEmojis[Math.floor(Math.random() * catEmojis.length)];
   cat.style.left = x + 'px';
   cat.style.top = y + 'px';
 
@@ -443,12 +448,35 @@ function spawnCat() {
   cat.addEventListener('click', () => {
     clearTimeout(escapeTimer);
     cat.remove();
+    if (isBomb) {
+      gameOverByBomb();
+      return;
+    }
     caught++;
     caughtCountEl.textContent = caught;
     if (caught >= TARGET) endGame(true);
   });
 
   playArea.appendChild(cat);
+}
+
+function gameOverByBomb() {
+  gameActive = false;
+  clearInterval(timerId);
+  clearInterval(spawnId);
+  playArea.querySelectorAll('.fleeing-cat').forEach(el => el.remove());
+
+  caught = 0;
+  timeLeft = GAME_SECONDS;
+  caughtCountEl.textContent = caught;
+  timeLeftEl.textContent = timeLeft;
+
+  gameStatus.textContent = '💥 GAME OVER! Bombaya bastın, baştan başlıyorsun.';
+  startBtn.disabled = false;
+  startBtn.style.opacity = '1';
+  startBtn.textContent = '🔁 Baştan Başla';
+  hintText.style.display = 'flex';
+  hintText.textContent = 'Baştan başlamak için düğmeye bas 👇';
 }
 
 function endGame(won) {
