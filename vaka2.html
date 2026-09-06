@@ -343,6 +343,14 @@ h1 em { font-style: normal; color: var(--stamp); }
 
 <script>
 // ---- Hafıza / eşleştirme oyunu ----
+const STORAGE_KEY = 'vaka2_zy11_solved';
+function isAlreadySolved() {
+  return localStorage.getItem(STORAGE_KEY) === 'true';
+}
+function markSolved() {
+  localStorage.setItem(STORAGE_KEY, 'true');
+}
+
 const symbols = ['⚡','🐱','🎾','💥','🔋','😹'];
 let deck = [...symbols, ...symbols];
 deck = deck.map(s => ({ symbol: s, flipped: false, matched: false }));
@@ -362,6 +370,7 @@ const statusEl = document.getElementById('gameStatus');
 const winEl = document.getElementById('gameWin');
 const revealBtn = document.getElementById('revealBtn');
 const codePrompt = document.getElementById('codePrompt');
+const gameSubEl = document.querySelector('.game-sub');
 
 function renderGrid() {
   grid.innerHTML = '';
@@ -415,13 +424,26 @@ function flipCard(idx) {
 }
 
 function winGame() {
+  markSolved();
   winEl.style.display = 'block';
   codePrompt.textContent = 'Testi bitirdin! Kodu görmek için tıkla:';
   revealBtn.disabled = false;
   revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
 }
 
-renderGrid();
+if (isAlreadySolved()) {
+  // Daha önce çözülmüş: oyunu tekrar oynatma, direkt açık göster
+  grid.style.display = 'none';
+  statusEl.style.display = 'none';
+  gameSubEl.textContent = 'Bu testi zaten çözmüştün, tekrar çözmene gerek yok ✅';
+  winEl.style.display = 'block';
+  winEl.textContent = '✅ Bu görevi daha önce tamamladın. Kod hazır.';
+  codePrompt.textContent = 'Kodu görmek için tıkla:';
+  revealBtn.disabled = false;
+  revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
+} else {
+  renderGrid();
+}
 
 // ---- Kod gösterme ----
 function revealCode() {
