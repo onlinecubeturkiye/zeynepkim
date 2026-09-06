@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZY-11 · Zeynep Gerçekten Kim?</title>
+<title>ZKD-01 · Zeynep Gerçekten Kim?</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
@@ -181,7 +181,7 @@ footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', curs
 <body>
 <div class="board">
 
-  <div class="folder-tab">DOSYA NO: ZY-11 • GİZLİ</div>
+  <div class="folder-tab">DOSYA NO: ZKD-01 • GİZLİ</div>
 
   <header>
     <div class="case-number">// VAKA RAPORU — ERİŞİM: SADECE YAKIN ÇEVRE</div>
@@ -203,28 +203,28 @@ footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', curs
 
   <div class="evidence-grid" id="evidenceGrid"></div>
 
-  <footer class="credit">dosya ZY-11 · gizlilik derecesi: sadece Zeynep 💛</footer>
+  <footer class="credit">dosya ZKD-01 · gizlilik derecesi: sadece Zeynep 💛</footer>
 </div>
 
 <script>
 // codes[i] = case (i+1)'in KENDİ sayfasında verdiği kod (bir sonraki dosyayı açar)
 const cases = [
-  { tag:"Davranış Kaydı", title:"1. Vaka: Hırsız Kedi", href:"vaka1/", code:"26" },
-  { tag:"Enerji Raporu", title:"2. Vaka: Spastik", href:"vaka2/", code:"03" },
-  { tag:"Stil Analizi", title:"3. Vaka: Çakma Gotik", href:"vaka3/", code:"07" },
-  { tag:"Davranış Kaydı", title:"4. Vaka: Lolcu Köpek", href:"vaka4/", code:"18" },
-  { tag:"İştah Raporu", title:"5. Vaka: Doymayan", href:"vaka5/", code:"11" },
-  { tag:"Lakap Dosyası", title:"6. Vaka: Midesiz", href:"vaka6/", code:"13" },
-  { tag:"Saha Gözlemi", title:"7. Vaka: Yolda Yürüyemeyen Kız", href:"vaka7/", code:"12" },
-  { tag:"Sosyal Anomali", title:"8. Vaka: Uzaylı Kedi", href:"vaka8/", code:"06" },
-  { tag:"Karakter Analizi", title:"9. Vaka: Pisicik Abi", href:"vaka9/", code:"20" },
-  { tag:"Sevimlilik Ölçümü", title:"10. Vaka: Sevimli Kedi", href:"vaka10/", code:"01" },
+  { tag:"Davranış Kaydı", title:"1. Vaka: Hırsız Kedi", href:"vaka1.html", code:"26" },
+  { tag:"Enerji Raporu", title:"2. Vaka: Spastik", href:"vaka2.html", code:"03" },
+  { tag:"Stil Analizi", title:"3. Vaka: Çakma Gotik", href:"vaka3.html", code:"07" },
+  { tag:"Davranış Kaydı", title:"4. Vaka: Lolcu Köpek", href:"vaka4.html", code:"18" },
+  { tag:"İştah Raporu", title:"5. Vaka: Doymayan", href:"vaka5.html", code:"11" },
+  { tag:"Lakap Dosyası", title:"6. Vaka: Midesiz", href:"vaka6.html", code:"13" },
+  { tag:"Saha Gözlemi", title:"7. Vaka: Yolda Yürüyemeyen Kız", href:"vaka7.html", code:"12" },
+  { tag:"Sosyal Anomali", title:"8. Vaka: Uzaylı Kedi", href:"vaka8.html", code:"06" },
+  { tag:"Karakter Analizi", title:"9. Vaka: Pisicik Abi", href:"vaka9.html", code:"20" },
+  { tag:"Sevimlilik Ölçümü", title:"10. Vaka: Sevimli Kedi", href:"vaka10.html", code:"01" },
 ];
 const FULL_CODE = cases.map(c => c.code).join("");
-const finalCase = { tag:"Şifre Çözümü", title:"11. Vaka: Son Dosya", href:"vaka11/", code: FULL_CODE };
+const finalCase = { tag:"Şifre Çözümü", title:"11. Vaka: Son Dosya", href:"vaka11.html", code: FULL_CODE };
 const allCases = [...cases, finalCase];
 
-const STORAGE_KEY = 'zy11_unlocked';
+const STORAGE_KEY = 'zkd01_unlocked';
 function getUnlocked() {
   try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[0]'); return v; }
   catch(e) { return [0]; }
