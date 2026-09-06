@@ -15,6 +15,7 @@
   --ink: #2b2013;
   --pin-red: #e63946;
   --pin-olive: #8a8a5c;
+  --pin-green: #588157;
   --stamp: #b5252c;
   --gold: #d4a017;
   --tape: rgba(230, 217, 181, 0.85);
@@ -138,10 +139,99 @@ h1 em { font-style: normal; color: var(--stamp); }
 }
 .verdict b { color: var(--stamp); }
 
+.game-section {
+  border-top: 2px dashed rgba(43,32,19,0.25);
+  padding: 22px 4px 6px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.game-title {
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--stamp);
+  margin-bottom: 4px;
+}
+.game-sub {
+  font-family: 'Kalam', cursive;
+  font-size: 0.88rem;
+  color: #4a3b26;
+  margin-bottom: 14px;
+}
+.game-meta {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #4a3b26;
+  margin-bottom: 12px;
+}
+.game-meta span b { color: var(--stamp); }
+.play-area {
+  position: relative;
+  max-width: 480px;
+  height: 220px;
+  margin: 0 auto 14px;
+  background: linear-gradient(145deg, #2c2440, #4d3b6b);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+.play-area .hint-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Kalam', cursive;
+  color: rgba(247,240,220,0.7);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 0 20px;
+}
+.fleeing-cat {
+  position: absolute;
+  font-size: 1.9rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  animation: pop-in 0.15s ease;
+}
+@keyframes pop-in { from { transform: scale(0); } to { transform: scale(1); } }
+.start-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(212,160,23,0.35);
+  transition: transform 0.2s ease;
+  margin-bottom: 6px;
+}
+.start-btn:hover { transform: translateY(-2px) scale(1.03); }
+.game-status { font-family: 'Kalam', cursive; font-size: 0.85rem; color: #4a3b26; min-height: 20px; margin-bottom: 8px; }
+.game-win {
+  display: none;
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  color: var(--pin-green);
+  background: rgba(88,129,87,0.12);
+  border: 1.5px solid var(--pin-green);
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: 380px;
+  margin: 0 auto 6px;
+  font-size: 0.9rem;
+}
+
 .code-box {
   text-align: center;
-  padding: 24px 20px 20px;
-  border-top: 2px dashed rgba(43,32,19,0.25);
+  padding: 20px 20px 20px;
 }
 .code-box p { font-family: 'Kalam', cursive; color: #4a3b26; margin-bottom: 14px; font-size: 0.98rem; }
 .reveal-btn {
@@ -155,9 +245,16 @@ h1 em { font-style: normal; color: var(--stamp); }
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(181,37,44,0.35);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 .reveal-btn:hover { transform: translateY(-2px) scale(1.03); }
+.reveal-btn:disabled {
+  background: #9c8a6f;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.7;
+}
 .code-display {
   display: none;
   margin-top: 18px;
@@ -212,6 +309,7 @@ h1 em { font-style: normal; color: var(--stamp); }
   h1 { font-size: 1.35rem; max-width: 100%; }
   .stamp-corner { position: static; display: inline-block; margin-bottom: 14px; transform: rotate(0deg); }
   .code-display { font-size: 1.9rem; letter-spacing: 6px; }
+  .play-area { height: 190px; }
 }
 </style>
 </head>
@@ -225,7 +323,7 @@ h1 em { font-style: normal; color: var(--stamp); }
     <div class="case-number">// DAVRANIŞ KAYDI</div>
     <div class="cat-photo">🐱</div>
     <h1>Vaka 1: <em>Hırsız Kedi</em></h1>
-    <p class="intro">Zanlı hakkında bir süredir gelen şikayetleri değerlendirdik. Bulgular aşağıda, dikkatlice incele — bu dosyanın sonunda bir kod seni bekliyor.</p>
+    <p class="intro">Zanlı hakkında bir süredir gelen şikayetleri değerlendirdik. Bulgular aşağıda, dikkatlice incele. Kodu almadan önce zanlıyı bizzat yakalaman gerekiyor.</p>
 
     <div class="evidence-list">
       <div class="evidence-item">
@@ -248,12 +346,26 @@ h1 em { font-style: normal; color: var(--stamp); }
 
     <div class="verdict">
       <b>SONUÇ:</b> Zanlı suçlu bulunmuştur. Ama çaldığı her şeyin karşılığında insanlara daha fazlasını bıraktığı görülmüş, bu yüzden dosya "af edilebilir hırsız" kategorisine alınmıştır. Not: Bu kedi aslında sadece Zeynep'tir. 🐾💛
+    </div>
 
+    <div class="game-section">
+      <div class="game-title">🐾 Mini Görev: Hırsız Kediyi Yakala</div>
+      <div class="game-sub">Kodu almadan önce zanlıyı yakala — 15 saniyede 10 kediye dokun.</div>
+      <div class="game-meta">
+        <span>⏱ Süre: <b id="timeLeft">15</b>s</span>
+        <span>🐱 Yakalanan: <b id="caughtCount">0</b> / 10</span>
+      </div>
+      <div class="play-area" id="playArea">
+        <div class="hint-text" id="hintText">Başlamak için aşağıdaki düğmeye bas 👇</div>
+      </div>
+      <button class="start-btn" id="startBtn" onclick="startGame()">🐾 Yakalamaya Başla</button>
+      <div class="game-status" id="gameStatus"></div>
+      <div class="game-win" id="gameWin">🎉 Zanlıyı yakaladın, kod artık senin!</div>
     </div>
 
     <div class="code-box">
-      <p>Bu vakanın kodunu görmek için tıkla:</p>
-      <button class="reveal-btn" onclick="revealCode()">🔍 Kodu Ortaya Çıkar</button>
+      <p id="codePrompt">Kodu görmek için önce yukarıdaki görevi bitir.</p>
+      <button class="reveal-btn" id="revealBtn" onclick="revealCode()" disabled>🔒 Önce Zanlıyı Yakala</button>
       <div class="code-display" id="codeDisplay">26</div>
       <p class="code-hint" id="codeHint" style="display:none;">Bu kodu ana sayfaya dönüp 2. dosyanın kilidini açmak için kullan.</p>
       <div class="warning-box" id="warningBox" style="display:none;">⚠️ Bu kodu bir yere not et! 11. vakanın şifresinin bir parçası — kaybedersen sonunda şifreyi tamamlayamazsın!</div>
@@ -265,7 +377,123 @@ h1 em { font-style: normal; color: var(--stamp); }
 </div>
 
 <script>
+// ---- Kaçan Kediyi Yakala oyunu ----
+const STORAGE_KEY = 'vaka1_zy11_solved';
+function isAlreadySolved() { return localStorage.getItem(STORAGE_KEY) === 'true'; }
+function markSolved() { localStorage.setItem(STORAGE_KEY, 'true'); }
+
+const TARGET = 10;
+const GAME_SECONDS = 15;
+let caught = 0;
+let timeLeft = GAME_SECONDS;
+let timerId = null;
+let spawnId = null;
+let gameActive = false;
+
+const playArea = document.getElementById('playArea');
+const hintText = document.getElementById('hintText');
+const startBtn = document.getElementById('startBtn');
+const timeLeftEl = document.getElementById('timeLeft');
+const caughtCountEl = document.getElementById('caughtCount');
+const gameStatus = document.getElementById('gameStatus');
+const gameWin = document.getElementById('gameWin');
+const revealBtn = document.getElementById('revealBtn');
+const codePrompt = document.getElementById('codePrompt');
+const catEmojis = ['🐱','🐈','😼','🙀'];
+
+function startGame() {
+  if (gameActive) return;
+  gameActive = true;
+  caught = 0;
+  timeLeft = GAME_SECONDS;
+  caughtCountEl.textContent = caught;
+  timeLeftEl.textContent = timeLeft;
+  gameStatus.textContent = '';
+  hintText.style.display = 'none';
+  startBtn.disabled = true;
+  startBtn.style.opacity = '0.6';
+  playArea.querySelectorAll('.fleeing-cat').forEach(el => el.remove());
+
+  timerId = setInterval(() => {
+    timeLeft--;
+    timeLeftEl.textContent = timeLeft;
+    if (timeLeft <= 0) endGame(caught >= TARGET);
+  }, 1000);
+
+  spawnCat();
+  spawnId = setInterval(spawnCat, 900);
+}
+
+function spawnCat() {
+  if (!gameActive) return;
+  const areaW = playArea.clientWidth;
+  const areaH = playArea.clientHeight;
+  const catSize = 40;
+  const x = Math.random() * (areaW - catSize);
+  const y = Math.random() * (areaH - catSize);
+
+  const cat = document.createElement('button');
+  cat.className = 'fleeing-cat';
+  cat.textContent = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+  cat.style.left = x + 'px';
+  cat.style.top = y + 'px';
+
+  const escapeTimer = setTimeout(() => { cat.remove(); }, 850);
+
+  cat.addEventListener('click', () => {
+    clearTimeout(escapeTimer);
+    cat.remove();
+    caught++;
+    caughtCountEl.textContent = caught;
+    if (caught >= TARGET) endGame(true);
+  });
+
+  playArea.appendChild(cat);
+}
+
+function endGame(won) {
+  gameActive = false;
+  clearInterval(timerId);
+  clearInterval(spawnId);
+  playArea.querySelectorAll('.fleeing-cat').forEach(el => el.remove());
+
+  if (won) {
+    winGame();
+  } else {
+    gameStatus.textContent = 'Süre bitti, zanlı kaçtı! Tekrar dene 🐾';
+    startBtn.disabled = false;
+    startBtn.style.opacity = '1';
+    startBtn.textContent = '🔁 Tekrar Dene';
+    hintText.style.display = 'flex';
+    hintText.textContent = 'Tekrar denemek için düğmeye bas 👇';
+  }
+}
+
+function winGame() {
+  markSolved();
+  gameWin.style.display = 'block';
+  gameStatus.textContent = '';
+  startBtn.style.display = 'none';
+  hintText.style.display = 'none';
+  codePrompt.textContent = 'Zanlıyı yakaladın! Kodu görmek için tıkla:';
+  revealBtn.disabled = false;
+  revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
+}
+
+if (isAlreadySolved()) {
+  document.querySelector('.game-sub').textContent = 'Bu görevi zaten tamamlamıştın, tekrar yakalamana gerek yok ✅';
+  hintText.style.display = 'none';
+  startBtn.style.display = 'none';
+  gameWin.style.display = 'block';
+  gameWin.textContent = '✅ Bu görevi daha önce tamamladın. Kod hazır.';
+  codePrompt.textContent = 'Kodu görmek için tıkla:';
+  revealBtn.disabled = false;
+  revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
+}
+
+// ---- Kod gösterme ----
 function revealCode() {
+  if (revealBtn.disabled) return;
   document.getElementById('codeDisplay').style.display = 'block';
   document.getElementById('codeHint').style.display = 'block';
   document.getElementById('warningBox').style.display = 'block';
