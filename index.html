@@ -157,56 +157,14 @@ h1 span { color: var(--stamp); }
   letter-spacing: 1px;
 }
 .ev-title { font-weight: 800; font-size: 1.02rem; margin-bottom: 6px; line-height: 1.35; }
-.ev-body {
-  max-height: 0; overflow: hidden;
-  transition: max-height 0.5s ease, opacity 0.4s ease;
-  opacity: 0;
-  font-family: 'Kalam', cursive; font-size: 0.92rem; line-height: 1.55; color: #3a2f1d;
-}
-.evidence-card.open .ev-body { max-height: 400px; opacity: 1; margin-top: 6px; }
-.ev-code {
-  display: inline-block; margin-top: 10px;
-  font-family: 'Courier New', monospace; font-weight: 700;
-  background: var(--ink); color: var(--gold);
-  padding: 4px 12px; border-radius: 6px; letter-spacing: 3px; font-size: 0.9rem;
-}
 .ev-toggle { margin-top: 10px; font-size: 0.72rem; color: var(--stamp); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-.evidence-card.open .ev-toggle::after { content: '▲ Kapat'; }
-.evidence-card:not(.open) .ev-toggle::after { content: '▼ Dosyayı Aç'; }
-.evidence-card.open { border-left: 4px solid var(--pin-green); }
-.evidence-card.final.open { border-left: 4px solid var(--gold); }
+.evidence-card:not(.locked) .ev-toggle::after { content: '▶ Dosyayı Aç'; }
 
-.evidence-card.locked { cursor: not-allowed; opacity: 0.55; filter: grayscale(0.6); }
+.evidence-card.locked { cursor: pointer; opacity: 0.55; filter: grayscale(0.6); }
 .evidence-card.locked:hover { transform: inherit; box-shadow: 0 10px 22px var(--paper-shadow); }
 .evidence-card.locked .ev-title, .evidence-card.locked .ev-tag { filter: blur(4px); user-select: none; }
 .lock-icon { position: absolute; top: 14px; right: 14px; font-size: 1.2rem; opacity: 0.7; }
-.evidence-card.locked .ev-toggle::after { content: '🔒 Önce diğer dosyayı aç'; }
-
-.verdict-note {
-  display: none; max-width: 560px; margin: 60px auto 0;
-  background: var(--paper); padding: 30px 26px; border-radius: 16px;
-  box-shadow: 0 15px 35px var(--paper-shadow); text-align: center;
-  transform: rotate(-1deg); animation: dropIn 0.6s ease;
-}
-.verdict-note.show { display: block; }
-@keyframes dropIn { 0% { opacity:0; transform: translateY(-30px) rotate(-1deg); } 100% { opacity:1; transform: translateY(0) rotate(-1deg); } }
-.verdict-stamp {
-  display: inline-block; border: 3px double var(--stamp); color: var(--stamp);
-  font-family: 'Kalam', cursive; font-weight: 700; font-size: 1.05rem;
-  padding: 6px 18px; border-radius: 8px; transform: rotate(-3deg); margin-bottom: 14px; letter-spacing: 2px;
-}
-.verdict-note h2 { font-size: 1.3rem; margin-bottom: 12px; }
-.verdict-note p { font-size: 0.95rem; color: #3a2f1d; margin-bottom: 10px; line-height: 1.55; font-family: 'Kalam', cursive; }
-
-.reveal-zone { display: none; text-align: center; margin-top: 40px; }
-.reveal-zone.show { display: block; animation: dropIn 0.5s ease; }
-.reveal-btn {
-  background: var(--stamp); color: var(--paper); border: none;
-  padding: 16px 34px; border-radius: 12px; font-family: 'Poppins', sans-serif;
-  font-weight: 700; font-size: 1.05rem; cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35); transition: transform 0.2s ease;
-}
-.reveal-btn:hover { transform: translateY(-3px) scale(1.03); }
+.evidence-card.locked .ev-toggle::after { content: '🔒 Kodu gir, aç'; }
 
 footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', cursive; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
 
@@ -228,122 +186,101 @@ footer.credit { text-align: center; margin-top: 60px; font-family: 'Kalam', curs
   <header>
     <div class="case-number">// VAKA RAPORU — ERİŞİM: SADECE YAKIN ÇEVRE</div>
     <h1>Zeynep Gerçekten <span>Kim?</span></h1>
-    <p class="subtitle">10 kanıt dosyası sırayla açılıyor, her biri sana 2 haneli bir kod veriyor. 10 kod bir araya gelince 11. ve son dosyanın kilidi açılıyor. 🕵️‍♀️🔐</p>
+    <p class="subtitle">1. dosya açık. İçine girip kodu bulunca, buraya dönüp bir sonraki dosyanın kilidini o kodla açacaksın. 10 kod toplanınca son dosya (11) açılıyor. 🕵️‍♀️🔐</p>
   </header>
 
   <div class="suspect-zone">
     <div class="polaroid" id="polaroid">
-      <div class="polaroid-photo" id="polaroidPhoto">🐱</div>
+      <div class="polaroid-photo">🐱</div>
       <div class="polaroid-caption">ŞÜPHELİ: ZEYNEP</div>
     </div>
   </div>
 
   <div class="tracker">
-    <div class="tracker-label" id="trackerLabel">0 / 11 kanıt dosyası incelendi</div>
+    <div class="tracker-label" id="trackerLabel">0 / 11 dosya açıldı</div>
     <div class="tracker-bar-bg"><div class="tracker-bar-fill" id="trackerFill"></div></div>
   </div>
 
   <div class="evidence-grid" id="evidenceGrid"></div>
 
-  <div class="reveal-zone" id="revealZone">
-    <button class="reveal-btn" id="revealBtn">🔍 Resmi Sonucu Gör</button>
-  </div>
-
   <footer class="credit">dosya ZY-11 · gizlilik derecesi: sadece Zeynep 💛</footer>
 </div>
 
-<div class="verdict-note" id="verdictNote" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:100; background:rgba(10,6,3,0.75); padding:20px;">
-  <div style="background:var(--paper); max-width:520px; padding:30px 26px; border-radius:16px; text-align:center; transform:rotate(-1deg); box-shadow:0 15px 35px var(--paper-shadow);">
-    <div class="verdict-stamp">DOSYA KAPANDI</div>
-    <h2>Resmi Sonuç</h2>
-    <p>10 kanıt dosyası incelendi, 20 haneli kod çözüldü:</p>
-    <p id="verdictCode" style="font-family:'Courier New',monospace; letter-spacing:2px; font-size:0.95rem;"></p>
-    <p id="finalMessage" style="margin-top:16px; font-size:1.05rem; font-weight:600;">Buraya senin göndereceğin final metni gelecek 💌</p>
-    <button id="modalClose" style="margin-top:18px; background:var(--ink); color:var(--paper); border:none; padding:10px 22px; border-radius:8px; font-weight:600; cursor:pointer;">Kapat ✕</button>
-  </div>
-</div>
-
 <script>
-const clueData = [
-  { tag:"Davranış Kaydı", title:"1. Vaka: Hırsız Kedi", body:"Etraftaki atıştırmalıklar, dikkatler ve bazen kalpler gizemli şekilde kayboluyor. Fail her seferinde masum bir 'ben mi?' bakışıyla olay yerinden uzaklaşıyor. 🐱💨 İlk ipucu: şüphelinin isminin baş harfi.", code:"26" },
-  { tag:"Enerji Raporu", title:"2. Vaka: Spastik", body:"Sakin bir anda bile aniden yerinden fırlayıp koşabiliyor, cümle ortasında konuyu değiştirip aynı anda üç şeyi birden yapmaya çalışabiliyor. ⚡🌀 Kod: doğum günü.", code:"03" },
-  { tag:"Stil Analizi", title:"3. Vaka: Çakma Gotik", body:"Zaman zaman karanlık tavrına bürünüyor ama beş dakika sonra bir köpek videosuna kahkaha atarken yakalanıyor. 🖤➡️☀️ Kod: doğum ayı.", code:"07" },
-  { tag:"Davranış Kaydı", title:"4. Vaka: Lolcu Köpek", body:"Bir mizah unsuru gördüğü anda anında tepki veriyor, kahkahayı zor tutuyor. 🐶😂 Kod: yaşı.", code:"18" },
-  { tag:"İştah Raporu", title:"5. Vaka: Doymayan", body:"Bir tabak asla yetmiyor, bir plan asla yetmiyor, hep 'bir tane daha' diyor. 🍽️✨ Kod: favori sayısı.", code:"11" },
-  { tag:"Lakap Dosyası", title:"6. Vaka: Midesiz", body:"Konu yemeğe gelince ortaya çıkan efsanevi bir lakap tespit edildi: Midesiz. 🍕😆 Kod: lakabın baş harfi (M).", code:"13" },
-  { tag:"Saha Gözlemi", title:"7. Vaka: Yolda Yürüyemeyen Kız", body:"Düz bir yolda bile bir şeye takılması, çarpması defalarca gözlemlendi. 🚶‍♀️💫 Kod: favori yabancı şarkıcının baş harfi (Lady Gaga).", code:"12" },
-  { tag:"Sosyal Anomali", title:"8. Vaka: Uzaylı Kedi", body:"Bir kedi görünce anında o yöne koşması ve kedi diliyle iletişim kurması kayıt altına alındı. 🛸🐾 Kod: favori şarkıcının baş harfi (Fatma).", code:"06" },
-  { tag:"Karakter Analizi", title:"9. Vaka: Pisicik Abi", body:"Bir yandan yavru kedi kadar şımarık, bir yandan da arkadaşlarını kolluyor. 🐾🛡️ Kod: favori şarkıcının soyadından (Turgut → T).", code:"20" },
-  { tag:"Sevimlilik Ölçümü", title:"10. Vaka: Sevimli Kedi", body:"Uykulu hali ve birden şımarma anları tüm önceki dosyaları gölgede bırakacak kadar sevimli bulundu. 🐈💛 Kod: favori şarkının baş harfi (Apocalypse → A).", code:"01" }
+// codes[i] = case (i+1)'in KENDİ sayfasında verdiği kod (bir sonraki dosyayı açar)
+const cases = [
+  { tag:"Davranış Kaydı", title:"1. Vaka: Hırsız Kedi", href:"vaka1/", code:"26" },
+  { tag:"Enerji Raporu", title:"2. Vaka: Spastik", href:"vaka2/", code:"03" },
+  { tag:"Stil Analizi", title:"3. Vaka: Çakma Gotik", href:"vaka3/", code:"07" },
+  { tag:"Davranış Kaydı", title:"4. Vaka: Lolcu Köpek", href:"vaka4/", code:"18" },
+  { tag:"İştah Raporu", title:"5. Vaka: Doymayan", href:"vaka5/", code:"11" },
+  { tag:"Lakap Dosyası", title:"6. Vaka: Midesiz", href:"vaka6/", code:"13" },
+  { tag:"Saha Gözlemi", title:"7. Vaka: Yolda Yürüyemeyen Kız", href:"vaka7/", code:"12" },
+  { tag:"Sosyal Anomali", title:"8. Vaka: Uzaylı Kedi", href:"vaka8/", code:"06" },
+  { tag:"Karakter Analizi", title:"9. Vaka: Pisicik Abi", href:"vaka9/", code:"20" },
+  { tag:"Sevimlilik Ölçümü", title:"10. Vaka: Sevimli Kedi", href:"vaka10/", code:"01" },
 ];
-const FULL_CODE = clueData.map(c => c.code).join("");
-const finalCard = { tag:"Şifre Çözümü", title:"11. Vaka: Son Dosya", body:`10 koddan toplanan tam şifre: <span style="font-family:'Courier New',monospace; letter-spacing:2px;">${FULL_CODE}</span><br><br>Aşağıdaki düğmeye basarak dosyanın kilidini tamamen aç. 🔓` };
+const FULL_CODE = cases.map(c => c.code).join("");
+const finalCase = { tag:"Şifre Çözümü", title:"11. Vaka: Son Dosya", href:"vaka11/", code: FULL_CODE };
+const allCases = [...cases, finalCase];
 
-const allCards = [...clueData, finalCard];
+const STORAGE_KEY = 'zy11_unlocked';
+function getUnlocked() {
+  try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[0]'); return v; }
+  catch(e) { return [0]; }
+}
+function saveUnlocked(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+let unlocked = getUnlocked();
+if (!unlocked.includes(0)) unlocked.push(0); // 1. vaka her zaman açık
+saveUnlocked(unlocked);
+
 const grid = document.getElementById('evidenceGrid');
 const trackerFill = document.getElementById('trackerFill');
 const trackerLabel = document.getElementById('trackerLabel');
-const polaroidPhoto = document.getElementById('polaroidPhoto');
-document.getElementById('verdictCode').textContent = FULL_CODE;
-const cards = [];
 
-allCards.forEach((clue, i) => {
-  const isFinal = i === clueData.length;
-  const card = document.createElement('div');
-  card.className = i === 0 ? 'evidence-card' : 'evidence-card locked';
-  if (isFinal) card.classList.add('final');
-  const codeHtml = (!isFinal) ? `<div class="ev-code">Kanıt Kodu: ${clue.code}</div>` : '';
-  card.innerHTML = `
-    <div class="pin"></div>
-    ${i !== 0 ? '<div class="lock-icon">🔒</div>' : ''}
-    <div class="ev-tag">${clue.tag}</div>
-    <div class="ev-title">${clue.title}</div>
-    <div class="ev-body">${clue.body}${codeHtml}</div>
-    <div class="ev-toggle"></div>
-  `;
-  card.addEventListener('click', () => {
-    if (card.classList.contains('locked')) return;
-    if (!card.classList.contains('open')) {
-      card.classList.add('open');
-      updateTracker();
-      burstConfetti();
-      unlockNext(i);
-    } else {
-      card.classList.remove('open');
-    }
+function render() {
+  grid.innerHTML = '';
+  allCases.forEach((c, i) => {
+    const isUnlocked = unlocked.includes(i);
+    const card = document.createElement('div');
+    card.className = isUnlocked ? 'evidence-card' : 'evidence-card locked';
+    card.innerHTML = `
+      <div class="pin"></div>
+      ${!isUnlocked ? '<div class="lock-icon">🔒</div>' : ''}
+      <div class="ev-tag">${c.tag}</div>
+      <div class="ev-title">${c.title}</div>
+      <div class="ev-toggle"></div>
+    `;
+    card.addEventListener('click', () => {
+      if (isUnlocked) {
+        window.location.href = c.href;
+      } else {
+        // önceki vakanın kodu bu kartın kilidini açar
+        const needed = allCases[i - 1] ? allCases[i - 1].code : null;
+        const guess = prompt(`Bu dosyayı açmak için ${i}. vakadan aldığın kodu gir:`);
+        if (guess !== null && guess.trim() === needed) {
+          unlocked.push(i);
+          saveUnlocked(unlocked);
+          burstConfetti();
+          window.location.href = c.href;
+        } else if (guess !== null) {
+          alert('Yanlış kod, tekrar dene 🔍');
+        }
+      }
+    });
+    grid.appendChild(card);
   });
-  grid.appendChild(card);
-  cards.push(card);
-});
+  updateTracker();
+}
 
-function unlockNext(index) {
-  const next = cards[index + 1];
-  if (next) {
-    next.classList.remove('locked');
-    const lockIcon = next.querySelector('.lock-icon');
-    if (lockIcon) lockIcon.remove();
-  }
-}
 function updateTracker() {
-  const openedTotal = document.querySelectorAll('.evidence-card.open').length;
-  const pct = (openedTotal / allCards.length) * 100;
+  const done = unlocked.length;
+  const pct = (done / allCases.length) * 100;
   trackerFill.style.width = pct + '%';
-  trackerLabel.textContent = `${openedTotal} / ${allCards.length} kanıt dosyası incelendi`;
-  if (openedTotal === allCards.length) {
-    setTimeout(() => {
-      document.getElementById('revealZone').classList.add('show');
-      document.getElementById('revealZone').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 400);
-  }
+  trackerLabel.textContent = `${done} / ${allCases.length} dosya açıldı`;
 }
-document.getElementById('revealBtn').addEventListener('click', () => {
-  document.getElementById('verdictNote').style.display = 'flex';
-  polaroidPhoto.textContent = '🌟';
-  burstConfetti();
-});
-document.getElementById('modalClose').addEventListener('click', () => {
-  document.getElementById('verdictNote').style.display = 'none';
-});
+
 function burstConfetti() {
   const emojis = ['🐾','✨','🛸','⭐','💛'];
   for (let i = 0; i < 10; i++) {
@@ -356,11 +293,14 @@ function burstConfetti() {
     setTimeout(() => c.remove(), 4000);
   }
 }
+
 document.getElementById('polaroid').addEventListener('click', () => {
   const p = document.getElementById('polaroid');
   p.style.transform = 'rotate(0deg) scale(1.08)';
   setTimeout(() => { p.style.transform = ''; }, 300);
 });
+
+render();
 </script>
 </body>
 </html>
