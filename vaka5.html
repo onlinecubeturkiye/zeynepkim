@@ -333,8 +333,6 @@ h1 em { font-style: normal; color: var(--stamp); }
   h1 { font-size: 1.35rem; max-width: 100%; }
   .stamp-corner { position: static; display: inline-block; margin-bottom: 14px; transform: rotate(0deg); }
   .code-display { font-size: 1.9rem; letter-spacing: 6px; }
-  .maze-grid { grid-template-columns: repeat(7, 32px); grid-template-rows: repeat(7, 32px); }
-  .maze-cell { width: 32px; height: 32px; font-size: 1rem; }
 }
 </style>
 </head>
@@ -377,7 +375,16 @@ h1 em { font-style: normal; color: var(--stamp); }
       <div class="game-title">🌯 Mini Görev: Doymayan'ın Labirenti</div>
       <div class="game-sub">Zanlıyı çiğköfteye ulaştır! Ok tuşlarını ya da aşağıdaki butonları kullanarak labirentte ilerle.</div>
 
-      <div class="maze-wrap">
+      <div class="diff-select" id="diffSelect">
+        <div class="diff-label">Önce zorluk seç:</div>
+        <div class="diff-buttons">
+          <button class="diff-btn kolay" data-size="6">🟢 Kolay</button>
+          <button class="diff-btn orta" data-size="8">🟠 Orta</button>
+          <button class="diff-btn zor" data-size="10">🔴 Zor</button>
+        </div>
+      </div>
+
+      <div class="maze-wrap" id="mazeWrap">
         <div class="maze-grid" id="mazeGrid"></div>
         <div class="dpad">
           <button id="dpadUp">↑</button>
@@ -385,9 +392,10 @@ h1 em { font-style: normal; color: var(--stamp); }
           <button id="dpadDown">↓</button>
           <button id="dpadRight">→</button>
         </div>
+        <button class="change-diff-btn" id="changeDiffBtn">🔁 Zorluğu Değiştir</button>
       </div>
 
-      <div class="game-status" id="gameStatus">😋 Zanlıyı çiğköfteye götür</div>
+      <div class="game-status" id="gameStatus"></div>
       <div class="game-win" id="gameWin">🎉 Zanlı sonunda doydu (kısa süreliğine), kod artık senin!</div>
     </div>
 
@@ -410,28 +418,78 @@ const STORAGE_KEY = 'vaka5_zy11_solved';
 function isAlreadySolved() { return localStorage.getItem(STORAGE_KEY) === 'true'; }
 function markSolved() { localStorage.setItem(STORAGE_KEY, 'true'); }
 
-// 0 = yol, 1 = duvar
-const maze = [
-  [0,0,0,1,1,1,1],
-  [1,1,0,1,1,1,1],
-  [0,0,0,0,0,0,0],
-  [0,1,1,0,1,1,0],
-  [0,0,0,0,0,0,0],
-  [1,1,1,1,0,1,1],
-  [1,1,1,1,0,0,0],
-];
-const ROWS = maze.length;
-const COLS = maze[0].length;
-const start = { r: 0, c: 0 };
-const goal = { r: 6, c: 6 };
-let player = { r: start.r, c: start.c };
-let won = false;
-
 const grid = document.getElementById('mazeGrid');
 const gameStatus = document.getElementById('gameStatus');
 const gameWin = document.getElementById('gameWin');
 const revealBtn = document.getElementById('revealBtn');
 const codePrompt = document.getElementById('codePrompt');
+const diffSelect = document.getElementById('diffSelect');
+const mazeWrap = document.getElementById('mazeWrap');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+
+let maze = [];
+let ROWS = 0, COLS = 0;
+let start = { r: 1, c: 1 };
+let goal = { r: 1, c: 1 };
+let player = { r: 1, c: 1 };
+let won = false;
+
+// Rastgele, her zaman çözülebilir bir labirent üretir (recursive backtracker)
+function generateMaze(rooms) {
+  const gr = rooms * 2 + 1;
+  const gc = rooms * 2 + 1;
+  const m = Array.from({ length: gr }, () => Array(gc).fill(1));
+  const visited = Array.from({ length: rooms }, () => Array(rooms).fill(false));
+
+  function shuffledDirs() {
+    const dirs = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+    for (let i = dirs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
+    }
+    return dirs;
+  }
+
+  function carve(r, c) {
+    visited[r][c] = true;
+    m[2 * r + 1][2 * c + 1] = 0;
+    for (const [dr, dc] of shuffledDirs()) {
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < rooms && nc >= 0 && nc < rooms && !visited[nr][nc]) {
+        m[2 * r + 1 + dr][2 * c + 1 + dc] = 0;
+        carve(nr, nc);
+      }
+    }
+  }
+  carve(0, 0);
+  return { m, gr, gc };
+}
+
+function setupMaze(rooms) {
+  const { m, gr, gc } = generateMaze(rooms);
+  maze = m;
+  ROWS = gr;
+  COLS = gc;
+  start = { r: 1, c: 1 };
+  goal = { r: gr - 2, c: gc - 2 };
+  player = { r: start.r, c: start.c };
+  won = false;
+
+  // Hücre boyutunu ekrana göre ayarla (mobil dahil)
+  const maxWidth = Math.min(360, window.innerWidth - 64);
+  const cellSize = Math.max(14, Math.floor(maxWidth / COLS));
+  grid.style.setProperty('--cell-size', cellSize + 'px');
+  grid.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
+  grid.style.gridTemplateRows = `repeat(${ROWS}, var(--cell-size))`;
+
+  gameStatus.textContent = '😋 Zanlıyı çiğköfteye götür';
+  gameWin.style.display = 'none';
+  codePrompt.textContent = 'Kodu görmek için önce yukarıdaki labirenti bitir.';
+  revealBtn.disabled = true;
+  revealBtn.textContent = '🔒 Önce Labirenti Bitir';
+
+  renderMaze();
+}
 
 function renderMaze() {
   grid.innerHTML = '';
@@ -471,16 +529,37 @@ function tryMove(dr, dc) {
   }
 }
 
+// Ok tuşları hem labirenti hareket ettirir hem de sayfanın kaymasını engeller
 document.addEventListener('keydown', (e) => {
+  const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+  if (!arrowKeys.includes(e.key)) return;
+  if (mazeWrap.style.display === 'none') return;
+  e.preventDefault();
   if (e.key === 'ArrowUp') tryMove(-1, 0);
   else if (e.key === 'ArrowDown') tryMove(1, 0);
   else if (e.key === 'ArrowLeft') tryMove(0, -1);
   else if (e.key === 'ArrowRight') tryMove(0, 1);
-});
+}, { passive: false });
+
 document.getElementById('dpadUp').addEventListener('click', () => tryMove(-1, 0));
 document.getElementById('dpadDown').addEventListener('click', () => tryMove(1, 0));
 document.getElementById('dpadLeft').addEventListener('click', () => tryMove(0, -1));
 document.getElementById('dpadRight').addEventListener('click', () => tryMove(0, 1));
+
+changeDiffBtn.addEventListener('click', () => {
+  mazeWrap.style.display = 'none';
+  diffSelect.style.display = 'flex';
+  gameStatus.textContent = '';
+});
+
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const rooms = parseInt(btn.dataset.size, 10);
+    diffSelect.style.display = 'none';
+    mazeWrap.style.display = 'flex';
+    setupMaze(rooms);
+  });
+});
 
 function winGame() {
   won = true;
@@ -493,10 +572,9 @@ function winGame() {
 }
 
 if (isAlreadySolved()) {
-  won = true;
-  player = { r: goal.r, c: goal.c };
+  diffSelect.style.display = 'none';
+  mazeWrap.style.display = 'none';
   document.querySelector('.game-sub').textContent = 'Bu görevi zaten tamamlamıştın, tekrar oynamana gerek yok ✅';
-  document.querySelector('.dpad').style.display = 'none';
   gameStatus.textContent = '';
   gameWin.style.display = 'block';
   gameWin.textContent = '✅ Bu görevi daha önce tamamladın. Kod hazır.';
@@ -504,8 +582,6 @@ if (isAlreadySolved()) {
   revealBtn.disabled = false;
   revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
 }
-
-renderMaze();
 
 // ---- Kod gösterme ----
 function revealCode() {
