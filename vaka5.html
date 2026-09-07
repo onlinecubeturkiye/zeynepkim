@@ -158,7 +158,7 @@ h1 em { font-style: normal; color: var(--stamp); }
   margin-bottom: 16px;
 }
 
-.maze-wrap { display: none; flex-direction: column; align-items: center; gap: 14px; touch-action: none; }
+.maze-wrap { display: none; flex-direction: column; align-items: center; gap: 14px; max-width: 100%; }
 .maze-grid {
   display: grid;
   gap: 1px;
@@ -166,6 +166,8 @@ h1 em { font-style: normal; color: var(--stamp); }
   padding: 6px;
   border-radius: 10px;
   box-shadow: inset 0 0 0 2px var(--gold);
+  max-width: 100%;
+  overflow: hidden;
 }
 .maze-cell {
   width: var(--cell-size, 24px);
@@ -342,7 +344,7 @@ h1 em { font-style: normal; color: var(--stamp); }
 
     <div class="game-section">
       <div class="game-title">🌯 Mini Görev: Doymayan'ın Labirenti</div>
-      <div class="game-sub">Zanlıyı çiğköfteye ulaştır! Ok tuşlarını ya da aşağıdaki butonları kullanarak labirentte ilerle. Dikkat: çıkmaz yollar var, dikkatli ol!</div>
+      <div class="game-sub" id="gameSub">Zanlıyı çiğköfteye ulaştır! Ok tuşlarını ya da aşağıdaki butonları kullanarak labirentte ilerle. Dikkat: çıkmaz yollar var, dikkatli ol!</div>
 
       <div class="maze-wrap" id="mazeWrap">
         <div class="maze-grid" id="mazeGrid"></div>
@@ -382,9 +384,8 @@ const gameStatus = document.getElementById('gameStatus');
 const gameWin = document.getElementById('gameWin');
 const revealBtn = document.getElementById('revealBtn');
 const codePrompt = document.getElementById('codePrompt');
-const diffSelect = document.getElementById('diffSelect');
 const mazeWrap = document.getElementById('mazeWrap');
-const changeDiffBtn = document.getElementById('changeDiffBtn');
+const gameSub = document.getElementById('gameSub');
 
 let maze = [];
 let ROWS = 0, COLS = 0;
@@ -435,13 +436,15 @@ function setupMaze(rooms) {
   player = { r: start.r, c: start.c };
   won = false;
 
-  // Hücre boyutunu ekrana göre ayarla (mobil dahil)
-  const maxWidth = Math.min(360, window.innerWidth - 64);
-  const cellSize = Math.max(14, Math.floor(maxWidth / COLS));
+  // Labirenti önce görünür yap ki gerçek (kartın içindeki) genişliği ölçebilelim,
+  // ekran genişliğine göre değil, kartın kendi iç alanına göre boyutlandır.
+  mazeWrap.style.display = 'flex';
+  const containerWidth = mazeWrap.clientWidth || (window.innerWidth - 64);
+  const maxWidth = Math.min(360, containerWidth - 16); // grid padding/border için pay
+  const cellSize = Math.max(12, Math.floor(maxWidth / COLS));
   grid.style.setProperty('--cell-size', cellSize + 'px');
   grid.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size))`;
   grid.style.gridTemplateRows = `repeat(${ROWS}, var(--cell-size))`;
-
   gameStatus.textContent = '😋 Zanlıyı çiğköfteye götür';
   gameWin.style.display = 'none';
   codePrompt.textContent = 'Kodu görmek için önce yukarıdaki labirenti bitir.';
@@ -509,24 +512,25 @@ document.getElementById('dpadRight').addEventListener('click', () => tryMove(0, 
 function winGame() {
   won = true;
   markSolved();
-  gameWin.style.display = 'block';
+  showSolvedState('🎉 Zanlı sonunda doydu (kısa süreliğine), kod artık senin!');
+}
+
+// Labirent bittiğinde (yeni çözüldüğünde ya da daha önce çözülmüşse) ekranı
+// "tamamlandı" haline getirir: labirent gizlenir, tebrik/onay mesajı gösterilir.
+function showSolvedState(message) {
+  mazeWrap.style.display = 'none';
+  gameSub.textContent = 'Bu görevi tamamladın, tekrar oynamana gerek yok ✅';
   gameStatus.textContent = '';
-  codePrompt.textContent = 'Zanlı çiğköfteye ulaştı! Kodu görmek için tıkla:';
+  gameWin.style.display = 'block';
+  gameWin.textContent = message;
+  codePrompt.textContent = 'Kodu görmek için tıkla:';
   revealBtn.disabled = false;
   revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
 }
 
 if (isAlreadySolved()) {
-  mazeWrap.style.display = 'none';
-  document.querySelector('.game-sub').textContent = 'Bu görevi zaten tamamlamıştın, tekrar oynamana gerek yok ✅';
-  gameStatus.textContent = '';
-  gameWin.style.display = 'block';
-  gameWin.textContent = '✅ Bu görevi daha önce tamamladın. Kod hazır.';
-  codePrompt.textContent = 'Kodu görmek için tıkla:';
-  revealBtn.disabled = false;
-  revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
+  showSolvedState('✅ Bu görevi daha önce tamamladın. Kod hazır.');
 } else {
-  mazeWrap.style.display = 'flex';
   setupMaze(HARD_ROOMS);
 }
 
