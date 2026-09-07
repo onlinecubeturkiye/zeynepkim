@@ -158,26 +158,6 @@ h1 em { font-style: normal; color: var(--stamp); }
   margin-bottom: 16px;
 }
 
-.diff-select { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 6px; }
-.diff-label { font-family: 'Kalam', cursive; font-weight: 700; color: #4a3b26; font-size: 0.95rem; }
-.diff-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-.diff-btn {
-  border: none;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  background: var(--gold);
-  color: var(--ink);
-  box-shadow: 0 4px 10px rgba(212,160,23,0.35);
-  transition: transform 0.15s ease;
-}
-.diff-btn:hover { transform: translateY(-2px) scale(1.03); }
-.diff-btn.zor { background: var(--stamp); color: var(--paper); box-shadow: 0 4px 10px rgba(181,37,44,0.35); }
-.diff-btn.orta { background: var(--pin-olive); color: var(--paper); box-shadow: 0 4px 10px rgba(138,138,92,0.35); }
-
 .maze-wrap { display: none; flex-direction: column; align-items: center; gap: 14px; touch-action: none; }
 .maze-grid {
   display: grid;
@@ -201,17 +181,6 @@ h1 em { font-style: normal; color: var(--stamp); }
 }
 .maze-cell.goal { background: rgba(212,160,23,0.35); }
 .maze-cell.player-here { background: rgba(88,129,87,0.35); }
-.change-diff-btn {
-  background: none;
-  border: none;
-  font-family: 'Kalam', cursive;
-  font-weight: 700;
-  color: var(--stamp);
-  font-size: 0.8rem;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 2px;
-}
 
 .dpad {
   display: grid;
@@ -373,16 +342,7 @@ h1 em { font-style: normal; color: var(--stamp); }
 
     <div class="game-section">
       <div class="game-title">🌯 Mini Görev: Doymayan'ın Labirenti</div>
-      <div class="game-sub">Zanlıyı çiğköfteye ulaştır! Ok tuşlarını ya da aşağıdaki butonları kullanarak labirentte ilerle.</div>
-
-      <div class="diff-select" id="diffSelect">
-        <div class="diff-label">Önce zorluk seç:</div>
-        <div class="diff-buttons">
-          <button class="diff-btn kolay" data-size="6">🟢 Kolay</button>
-          <button class="diff-btn orta" data-size="8">🟠 Orta</button>
-          <button class="diff-btn zor" data-size="10">🔴 Zor</button>
-        </div>
-      </div>
+      <div class="game-sub">Zanlıyı çiğköfteye ulaştır! Ok tuşlarını ya da aşağıdaki butonları kullanarak labirentte ilerle. Dikkat: çıkmaz yollar var, dikkatli ol!</div>
 
       <div class="maze-wrap" id="mazeWrap">
         <div class="maze-grid" id="mazeGrid"></div>
@@ -392,7 +352,6 @@ h1 em { font-style: normal; color: var(--stamp); }
           <button id="dpadDown">↓</button>
           <button id="dpadRight">→</button>
         </div>
-        <button class="change-diff-btn" id="changeDiffBtn">🔁 Zorluğu Değiştir</button>
       </div>
 
       <div class="game-status" id="gameStatus"></div>
@@ -433,6 +392,7 @@ let start = { r: 1, c: 1 };
 let goal = { r: 1, c: 1 };
 let player = { r: 1, c: 1 };
 let won = false;
+const HARD_ROOMS = 12; // tek zorluk: zor mod, büyük labirent
 
 // Rastgele, her zaman çözülebilir bir labirent üretir (recursive backtracker)
 function generateMaze(rooms) {
@@ -546,21 +506,6 @@ document.getElementById('dpadDown').addEventListener('click', () => tryMove(1, 0
 document.getElementById('dpadLeft').addEventListener('click', () => tryMove(0, -1));
 document.getElementById('dpadRight').addEventListener('click', () => tryMove(0, 1));
 
-changeDiffBtn.addEventListener('click', () => {
-  mazeWrap.style.display = 'none';
-  diffSelect.style.display = 'flex';
-  gameStatus.textContent = '';
-});
-
-document.querySelectorAll('.diff-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const rooms = parseInt(btn.dataset.size, 10);
-    diffSelect.style.display = 'none';
-    mazeWrap.style.display = 'flex';
-    setupMaze(rooms);
-  });
-});
-
 function winGame() {
   won = true;
   markSolved();
@@ -572,7 +517,6 @@ function winGame() {
 }
 
 if (isAlreadySolved()) {
-  diffSelect.style.display = 'none';
   mazeWrap.style.display = 'none';
   document.querySelector('.game-sub').textContent = 'Bu görevi zaten tamamlamıştın, tekrar oynamana gerek yok ✅';
   gameStatus.textContent = '';
@@ -581,6 +525,9 @@ if (isAlreadySolved()) {
   codePrompt.textContent = 'Kodu görmek için tıkla:';
   revealBtn.disabled = false;
   revealBtn.textContent = '🔍 Kodu Ortaya Çıkar';
+} else {
+  mazeWrap.style.display = 'flex';
+  setupMaze(HARD_ROOMS);
 }
 
 // ---- Kod gösterme ----
