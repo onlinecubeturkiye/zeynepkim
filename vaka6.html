@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>Vaka 6 · Midesiz — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .kitchen { height: 360px; touch-action: none; cursor: none;
   background: radial-gradient(circle at 50% 120%, rgba(255,77,94,.55), transparent 60%), radial-gradient(circle at 20% 0%, rgba(255,138,61,.35), transparent 50%), linear-gradient(180deg, #2a1550, #150b33); }
@@ -22,7 +23,7 @@
 <body>
 <div class="app" id="app"></div>
 <template id="mission">
-  <div class="hud"><span class="pill">🍽 <b id="score">0</b>/15</span><span class="pill lives" id="lives">❤️❤️❤️</span></div>
+  <div class="hud"><span class="pill">🍽 <b id="score">0</b><span id="scoreMax">/15</span></span><span class="pill lives" id="lives">❤️❤️❤️</span></div>
   <div class="bar"><div id="prog"></div></div>
   <div class="arena kitchen" id="arena"><div class="hole"></div><div class="eater" id="eater">😋</div></div>
   <button class="btn" id="startBtn">🍕 Yemek Yağmurunu Başlat</button>
@@ -31,15 +32,16 @@
 
 <script src="assets/zy11.js"></script>
 <script>
-const TARGET = 15, FOODS = ['🍕','🌭','🍟','🌶️','🥙','🍫','🥒','🍝','🍔','🧄','🍩','🌮'];
+let ARC = null, TARGET = 15; const FOODS = ['🍕','🌭','🍟','🌶️','🥙','🍫','🥒','🍝','🍔','🧄','🍩','🌮'];
 const LINES = { '🌶️': 'Acı mı? Hiç hissetmedi.', '🥒': 'Turşu + çikolata kombosu!', '🍫': 'Tatlı başka mide 🍫', '🍕': 'Soğuk pizza, kahvaltılık.' };
 let arena, eater, statusEl, foods = [], score, lives, ex = .5, raf, last, acc, running = false;
 
 function setX(x) { ex = Math.max(.08, Math.min(.92, x)); eater.style.left = (ex * 100) + '%'; }
-function hud() { ZY.$('#score').textContent = score; ZY.$('#lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives); ZY.$('#prog').style.width = (score / TARGET * 100) + '%'; }
+function hud() { ZY.$('#score').textContent = score; ZY.$('#scoreMax').textContent = ARC ? '' : '/15'; ZY.$('#lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives); ZY.$('#prog').style.width = (ARC ? 100 : score / TARGET * 100) + '%'; }
 function clear() { foods.forEach(f => f.el.remove()); foods = []; }
 
-function init() {
+function init(arc) {
+  if (arc !== undefined) ARC = arc; TARGET = ARC ? Infinity : 15;
   arena = ZY.$('#arena'); eater = ZY.$('#eater'); statusEl = ZY.$('#status');
   running = false; cancelAnimationFrame(raf); clear(); score = 0; lives = 3; hud(); setX(.5); eater.textContent = '😋';
   ZY.arenaMsg(arena, '🕳️', 'Kara delik mide aç!', 'Parmağını sürükle, yemekleri yakala. 🥗 salatadan kaç!');
@@ -62,12 +64,12 @@ function spawn() {
   const bad = Math.random() < .27, el = document.createElement('div');
   el.className = 'food' + (bad ? ' bad' : ''); el.textContent = bad ? '🥗' : FOODS[Math.floor(Math.random() * FOODS.length)];
   arena.appendChild(el);
-  foods.push({ el, bad, x: .08 + Math.random() * .84, y: -40, v: (130 + Math.random() * 90) * (1 + score * .045), rot: 0, vr: (Math.random() - .5) * 6, sway: Math.random() * 6 });
+  foods.push({ el, bad, x: .08 + Math.random() * .84, y: -40, v: (130 + Math.random() * 90) * (1 + Math.min(score, 60) * (ARC ? .025 : .045)), rot: 0, vr: (Math.random() - .5) * 6, sway: Math.random() * 6 });
 }
 function loop(t) {
   if (!running) return;
   const dt = Math.min(.05, (t - last) / 1000); last = t; acc += dt;
-  if (acc > Math.max(.42, .9 - score * .028)) { acc = 0; spawn(); }
+  if (acc > Math.max(ARC ? .3 : .42, .9 - score * (ARC ? .012 : .028))) { acc = 0; spawn(); }
   const W = arena.clientWidth, H = arena.clientHeight, ey = H - 48, rect = arena.getBoundingClientRect();
   for (let i = foods.length - 1; i >= 0; i--) {
     const f = foods[i]; f.y += f.v * dt; f.rot += f.vr * dt * 60; f.sway += dt * 3;
@@ -96,6 +98,8 @@ function loop(t) {
 function end(won) {
   running = false; cancelAnimationFrame(raf); clear();
   const b = ZY.$('#startBtn');
+  ZY.stat('foods', score);
+  if (ARC) { eater.textContent = '😵'; ZY.arenaMsg(arena, '🥗', 'Salata kazandı!', score + ' yemek'); b.style.display = ''; b.disabled = false; b.textContent = '🔁 Tekrar'; return ZY.arcadeEnd(score); }
   if (!won) { eater.textContent = '😵'; ZY.arenaMsg(arena, '🥗', 'Salata kazandı!', score + ' yemek yedin'); b.style.display = ''; b.disabled = false; b.textContent = '🔁 Tekrar Dene'; return; }
   eater.textContent = '🤤'; ZY.arenaMsg(arena, '🕳️', '15 yemek yok oldu', 'Mide hâlâ bulunamadı');
   ZY.complete({ stars: lives, stats: '❤️ ' + lives + ' can kaldı', msg: 'Zanlı: "Tatlı var mı?" 🍩' });

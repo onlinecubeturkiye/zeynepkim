@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>Vaka 8 · Uzaylı Kedi — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .space { max-width: 360px; padding: 22px; background: radial-gradient(circle at 50% 50%, rgba(61,220,132,.25), transparent 60%), linear-gradient(160deg, #0d1f2a, #120b33); }
 .radar { position: absolute; inset: 0; pointer-events: none; background: conic-gradient(from 0deg, rgba(61,220,132,.28), transparent 25%); border-radius: inherit; animation: spin 4s linear infinite; opacity: .5; }
@@ -30,7 +31,7 @@
 <body>
 <div class="app" id="app"></div>
 <template id="mission">
-  <div class="hud"><span class="pill">📡 <b id="lvl">0</b>/6</span><span class="pill">📵 <b id="fails">0</b> hata</span></div>
+  <div class="hud"><span class="pill">📡 <b id="lvl">0</b><span id="lvlMax">/6</span></span><span class="pill">📵 <b id="fails">0</b> hata</span></div>
   <div class="term" id="term">&gt; bağlantı bekleniyor<span class="cur">_</span></div>
   <div class="arena space" id="arena"><div class="radar"></div>
     <div class="pads"><button class="pad" data-i="0" disabled>👽</button><button class="pad" data-i="1" disabled>🐱</button><button class="pad" data-i="2" disabled>🛸</button><button class="pad" data-i="3" disabled>⭐</button><div class="center" id="center">?</div></div>
@@ -42,16 +43,17 @@
 
 <script src="assets/zy11.js"></script>
 <script>
-const TARGET = 6, TONES = [330, 415, 494, 622], WORDS = ['mrrr', 'miyav', 'bip', 'zıp'];
+let ARC = null, TARGET = 6; const TONES = [330, 415, 494, 622], WORDS = ['mrrr', 'miyav', 'bip', 'zıp'];
 let pads, term, statusEl, seq, pos, accepting, fails, session = 0;
 const say = t => term.innerHTML = '&gt; ' + t + '<span class="cur">_</span>';
 const setPads = on => pads.forEach(p => p.disabled = !on);
 async function flash(i, ms) { pads[i].classList.add('lit'); ZY.beep(TONES[i], ms / 1000, 'triangle', .14); await ZY.wait(ms); pads[i].classList.remove('lit'); }
 
-function init() {
+function init(arc) {
+  if (arc !== undefined) ARC = arc; TARGET = ARC ? Infinity : 6;
   pads = [...document.querySelectorAll('.pad')]; term = ZY.$('#term'); statusEl = ZY.$('#status');
   session++; seq = []; pos = 0; accepting = false; fails = 0; setPads(false);
-  ZY.$('#lvl').textContent = 0; ZY.$('#fails').textContent = 0; ZY.$('#center').textContent = '?'; ZY.$('#decoded').style.display = 'none';
+  ZY.$('#lvl').textContent = 0; ZY.$('#lvlMax').textContent = ARC ? '' : '/6'; ZY.$('#fails').textContent = 0; ZY.$('#center').textContent = '?'; ZY.$('#decoded').style.display = 'none';
   say('bağlantı bekleniyor'); statusEl.textContent = '';
   const b = ZY.$('#startBtn'); b.style.display = ''; b.disabled = false; b.textContent = '📡 Sinyali Al'; b.onclick = start;
   pads.forEach(p => p.onpointerdown = e => { e.preventDefault(); press(+p.dataset.i); });
@@ -73,6 +75,7 @@ async function press(i) {
     accepting = false; setPads(false); fails++; ZY.$('#fails').textContent = fails;
     ZY.beep(110, .4, 'sawtooth'); ZY.buzz(150); ZY.shake(ZY.$('#arena'));
     say('HATA: sinyal bozuldu 📵');
+    if (ARC) { const b = ZY.$('#startBtn'); b.style.display = ''; b.textContent = '🔁 Tekrar'; b.onclick = () => { init(); start(); }; return ZY.arcadeEnd(seq.length - 1); }
     statusEl.className = 'status bad'; statusEl.textContent = 'Uzaylı dili zor! Baştan alıyoruz (' + (seq.length - 1) + '. sinyale kadar geldin)';
     const b = ZY.$('#startBtn'); b.style.display = ''; b.textContent = '🔁 Tekrar Bağlan'; return;
   }
@@ -81,7 +84,7 @@ async function press(i) {
     accepting = false; setPads(false); ZY.$('#lvl').textContent = seq.length;
     ZY.burstAt(ZY.$('#center'), { count: 16, colors: ['#a6ff4d', '#3ddc84', '#fff'] }); ZY.sfx.good();
     if (seq.length >= TARGET) return done();
-    statusEl.className = 'status good'; statusEl.textContent = ['Kedi frekansı yakalandı 🐱', 'Sinyal güçleniyor 📶', 'Mrrr onaylandı', 'Neredeyse çözüldü! 🛸', 'Son bir sinyal!'][seq.length - 1];
+    statusEl.className = 'status good'; statusEl.textContent = ARC ? '📡 ' + seq.length + ' sinyal!' : ['Kedi frekansı yakalandı 🐱', 'Sinyal güçleniyor 📶', 'Mrrr onaylandı', 'Neredeyse çözüldü! 🛸', 'Son bir sinyal!'][seq.length - 1];
     await ZY.wait(650); next();
   }
 }

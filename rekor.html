@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
+<title>Rekor Salonu — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
+<style>
+.arc { display: flex; gap: 14px; align-items: center; padding: 16px; }
+.arc + .arc { margin-top: 12px; }
+.arc .ic { width: 64px; height: 64px; flex: none; border-radius: 20px; display: grid; place-items: center; font-size: 2.1rem; background: var(--g); box-shadow: 0 8px 18px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.3); }
+.arc .tx { flex: 1; min-width: 0; }
+.arc .tx b { font-family: var(--font-head); font-size: 1.08rem; display: block; line-height: 1.15; }
+.arc .tx small { color: var(--text-dim); font-size: .8rem; font-weight: 600; line-height: 1.35; display: block; margin-top: 2px; }
+.arc .best { font-family: var(--font-head); font-weight: 800; color: var(--yellow); font-size: .95rem; margin-top: 4px; }
+.arc.off { opacity: .55; } .arc.off .ic { filter: grayscale(1); }
+.trophy { text-align: center; padding: 22px 16px; }
+.trophy .big { font-size: 3.4rem; animation: bob 3s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="bar"></div>
+  <div class="card trophy"><div class="big">🏆</div><h1 style="font-size:1.8rem">Rekor <em>Salonu</em></h1><p class="intro">Bir vakayı çözünce onun sonsuz modu açılır. Rekorunu kır, pati kazan, günlük görevleri bitir!</p></div>
+  <div class="section-label">🎮 Rekor Modları</div>
+  <div id="list"></div>
+</div>
+<script src="assets/zy11.js"></script>
+<script>
+function render() {
+  ZY.$('#bar').innerHTML = ZY.hubBar(); ZY.bindSound();
+  const p = ZY.prof();
+  ZY.$('#list').innerHTML = ZY.ARCADES.map(a => {
+    const c = ZY.CASES[a.n - 1], open = ZY.arcadeAvailable(a), best = p.arcade[a.id] || 0;
+    return '<div class="card arc' + (open ? '' : ' off') + '" style="--g:' + c.grad + '"><div class="ic">' + (open ? a.e : '🔒') + '</div><div class="tx"><b>' + a.t + '</b><small>' + (open ? a.d : 'Açmak için Vaka ' + a.n + ' (' + c.alias + ') çöz') + '</small>' +
+      (open ? '<div class="best">🏆 ' + best + ' ' + a.unit + '</div>' : '') + '</div>' +
+      (open ? '<a class="btn small" href="vaka' + a.n + '.html?rekor=1">Oyna</a>' : '') + '</div>';
+  }).join('');
+}
+render(); ZY.tabbar('rekor');
+</script>
+</body>
+</html>

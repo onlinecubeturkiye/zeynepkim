@@ -192,13 +192,200 @@
     });
   }
 
+  // =========================================================
+  //   META OYUN: profil, pati, XP, rütbe, seri, günlük görev,
+  //   başarımlar, rekor modu, dükkan
+  // =========================================================
+  const K_PROF = 'zy11_profile';
+  const RANKS = ['Çaylak Dedektif', 'Stajyer Dedektif', 'Dedektif', 'Kıdemli Dedektif', 'Komiser', 'Başkomiser', 'Müfettiş', 'Baş Müfettiş', 'Ajan ZY', 'Efsane Dedektif'];
+  const RANK_E = ['🔍', '📝', '🕵️', '🕵️‍♀️', '🎖️', '🎖️', '🏅', '🏅', '🦸‍♀️', '👑'];
+
+  const ARCADES = [
+    { id: 'kedi',    n: 1, e: '🐱', t: 'Sonsuz Kedi Avı',  unit: 'kedi',   d: '30 saniyede kaç kedi yakalarsın? Bomba oyunu bitirir.', daily: 20, pay: 1.5 },
+    { id: 'refleks', n: 4, e: '🐶', t: 'Refleks Maratonu', unit: 'tur',    d: 'Hata yapana kadar devam. Her tur biraz daha hızlı.', daily: 10, pay: 4 },
+    { id: 'mide',    n: 6, e: '🍕', t: 'Bitmeyen Sofra',   unit: 'yemek',  d: '3 can, sonsuz yemek. Salata gelene kadar ye!', daily: 30, pay: 1.2 },
+    { id: 'yol',     n: 7, e: '🚶‍♀️', t: 'Sonsuz Yürüyüş',  unit: 'm',      d: '3 can, bitmeyen kaldırım. Ne kadar uzağa?', daily: 500, pay: 0.08 },
+    { id: 'sinyal',  n: 8, e: '👽', t: 'Uzaylı Hafızası',  unit: 'sinyal', d: 'Tek hata hakkı. En uzun diziyi hatırla.', daily: 8, pay: 5 },
+  ];
+
+  const THEMES = [
+    { id: 'gece',    name: 'Gece Ajansı',   price: 0,   sw: ['#1a1145', '#ff4d9d', '#33e1ff'] },
+    { id: 'seker',   name: 'Pembe Şeker',   price: 150, sw: ['#3d1238', '#ff7ac6', '#ffd23f'] },
+    { id: 'gotik',   name: 'Kıştan Kışa Gotik', price: 200, sw: ['#0d0a12', '#b31b3c', '#9b6bff'] },
+    { id: 'okyanus', name: 'Okyanus',       price: 200, sw: ['#06263d', '#33e1ff', '#a6ff4d'] },
+    { id: 'gunbatimi', name: 'Gün Batımı',  price: 250, sw: ['#3a1420', '#ff8a3d', '#ffd23f'] },
+    { id: 'altin',   name: 'Altın Dedektif', price: 0,  sw: ['#2a1d05', '#ffd23f', '#fff1b8'], need: 'gizli' },
+  ];
+  const AVATARS = [['🐱', 0], ['🐶', 40], ['😼', 40], ['🦊', 60], ['🐼', 60], ['🐸', 60], ['🐰', 60], ['🐨', 70], ['🐯', 80], ['👽', 80], ['🦁', 100], ['🦄', 120], ['🐉', 200]];
+  const BOX_PRICE = 60;
+  const CATS = [
+    { id: 'tekir', e: '🐈', a: '', n: 'Tekir Tarık', r: 1 }, { id: 'kara', e: '🐈‍⬛', a: '', n: 'Kara Mırnav', r: 1 },
+    { id: 'gulen', e: '😸', a: '', n: 'Gülen Pisi', r: 1 }, { id: 'uyku', e: '😽', a: '💤', n: 'Uykucu', r: 1 },
+    { id: 'saskin', e: '🙀', a: '', n: 'Şaşkın Şeker', r: 1 }, { id: 'somurt', e: '😾', a: '', n: 'Somurtkan', r: 1 },
+    { id: 'aglak', e: '😿', a: '', n: 'Duygusal Dilek', r: 1 }, { id: 'kahkaha', e: '😹', a: '', n: 'Kahkaha Kedisi', r: 1 },
+    { id: 'pamuk', e: '🐱', a: '☁️', n: 'Pamuk', r: 1 }, { id: 'sokak', e: '🐈', a: '🗑️', n: 'Sokak Lordu', r: 1 },
+    { id: 'sarman', e: '😺', a: '🧡', n: 'Sarman', r: 1 }, { id: 'kurabiye', e: '🐱', a: '🍪', n: 'Kurabiye', r: 1 },
+    { id: 'gotik', e: '🐈‍⬛', a: '🖤', n: 'Gotik Kedi', r: 2 }, { id: 'lolcu', e: '😼', a: '🎮', n: 'Lolcu Kedi', r: 2 },
+    { id: 'popeyes', e: '😺', a: '🍗', n: 'Popeyes Kedisi', r: 2 }, { id: 'cigkofte', e: '😸', a: '🌯', n: 'Çiğköfteci', r: 2 },
+    { id: 'ufo', e: '🐱', a: '🛸', n: 'Uzaylı Mırnav', r: 2 }, { id: 'monster', e: '😼', a: '🥤', n: 'Monster Kedi', r: 2 },
+    { id: 'abi', e: '😼', a: '🛡️', n: 'Pisicik Abi', r: 2 }, { id: 'yuruyus', e: '🐈', a: '🚧', n: 'Tökezleyen Kedi', r: 2 },
+    { id: 'altin', e: '🐱', a: '👑', n: 'Altın Kedi', r: 3 }, { id: 'kozmik', e: '🐈‍⬛', a: '🌌', n: 'Kozmik Kedi', r: 3 },
+    { id: 'asik', e: '😻', a: '💘', n: 'Aşık Kedi', r: 3 }, { id: 'zeynep', e: '😻', a: '💛', n: 'Zeynep Kedi', r: 3 },
+  ];
+  const RARITY = ['', 'Sıradan', 'Nadir', 'Efsane'];
+
+  function prof() {
+    let p; try { p = JSON.parse(store.get(K_PROF) || '{}') || {}; } catch (e) { p = {}; }
+    p.patis = p.patis || 0; p.xp = p.xp || 0;
+    p.streak = p.streak || { last: null, count: 0, best: 0 };
+    p.daily = p.daily || {}; p.stats = p.stats || {}; p.ach = p.ach || {}; p.arcade = p.arcade || {};
+    p.owned = p.owned || {}; p.owned.themes = p.owned.themes || ['gece']; p.owned.avatars = p.owned.avatars || ['🐱']; p.owned.cats = p.owned.cats || {};
+    p.theme = p.theme || 'gece'; p.avatar = p.avatar || '🐱';
+    return p;
+  }
+  function saveProf(p) { store.set(K_PROF, JSON.stringify(p)); }
+  function applyTheme(id) { document.documentElement.dataset.theme = id || prof().theme; }
+
+  function levelInfo(xp) {
+    let lvl = 1, need = 100, acc = 0;
+    while (lvl < RANKS.length && xp >= acc + need) { acc += need; lvl++; need = Math.round(need * 1.35); }
+    const max = lvl >= RANKS.length;
+    return { lvl, name: RANKS[lvl - 1], e: RANK_E[lvl - 1], into: xp - acc, need: max ? 0 : need, pct: max ? 100 : Math.round((xp - acc) / need * 100) };
+  }
+
+  // başarım / rütbe bildirimleri: oyunu engellemeyen, üstten kayan şerit
+  const pending = []; let showing = false;
+  function queueNote(n) { pending.push(n); if (!showing) nextNote(); }
+  async function nextNote() {
+    const n = pending.shift(); if (!n) { showing = false; return; }
+    showing = true;
+    const el = document.createElement('div'); el.className = 'note-banner';
+    el.innerHTML = '<div class="nb-e">' + n.e + '</div><div class="nb-t"><small>' + n.tag + '</small><b>' + n.t + '</b><span>' + n.d + '</span></div>';
+    document.body.appendChild(el);
+    sfx.star(2); buzz(40);
+    requestAnimationFrame(() => el.classList.add('on'));
+    burst(innerWidth / 2, 60, { count: 26, colors: ['#ffd23f', '#fff', '#ff4d9d'], speed: 5 });
+    const close = () => { el.classList.remove('on'); setTimeout(() => { el.remove(); nextNote(); }, 350); };
+    el.onclick = close; setTimeout(close, 3200);
+  }
+
+  let checking = false;
+  function reward(patis, xp, reason, quiet) {
+    const p = prof(); const before = levelInfo(p.xp).lvl;
+    p.patis += patis || 0; p.xp += xp || 0; saveProf(p);
+    const after = levelInfo(p.xp);
+    if (!quiet && (patis || xp)) toast((reason ? reason + ' · ' : '') + (patis ? '+' + patis + ' 🐾' : '') + (patis && xp ? '  ' : '') + (xp ? '+' + xp + ' XP' : ''));
+    if (after.lvl > before) {
+      const bonus = 25 * after.lvl; const q = prof(); q.patis += bonus; saveProf(q);
+      queueNote({ e: after.e, tag: 'RÜTBE ATLADIN · SEVİYE ' + after.lvl, t: after.name, d: 'Bonus +' + bonus + ' 🐾' });
+    }
+    refreshHud();
+    if (!checking) checkAch();
+  }
+
+  function solvedCount() { return MAIN.filter(c => isSolved(c.n)).length + (isSolved(11) ? 1 : 0); }
+  const ACH = [
+    { id: 'ilk', e: '🔍', t: 'İlk İpucu', d: 'İlk vakayı çöz', c: () => isSolved(1) },
+    { id: 'yari', e: '📂', t: 'Yarı Yol', d: '5 vaka çöz', c: () => solvedCount() >= 5 },
+    { id: 'final', e: '💌', t: 'Dosya Kapandı', d: 'Son dosyayı çöz', c: () => isSolved(11) },
+    { id: 'gizli', e: '🌌', t: 'Altın Dedektif', d: 'Gizli dosyayı çöz', c: () => isSolved(12) },
+    { id: 'uc', e: '⭐', t: 'Kusursuz', d: 'Bir vakada 3 yıldız al', c: () => MAIN.some(c => stars(c.n) >= 3) },
+    { id: 'otuz', e: '🌟', t: 'Yıldız Avcısı', d: '30 yıldızın hepsini topla', c: () => totalStars() >= STARS_NEEDED },
+    { id: 'seri3', e: '🔥', t: 'Isınıyor', d: '3 gün üst üste gel', c: p => p.streak.best >= 3 },
+    { id: 'seri7', e: '🔥', t: 'Bir Hafta!', d: '7 günlük seri yap', c: p => p.streak.best >= 7 },
+    { id: 'seri30', e: '☄️', t: 'Sadık Dedektif', d: '30 günlük seri yap', c: p => p.streak.best >= 30 },
+    { id: 'gunluk1', e: '📅', t: 'Mesai Başladı', d: 'İlk günlük görevi bitir', c: p => (p.stats.daily || 0) >= 1 },
+    { id: 'gunluk10', e: '🗓️', t: 'Mesai Canavarı', d: '10 günlük görev bitir', c: p => (p.stats.daily || 0) >= 10 },
+    { id: 'kedi100', e: '🐱', t: 'Kedi Kapanı', d: 'Toplam 100 kedi yakala', c: p => (p.stats.cats || 0) >= 100 },
+    { id: 'yemek200', e: '🍕', t: 'Kara Delik', d: 'Toplam 200 yemek ye', c: p => (p.stats.foods || 0) >= 200 },
+    { id: 'yol2k', e: '🚶‍♀️', t: 'Eskort Ustası', d: 'Toplam 2 km yürüt', c: p => (p.stats.meters || 0) >= 2000 },
+    { id: 'gece', e: '🌙', t: 'Gece Nöbeti', d: 'Gece 02:00–04:00 arası oyna', c: p => !!p.stats.night },
+    { id: 'oyun50', e: '🎮', t: 'Bağımlı', d: '50 oyun oyna', c: p => (p.stats.plays || 0) >= 50 },
+    { id: 'kutu', e: '🎁', t: 'Sürpriz!', d: 'İlk sürpriz kutuyu aç', c: p => Object.keys(p.owned.cats).length >= 1 },
+    { id: 'kedi12', e: '📒', t: 'Koleksiyoncu', d: '12 farklı kedi topla', c: p => Object.keys(p.owned.cats).length >= 12 },
+    { id: 'kediTam', e: '👑', t: 'Kedi Kraliçesi', d: 'Kedi albümünü tamamla', c: p => Object.keys(p.owned.cats).length >= CATS.length },
+    { id: 'stil', e: '🎨', t: 'Stil İkonu', d: 'Yeni bir tema satın al', c: p => p.owned.themes.length >= 2 },
+    { id: 'rekor', e: '🏆', t: 'Rekortmen', d: 'Her rekor modunda puan yap', c: p => ARCADES.every(a => (p.arcade[a.id] || 0) > 0) },
+    { id: 'rutbe5', e: '🎖️', t: 'Komiser', d: '5. rütbeye ulaş', c: p => levelInfo(p.xp).lvl >= 5 },
+    { id: 'efsane', e: '👑', t: 'Efsane', d: 'Son rütbeye ulaş', c: p => levelInfo(p.xp).lvl >= RANKS.length },
+  ];
+  function checkAch() {
+    checking = true;
+    try {
+      let again = true;
+      while (again) {
+        again = false;
+        const p = prof();
+        for (const a of ACH) {
+          if (p.ach[a.id] || !a.c(p)) continue;
+          p.ach[a.id] = Date.now(); saveProf(p);
+          reward(30, 25, null, true);
+          queueNote({ e: a.e, tag: 'BAŞARIM AÇILDI', t: a.t, d: a.d + ' · +30 🐾' });
+          again = true; break;
+        }
+      }
+    } finally { checking = false; }
+  }
+  function stat(k, inc) {
+    const p = prof(); p.stats[k] = (p.stats[k] || 0) + (inc == null ? 1 : inc);
+    const h = new Date().getHours(); if (h >= 2 && h < 4) p.stats.night = 1;
+    saveProf(p); if (!checking) checkAch();
+  }
+
+  // ---- seri & günlük görev ----
+  function today(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function yesterday() { const d = new Date(); d.setDate(d.getDate() - 1); return today(d); }
+  const STREAK_REWARD = [10, 15, 20, 25, 30, 40, 100];
+  function checkIn() {
+    const p = prof(), t = today();
+    if (p.streak.last === t) return null;
+    p.streak.count = p.streak.last === yesterday() ? p.streak.count + 1 : 1;
+    p.streak.best = Math.max(p.streak.best, p.streak.count); p.streak.last = t; saveProf(p);
+    const day = ((p.streak.count - 1) % 7) + 1, amt = STREAK_REWARD[day - 1];
+    reward(amt, 10, null, true);
+    return { day, amt, count: p.streak.count };
+  }
+  function arcadeAvailable(a) { return isSolved(a.n); }
+  function dailyTask() {
+    const p = prof(), t = today();
+    if (p.daily.date === t && p.daily.task) return p.daily;
+    const pool = [];
+    MAIN.forEach(c => { if (isUnlocked(c.n) && c.n !== 9 && c.n !== 3) pool.push({ kind: 'stars', n: c.n, min: stars(c.n) >= 3 ? 3 : (isSolved(c.n) ? 3 : 1) }); });
+    ARCADES.forEach(a => { if (arcadeAvailable(a)) pool.push({ kind: 'arcade', id: a.id, min: a.daily }, { kind: 'arcade', id: a.id, min: a.daily }); });
+    if (!pool.length) pool.push({ kind: 'stars', n: 1, min: 1 });
+    const seed = t.split('-').reduce((a, b) => a * 31 + +b, 7);
+    p.daily = { date: t, task: pool[seed % pool.length], done: false }; saveProf(p);
+    return p.daily;
+  }
+  function dailyText(task) {
+    if (task.kind === 'stars') { const c = CASES[task.n - 1]; return c.emoji + ' Vaka ' + c.n + ' (' + c.alias + ')' + (task.min > 1 ? ': ' + task.min + ' yıldızla bitir' : ': görevi bitir'); }
+    const a = ARCADES.find(x => x.id === task.id); return a.e + ' Rekor Modu · ' + a.t + ': ' + task.min + ' ' + a.unit;
+  }
+  function dailyHref(task) { if (task.kind === 'stars') return 'vaka' + task.n + '.html'; const a = ARCADES.find(x => x.id === task.id); return 'vaka' + a.n + '.html?rekor=1'; }
+  function dailyProgress(kind, key, val) {
+    const d = dailyTask(); if (d.done) return;
+    const t = d.task;
+    const ok = kind === t.kind && (kind === 'stars' ? key === t.n && val >= t.min : key === t.id && val >= t.min);
+    if (!ok) return;
+    const p = prof(); p.daily.done = true; saveProf(p); stat('daily');
+    reward(60, 50, null, true);
+    queueNote({ e: '📅', tag: 'GÜNLÜK GÖREV TAMAM', t: 'Mesai bitti!', d: '+60 🐾 · +50 XP · yarın yeni görev' });
+  }
+
+  // ---- mini HUD (vaka sayfalarında pati) ----
+  function refreshHud() { const el = $('#patiPill'); if (el) el.textContent = '🐾 ' + prof().patis; }
+
   // ---------- vaka sayfası iskeleti ----------
-  let cur = null, curCfg = null;
-  function appbar(c, backHref) {
+  let cur = null, curCfg = null, arcadeDef = null;
+  function arcadeMode(n) {
+    if (!/[?&]rekor=1/.test(location.search)) return null;
+    const a = ARCADES.find(x => x.n === n); return a && isSolved(n) ? a : null;
+  }
+  function appbar(c, arc) {
     const s = stars(c.n);
-    return '<div class="appbar"><a class="icon-btn" href="' + (backHref || 'index.html') + '" aria-label="Haritaya dön">←</a>' +
-      '<div class="title"><small>VAKA ' + String(c.n).padStart(2, '0') + ' · ' + c.tag.toUpperCase() + '</small>' + c.alias + '</div>' +
-      (c.code ? '<span class="pill gold" id="barStars">' + starsHtml(s) + '</span>' : '') +
+    return '<div class="appbar"><a class="icon-btn" href="' + (arc ? 'rekor.html' : 'index.html') + '" aria-label="Geri">←</a>' +
+      '<div class="title"><small>' + (arc ? 'REKOR MODU' : 'VAKA ' + String(c.n).padStart(2, '0') + ' · ' + c.tag.toUpperCase()) + '</small>' + (arc ? arc.t : c.alias) + '</div>' +
+      (arc ? '<span class="pill gold">🏆 ' + (prof().arcade[arc.id] || 0) + '</span>' : c.code ? '<span class="pill gold" id="barStars">' + starsHtml(s) + '</span>' : '') +
       '<button class="icon-btn" id="soundBtn" aria-label="Ses">' + (soundOn() ? '🔊' : '🔇') + '</button></div>';
   }
   function bindSound() {
@@ -216,49 +403,61 @@
 
   function page(n, cfg) {
     cfg = cfg || {};
+    applyTheme();
     const c = CASES[n - 1]; cur = c; curCfg = cfg;
+    const arc = arcadeDef = arcadeMode(n);
     document.documentElement.style.setProperty('--hero-grad', c.grad);
     document.documentElement.style.setProperty('--hero-glow', c.glow);
     const app = $('#app');
     const tpl = $('#mission');
-    let html = appbar(c);
-    html += '<div class="card hero"><div class="secret-stamp">' + (cfg.stamp || 'GİZLİ') + '</div><div class="hero-emoji">' + c.emoji + '</div>' +
-      '<span class="tag">' + c.tag + '</span><h1>Vaka ' + n + ': <em>' + c.alias + '</em></h1><p class="intro">' + (cfg.intro || '') + '</p></div>';
-    if (cfg.evidence) {
-      html += '<div class="section-label">🔎 Kanıtlar</div><div class="evidence-list">' +
-        cfg.evidence.map((e, i) => '<div class="evidence-item"><div class="ev-num">#' + (i + 1) + '</div><div class="ev-text">' + e + '</div></div>').join('') + '</div>';
-      if (cfg.verdict) html += '<div class="verdict"><b>SONUÇ ·</b> ' + cfg.verdict + '</div>';
+    let html = appbar(c, arc);
+    if (arc) {
+      const best = prof().arcade[arc.id] || 0;
+      html += '<div class="card hero"><div class="secret-stamp">REKOR</div><div class="hero-emoji">' + arc.e + '</div><span class="tag">Rekor Modu · Vaka ' + n + '</span>' +
+        '<h1><em>' + arc.t + '</em></h1><p class="intro">' + arc.d + '</p>' +
+        '<div class="btn-row" style="margin-top:12px"><span class="pill gold">🏆 Rekor: ' + best + ' ' + arc.unit + '</span></div></div>';
+      html += '<div class="section-label">🎮 Rekor Denemesi</div><div class="card mission"><div id="missionBody"></div></div>';
+    } else {
+      html += '<div class="card hero"><div class="secret-stamp">' + (cfg.stamp || 'GİZLİ') + '</div><div class="hero-emoji">' + c.emoji + '</div>' +
+        '<span class="tag">' + c.tag + '</span><h1>Vaka ' + n + ': <em>' + c.alias + '</em></h1><p class="intro">' + (cfg.intro || '') + '</p></div>';
+      if (cfg.evidence) {
+        html += '<div class="section-label">🔎 Kanıtlar</div><div class="evidence-list">' +
+          cfg.evidence.map((e, i) => '<div class="evidence-item"><div class="ev-num">#' + (i + 1) + '</div><div class="ev-text">' + e + '</div></div>').join('') + '</div>';
+        if (cfg.verdict) html += '<div class="verdict"><b>SONUÇ ·</b> ' + cfg.verdict + '</div>';
+      }
+      if (cfg.mission) {
+        const m = cfg.mission;
+        html += '<div class="section-label">🎮 Görev</div><div class="card mission"><div class="mission-head"><div class="mission-title">' + m.title + '</div></div>' +
+          '<p class="mission-sub">' + m.sub + '</p>' +
+          (m.goals ? '<div class="star-goals">' + m.goals.map((g, i) => '<span>' + '⭐'.repeat(i + 1) + ' ' + g + '</span>').join('') + '</div>' : '') +
+          '<div id="missionBody"></div></div>';
+      } else if (tpl) html += '<div id="custom"></div>';
+      if (c.code) html += '<div class="section-label">🔑 Kod</div><div class="card code-card" id="codeCard"></div>';
     }
-    if (cfg.mission) {
-      const m = cfg.mission;
-      html += '<div class="section-label">🎮 Görev</div><div class="card mission"><div class="mission-head"><div class="mission-title">' + m.title + '</div></div>' +
-        '<p class="mission-sub">' + m.sub + '</p>' +
-        (m.goals ? '<div class="star-goals">' + m.goals.map((g, i) => '<span>' + '⭐'.repeat(i + 1) + ' ' + g + '</span>').join('') + '</div>' : '') +
-        '<div id="missionBody"></div></div>';
-    }
-    else if (tpl) html += '<div id="custom"></div>';
-    if (c.code) html += '<div class="section-label">🔑 Kod</div><div class="card code-card" id="codeCard"></div>';
     html += '<div class="footer-nav" id="footerNav"></div>';
     app.innerHTML = html;
-    if (tpl) (cfg.mission ? $('#missionBody') : $('#custom')).appendChild(tpl.content.cloneNode(true));
+    if (tpl) (cfg.mission || arc ? $('#missionBody') : $('#custom')).appendChild(tpl.content.cloneNode(true));
     bindSound();
-    renderCode(); renderFooter();
+    if (arc) { const f = $('#footerNav'); f.innerHTML = '<a class="btn ghost" href="rekor.html">🏆 Rekor Salonu</a><a class="btn cool" href="vaka' + n + '.html">📂 Vakaya dön</a>'; }
+    else { renderCode(); renderFooter(); }
     if (!isUnlocked(n)) lockVeil(c);
-    if (cfg.init) cfg.init();
+    if (cfg.init) cfg.init(arc);
   }
 
   function renderCode() {
     const box = $('#codeCard'); if (!box || !cur) return;
     if (isSolved(cur.n)) {
+      const a = ARCADES.find(x => x.n === cur.n);
       box.innerHTML = '<div class="tag">' + cur.n + '. vakanın kodu</div><div class="code-big" style="margin-top:10px">' + cur.code + '</div>' +
         '<p class="code-note">📒 Kod Defteri\'ne kaydedildi. Son dosyanın şifresi 10 kodun yan yana yazılmasıyla oluşur.</p>' +
-        '<div style="margin-bottom:6px">En iyi skorun: ' + starsHtml(stars(cur.n)) + '</div>';
+        '<div style="margin-bottom:6px">En iyi skorun: ' + starsHtml(stars(cur.n)) + '</div>' +
+        (a ? '<a class="btn gold small" style="margin-top:10px" href="vaka' + cur.n + '.html?rekor=1">🏆 Rekor Modu: ' + a.t + '</a>' : '');
     } else {
       box.innerHTML = '<div style="font-size:2rem">🔒</div><p class="locked">Görevi bitirince kod burada belirecek.</p>';
     }
   }
   function nextAction() {
-    const next = CASES[cur.n]; // bir sonraki
+    const next = CASES[cur.n];
     if (!next || next.secret || !cur.code) return null;
     return { label: (unlocked().includes(cur.n) ? '' : '🔓 ') + next.n + '. dosyaya geç →', go: () => { unlock(cur.n); location.href = next.href; } };
   }
@@ -269,13 +468,16 @@
     if (na) { const b = document.createElement('button'); b.className = 'btn cool'; b.textContent = na.label; b.onclick = na.go; f.appendChild(b); }
   }
 
-  // Görev bitti → yıldızları kaydet, sonuç ekranını göster
+  // Görev bitti → yıldız, pati, XP, sonuç ekranı
   async function complete(res) {
     res = res || {};
     const n = cur.n, s = Math.max(1, Math.min(3, res.stars || 1));
     const first = !isSolved(n);
+    const oldStars = stars(n);
     markSolved(n);
     const best = setStars(n, s);
+    let patis = first ? 40 + s * 10 : s * 5, xp = first ? 30 + s * 10 : s * 5;
+    if (best && !first) { patis += 15 * (s - oldStars); xp += 10; }
     sfx.win(); confetti(90);
     const na = nextAction();
     const md = modal(
@@ -284,12 +486,14 @@
       '<div class="result-stars"><i>⭐</i><i>⭐</i><i>⭐</i></div>' +
       (best && !first ? '<div class="new-best">YENİ REKOR!</div>' : '') +
       (res.stats ? '<div class="stats">' + res.stats + '</div>' : '') +
+      '<div class="reward-row"><span>+' + patis + ' 🐾</span><span>+' + xp + ' XP</span></div>' +
       (res.msg ? '<p>' + res.msg + '</p>' : '') +
       (cur.code ? '<div class="tag">Kodun</div><div class="code-big" style="margin:4px 0 14px">' + cur.code + '</div>' : '') +
       '<div class="btn-row" style="flex-direction:column">' +
       (na ? '<button class="btn block cool" data-a="next">' + na.label + '</button>' : '') +
       '<button class="btn block ghost" data-a="again">🔁 Tekrar oyna' + (s < 3 ? ' (⭐ için)' : '') + '</button></div>',
       { dismiss: false });
+    stat('plays'); stat('wins');
     const icons = md.el.querySelectorAll('.result-stars i');
     for (let i = 0; i < 3; i++) {
       await wait(350);
@@ -299,16 +503,91 @@
     md.el.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
       md.el.remove();
       if (b.dataset.a === 'next') na.go();
-      else if (curCfg && curCfg.init) { curCfg.init(); const mb = $('#missionBody'); if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      else if (curCfg && curCfg.init) { curCfg.init(null); const mb = $('#missionBody'); if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     });
+    reward(patis, xp, null, true);
+    dailyProgress('stars', n, s);
     const bs = $('#barStars'); if (bs) bs.innerHTML = starsHtml(stars(n));
     renderCode(); renderFooter();
   }
 
+  // Rekor modu bitti → skor kaydet, ödül, sonuç ekranı
+  function arcadeEnd(score, extra) {
+    const a = arcadeDef; if (!a) return;
+    score = Math.max(0, Math.floor(score));
+    const p = prof(), old = p.arcade[a.id] || 0, isBest = score > old;
+    if (isBest) { p.arcade[a.id] = score; saveProf(p); }
+    const patis = Math.min(80, Math.floor(score * a.pay)) + (isBest && old > 0 ? 20 : 0), xp = Math.min(60, Math.floor(score * a.pay * 0.8)) + 5;
+    if (isBest) { sfx.win(); confetti(110); } else sfx.good();
+    const md = modal(
+      '<div style="font-family:var(--font-mono);font-size:.7rem;letter-spacing:2px;color:var(--text-faint)">REKOR MODU · ' + a.t.toUpperCase() + '</div>' +
+      '<div style="font-size:3rem;margin-top:6px">' + (isBest ? '🏆' : a.e) + '</div>' +
+      '<div class="score-big">' + score + '<small> ' + a.unit + '</small></div>' +
+      (isBest ? '<div class="new-best">' + (old ? 'YENİ REKOR!' : 'İLK REKORUN!') + '</div>' : '<div class="stats">Rekorun: ' + old + ' ' + a.unit + '</div>') +
+      (extra ? '<div class="stats">' + extra + '</div>' : '') +
+      '<div class="reward-row"><span>+' + patis + ' 🐾</span><span>+' + xp + ' XP</span></div>' +
+      '<div class="btn-row" style="flex-direction:column"><button class="btn block" data-a="again">🔁 Tekrar dene</button><a class="btn block ghost" href="rekor.html">🏆 Rekor Salonu</a></div>',
+      { dismiss: false });
+    md.el.querySelector('[data-a=again]').onclick = () => { md.el.remove(); if (curCfg && curCfg.init) curCfg.init(a); };
+    stat('plays');
+    reward(patis, xp, null, true);
+    dailyProgress('arcade', a.id, score);
+    const pill = $('.appbar .pill.gold'); if (pill) pill.textContent = '🏆 ' + (prof().arcade[a.id] || 0);
+  }
+
+  // ---- dükkan ----
+  function buy(kind, id, price) {
+    const p = prof();
+    if (p.patis < price) { sfx.bad(); toast('Yetersiz pati 🐾 (' + p.patis + '/' + price + ')'); return false; }
+    p.patis -= price;
+    if (kind === 'theme') { p.owned.themes.push(id); p.theme = id; }
+    if (kind === 'avatar') { p.owned.avatars.push(id); p.avatar = id; }
+    saveProf(p); sfx.win(); applyTheme(); refreshHud(); checkAch(); return true;
+  }
+  function openBox() {
+    const p = prof();
+    if (p.patis < BOX_PRICE) { sfx.bad(); toast('Yetersiz pati 🐾 (' + p.patis + '/' + BOX_PRICE + ')'); return null; }
+    p.patis -= BOX_PRICE;
+    const roll = Math.random(), r = roll < 0.06 ? 3 : roll < 0.32 ? 2 : 1;
+    const pool = CATS.filter(c => c.r === r), cat = pool[Math.floor(Math.random() * pool.length)];
+    const dup = !!p.owned.cats[cat.id];
+    p.owned.cats[cat.id] = (p.owned.cats[cat.id] || 0) + 1;
+    if (dup) p.patis += 20;
+    saveProf(p); refreshHud(); checkAch();
+    return { cat, dup };
+  }
+  function catHtml(c, big) { return '<span class="catpic' + (big ? ' big' : '') + '"><span>' + c.e + '</span>' + (c.a ? '<i>' + c.a + '</i>' : '') + '</span>'; }
+
+  function resetAllMeta() { store.del(K_PROF); }
+
+  // hub sayfalarının alt sekme çubuğu
+  function tabbar(active) {
+    document.body.classList.add('hub');
+    const d = dailyTask();
+    const tabs = [['index', '🗺', 'Harita'], ['rekor', '🏆', 'Rekorlar'], ['magaza', '🛍', 'Dükkan'], ['profil', '🕵️‍♀️', 'Profil']];
+    const nav = document.createElement('nav'); nav.className = 'tabbar';
+    nav.innerHTML = tabs.map(([id, e, t]) => '<a href="' + id + '.html" class="' + (id === active ? 'on' : '') + '">' + e +
+      (id === 'index' && !d.done ? '<span class="dot"></span>' : '') + '<small>' + t + '</small></a>').join('');
+    document.body.appendChild(nav);
+  }
+  function hubBar() {
+    const p = prof(), L = levelInfo(p.xp);
+    return '<div class="appbar"><a class="icon-btn" href="profil.html" style="font-size:1.4rem">' + p.avatar + '</a>' +
+      '<div class="title"><small>' + L.e + ' SEVİYE ' + L.lvl + (L.need ? ' · ' + L.into + '/' + L.need + ' XP' : ' · MAX') + '</small><div class="xpbar" style="margin-top:4px"><div style="width:' + L.pct + '%"></div></div></div>' +
+      '<span class="pill gold" id="patiPill">🐾 ' + p.patis + '</span>' +
+      '<button class="icon-btn" id="soundBtn" aria-label="Ses">' + (soundOn() ? '🔊' : '🔇') + '</button></div>';
+  }
+
+  // sayfa açılır açılmaz tema uygula
+  applyTheme();
+
   window.ZY = {
-    CASES, MAIN, FULL_CODE, STARS_NEEDED,
-    unlocked, unlock, isUnlocked, isSolved, markSolved, stars, setStars, totalStars, resetAll,
+    CASES, MAIN, FULL_CODE, STARS_NEEDED, ARCADES, THEMES, AVATARS, CATS, RARITY, BOX_PRICE, ACH, RANKS, STREAK_REWARD,
+    unlocked, unlock, isUnlocked, isSolved, markSolved, stars, setStars, totalStars, solvedCount,
+    resetAll: () => { resetAll(); resetAllMeta(); },
     soundOn, setSound, beep, sfx, buzz, burst, burstAt, confetti, toast, shake, floatText, shuffle, wait, $,
     starsHtml, countdown, arenaMsg, onHidden, modal, confirmBox, page, complete, appbar, bindSound,
+    prof, saveProf, levelInfo, reward, stat, checkAch, checkIn, dailyTask, dailyText, dailyHref, applyTheme, refreshHud,
+    arcadeEnd, arcadeAvailable, buy, openBox, catHtml, queueNote, tabbar, hubBar,
   };
 })();

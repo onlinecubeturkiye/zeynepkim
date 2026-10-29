@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
+<title>Dükkan — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
+<style>
+.tabs { display: flex; gap: 6px; margin: 18px 0 12px; padding: 5px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.tabs button { flex: 1; border: none; background: none; padding: 9px 0; border-radius: 999px; font-family: var(--font-head); font-weight: 700; font-size: .92rem; color: var(--text-dim); cursor: pointer; }
+.tabs button.on { background: var(--grad-hot); color: #fff; box-shadow: 0 6px 14px rgba(0,0,0,.25); }
+.pane { display: none; } .pane.on { display: block; animation: rise .35s ease both; }
+.swatch { height: 56px; border-radius: 14px; margin-bottom: 8px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.15); }
+.swatch i { position: absolute; width: 30px; height: 30px; border-radius: 50%; top: 13px; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.price { font-family: var(--font-head); font-weight: 800; color: var(--yellow); font-size: .9rem; margin-top: 6px; }
+.price.own { color: var(--lime); }
+.boxcard { text-align: center; padding: 22px 16px; }
+.giftbox { font-size: 4.6rem; display: inline-block; animation: bob 2.6s ease-in-out infinite; cursor: pointer; }
+.giftbox.shake { animation: boxshake .6s ease infinite; }
+@keyframes boxshake { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-12deg) scale(1.05); } 75% { transform: rotate(12deg) scale(1.05); } }
+.odds { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 10px 0 14px; }
+.odds span { font-size: .72rem; font-weight: 800; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--rc); }
+.album { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cat { border-radius: 16px; padding: 10px 2px 8px; text-align: center; background: var(--surface); border: 1px solid var(--line); position: relative; }
+.cat .catpic { font-size: 1.7rem; }
+.cat small { display: block; font-size: .62rem; font-weight: 800; line-height: 1.15; margin-top: 2px; min-height: 1.4em; }
+.cat.has { border-color: var(--rc); box-shadow: inset 0 0 18px color-mix(in srgb, var(--rc) 25%, transparent); }
+.cat.no .catpic { filter: brightness(0) opacity(.35); }
+.cat .cnt { position: absolute; top: 4px; right: 6px; font-size: .62rem; font-weight: 800; color: var(--text-faint); }
+.reveal { animation: pop .6s cubic-bezier(.3,1.6,.6,1); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="bar"></div>
+  <div class="tabs"><button data-t="kutu" class="on">🎁 Kutu</button><button data-t="tema">🎨 Tema</button><button data-t="avatar">🐾 Avatar</button></div>
+
+  <div class="pane on" id="p-kutu">
+    <div class="card boxcard">
+      <div class="giftbox" id="gift">🎁</div>
+      <h2 style="font-family:var(--font-head);font-size:1.4rem;margin-top:6px">Sürpriz Kedi Kutusu</h2>
+      <p style="color:var(--text-dim);margin-top:4px">İçinden rastgele bir koleksiyon kedisi çıkar. Aynısı çıkarsa <b>+20 🐾</b> geri.</p>
+      <div class="odds"><span class="r1">Sıradan %68</span><span class="r2">Nadir %26</span><span class="r3">Efsane %6</span></div>
+      <button class="btn gold" id="buyBox">🎁 Aç · <span id="boxPrice"></span> 🐾</button>
+    </div>
+    <div class="section-label">📒 Kedi Albümü · <span id="albumCount"></span></div>
+    <div class="album" id="album"></div>
+  </div>
+
+  <div class="pane" id="p-tema"><div class="grid2" id="themes"></div></div>
+  <div class="pane" id="p-avatar"><div class="grid3" id="avatars"></div></div>
+</div>
+<script src="assets/zy11.js"></script>
+<script>
+const $ = ZY.$;
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.t)); ZY.sfx.tap();
+});
+function render() {
+  $('#bar').innerHTML = ZY.hubBar(); ZY.bindSound();
+  const p = ZY.prof();
+  $('#boxPrice').textContent = ZY.BOX_PRICE;
+  const owned = p.owned.cats;
+  $('#albumCount').textContent = Object.keys(owned).length + '/' + ZY.CATS.length;
+  $('#album').innerHTML = ZY.CATS.map(c => {
+    const has = owned[c.id];
+    return '<div class="cat r' + c.r + (has ? ' has' : ' no') + '">' + (has > 1 ? '<span class="cnt">×' + has + '</span>' : '') + ZY.catHtml(c) + '<small>' + (has ? c.n : '???') + '</small><span class="rarity">' + ZY.RARITY[c.r] + '</span></div>';
+  }).join('');
+  $('#themes').innerHTML = ZY.THEMES.map(t => {
+    const own = p.owned.themes.includes(t.id), sel = p.theme === t.id, locked = t.need && !p.ach[t.need];
+    return '<div class="tile' + (sel ? ' sel' : '') + (locked ? ' off' : '') + '" data-id="' + t.id + '"><div class="swatch" style="background:' + t.sw[0] + '"><i style="left:12px;background:' + t.sw[1] + '"></i><i style="left:48px;background:' + t.sw[2] + '"></i></div>' +
+      '<b style="font-size:.95rem">' + t.name + '</b><div class="price' + (own ? ' own' : '') + '">' + (sel ? '✓ Kullanılıyor' : own ? 'Seç' : locked ? '🔒 Gizli dosyayı çöz' : (t.price ? t.price + ' 🐾' : 'Ücretsiz')) + '</div></div>';
+  }).join('');
+  $('#avatars').innerHTML = ZY.AVATARS.map(([e, price]) => {
+    const own = p.owned.avatars.includes(e), sel = p.avatar === e;
+    return '<div class="tile' + (sel ? ' sel' : '') + '" data-av="' + e + '" data-price="' + price + '"><div class="big">' + e + '</div><div class="price' + (own ? ' own' : '') + '">' + (sel ? '✓' : own ? 'Seç' : price + ' 🐾') + '</div></div>';
+  }).join('');
+  document.querySelectorAll('#themes .tile').forEach(el => el.onclick = () => {
+    const t = ZY.THEMES.find(x => x.id === el.dataset.id), q = ZY.prof();
+    if (t.need && !q.ach[t.need]) return ZY.toast('🔒 Bu tema gizli dosyayı çözenlere özel');
+    if (q.owned.themes.includes(t.id) || !t.price) { if (!q.owned.themes.includes(t.id)) q.owned.themes.push(t.id); q.theme = t.id; ZY.saveProf(q); ZY.applyTheme(); ZY.sfx.good(); render(); return; }
+    ZY.confirmBox(t.name, 'Bu temayı <b>' + t.price + ' 🐾</b> karşılığında almak ister misin?', 'Satın al').then(ok => { if (ok && ZY.buy('theme', t.id, t.price)) { ZY.confetti(60); render(); } });
+  });
+  document.querySelectorAll('#avatars .tile').forEach(el => el.onclick = () => {
+    const e = el.dataset.av, price = +el.dataset.price, q = ZY.prof();
+    if (q.owned.avatars.includes(e)) { q.avatar = e; ZY.saveProf(q); ZY.sfx.good(); render(); return; }
+    ZY.confirmBox('Avatar ' + e, '<b>' + price + ' 🐾</b> karşılığında alınsın mı?', 'Satın al').then(ok => { if (ok && ZY.buy('avatar', e, price)) { ZY.confetti(40); render(); } });
+  });
+}
+let busy = false;
+async function open() {
+  if (busy) return; if (ZY.prof().patis < ZY.BOX_PRICE) { ZY.sfx.bad(); return ZY.toast('Yetersiz pati 🐾 Oyun oyna, günlük görev yap!'); }
+  busy = true; const g = $('#gift'); g.classList.add('shake');
+  for (let i = 0; i < 5; i++) { ZY.beep(400 + i * 120, .08, 'triangle'); await ZY.wait(140); }
+  const res = ZY.openBox(); g.classList.remove('shake'); busy = false;
+  if (!res) return;
+  ZY.burstAt(g, { count: 40, colors: res.cat.r === 3 ? ['#ffd23f', '#fff', '#ffb627'] : res.cat.r === 2 ? ['#b98cff', '#fff', '#33e1ff'] : ['#9aa6c9', '#fff'] });
+  res.cat.r === 3 ? (ZY.sfx.win(), ZY.confetti(120)) : ZY.sfx.good();
+  const md = ZY.modal('<div class="r' + res.cat.r + '"><div class="rarity">' + ZY.RARITY[res.cat.r] + '</div><div class="reveal" style="margin:10px 0">' + ZY.catHtml(res.cat, true) + '</div></div><h2>' + res.cat.n + '</h2><p>' + (res.dup ? 'Bu kedi zaten albümünde vardı. <b>+20 🐾</b> geri aldın.' : 'Albüme eklendi! 📒') + '</p><div class="btn-row"><button class="btn ghost" id="mClose">Kapat</button><button class="btn gold" id="mAgain">🎁 Bir daha</button></div>');
+  $('#mClose').onclick = () => md.close(); $('#mAgain').onclick = () => { md.close(); open(); };
+  render();
+}
+$('#buyBox').onclick = open; $('#gift').onclick = open;
+render(); ZY.tabbar('magaza');
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
+<title>Dedektif Profili — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
+<style>
+.idcard { text-align: center; padding: 26px 18px 20px; overflow: hidden; }
+.idcard::before { content: ''; position: absolute; inset: 0 0 auto; height: 90px; background: var(--grad-hot); opacity: .35; }
+.idcard .av { position: relative; width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; display: grid; place-items: center; font-size: 3.8rem; background: var(--surface-solid); border: 4px solid rgba(255,255,255,.25); box-shadow: 0 12px 28px rgba(0,0,0,.4); }
+.idcard .av span { position: absolute; bottom: -4px; right: -4px; font-size: 1.6rem; }
+.idcard h1 { font-size: 1.6rem; margin: 4px 0 2px; }
+.ach { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.ach + .ach { margin-top: 8px; }
+.ach .e { width: 44px; height: 44px; flex: none; border-radius: 14px; display: grid; place-items: center; font-size: 1.5rem; background: var(--grad-gold); }
+.ach b { font-family: var(--font-head); display: block; line-height: 1.15; }
+.ach small { color: var(--text-dim); font-weight: 600; font-size: .8rem; }
+.ach.off { opacity: .5; } .ach.off .e { background: rgba(255,255,255,.08); filter: grayscale(1); }
+.ach .ok { margin-left: auto; color: var(--lime); font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="bar"></div>
+  <div class="card idcard" id="idcard"></div>
+  <div class="section-label">📊 İstatistikler</div>
+  <div class="grid3" id="stats"></div>
+  <div class="section-label">🏅 Başarımlar · <span id="achCount"></span></div>
+  <div id="achs"></div>
+  <div class="section-label">⚙️ Ayarlar</div>
+  <div class="card"><div class="btn-row"><a class="btn ghost small" href="magaza.html">🎨 Tema & avatar</a><button class="btn ghost small" id="resetBtn">🗑 İlerlemeyi sıfırla</button></div></div>
+</div>
+<script src="assets/zy11.js"></script>
+<script>
+const $ = ZY.$;
+function render() {
+  $('#bar').innerHTML = ZY.hubBar(); ZY.bindSound();
+  const p = ZY.prof(), L = ZY.levelInfo(p.xp), s = p.stats;
+  $('#idcard').innerHTML = '<div class="av">' + p.avatar + '<span>' + L.e + '</span></div><span class="tag">DEDEKTİF KİMLİĞİ · ZY-11</span><h1>' + L.name + '</h1>' +
+    '<div style="color:var(--text-dim);font-weight:700;font-size:.85rem;margin-bottom:10px">Seviye ' + L.lvl + ' / ' + ZY.RANKS.length + (L.need ? ' · sonraki rütbeye ' + (L.need - L.into) + ' XP' : ' · MAKSİMUM') + '</div>' +
+    '<div class="xpbar"><div style="width:' + L.pct + '%"></div></div>';
+  const T = [['📂', ZY.solvedCount() + '/11', 'Vaka'], ['⭐', ZY.totalStars() + '/30', 'Yıldız'], ['🐾', p.patis, 'Pati'], ['🔥', p.streak.best, 'En iyi seri'], ['📅', s.daily || 0, 'Günlük görev'], ['🎮', s.plays || 0, 'Oyun'],
+    ['🐱', s.cats || 0, 'Kedi yakalandı'], ['🍕', s.foods || 0, 'Yemek yendi'], ['🚶‍♀️', (s.meters || 0) + ' m', 'Yürüyüş'], ['📒', Object.keys(p.owned.cats).length + '/' + ZY.CATS.length, 'Kedi albümü'], ['🏆', Object.keys(p.arcade).length + '/' + ZY.ARCADES.length, 'Rekor modu'], ['✨', p.xp, 'Toplam XP']];
+  $('#stats').innerHTML = T.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
+  const got = ZY.ACH.filter(a => p.ach[a.id]).length;
+  $('#achCount').textContent = got + '/' + ZY.ACH.length;
+  $('#achs').innerHTML = ZY.ACH.slice().sort((a, b) => (!!p.ach[b.id]) - (!!p.ach[a.id])).map(a =>
+    '<div class="ach' + (p.ach[a.id] ? '' : ' off') + '"><div class="e">' + a.e + '</div><div><b>' + a.t + '</b><small>' + a.d + '</small></div>' + (p.ach[a.id] ? '<span class="ok">✓</span>' : '') + '</div>').join('');
+}
+$('#resetBtn').onclick = async () => { if (await ZY.confirmBox('Emin misin?', 'Tüm vakalar, yıldızlar, patiler, koleksiyon ve başarımlar silinecek.', 'Sıfırla')) { ZY.resetAll(); ZY.applyTheme('gece'); render(); ZY.toast('Soruşturma sıfırlandı 🕵️'); } };
+render(); ZY.tabbar('profil'); ZY.checkAch();
+</script>
+</body>
+</html>
