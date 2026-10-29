@@ -2,185 +2,134 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 3 · Çakma Gotik — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.sort-wrap { max-width: 480px; margin: 0 auto; }
-.items-tray { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; min-height: 76px; padding: 10px; margin-bottom: 16px; background: rgba(0,0,0,0.06); border-radius: 12px; }
-.drag-item {
-  width: 78px; padding: 6px 4px; border-radius: 10px; background: var(--paper);
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  cursor: grab; box-shadow: 0 4px 8px rgba(0,0,0,0.25); touch-action: none; user-select: none; -webkit-user-select: none;
-  border: 2px solid transparent; transition: border-color 0.15s ease, transform 0.15s ease;
+.wardrobe { padding: 14px; }
+.tray { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-height: 92px; padding: 10px; border-radius: 16px; background: rgba(0,0,0,.25); margin-bottom: 12px; }
+.item {
+  width: 76px; padding: 8px 4px 6px; border-radius: 14px; background: #fff; color: #1a1145; cursor: grab; touch-action: none;
+  display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 5px 0 #c9c2e8, 0 8px 14px rgba(0,0,0,.35);
+  transition: transform .15s ease, box-shadow .15s ease; animation: rise .4s ease both;
 }
-.drag-item .ic { font-size: 1.6rem; line-height: 1.1; }
-.drag-item .lb { font-size: 0.62rem; font-weight: 600; line-height: 1.2; text-align: center; }
-.drag-item.selected { border-color: var(--gold); transform: translateY(-3px); }
-.drag-item.dragging { cursor: grabbing; opacity: 0.9; transform: scale(1.08); }
-.drag-item.placed { display: none; }
-.drop-zones { display: flex; gap: 12px; margin-bottom: 8px; }
-.drop-zone {
-  flex: 1; min-height: 120px; border: 2px dashed rgba(43,32,19,0.35); border-radius: 12px;
-  display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; gap: 6px;
-  padding: 10px 6px 6px; font-weight: 700; font-size: 0.8rem; color: var(--ink-soft); cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+.item .ic { font-size: 1.8rem; line-height: 1.1; }
+.item .lb { font-size: .62rem; font-weight: 800; line-height: 1.15; text-align: center; }
+.item.sel { transform: translateY(-6px) rotate(-3deg); box-shadow: 0 5px 0 #ffb627, 0 0 18px rgba(255,210,63,.8); }
+.item.drag { z-index: 50; transform: scale(1.12) rotate(4deg); cursor: grabbing; }
+.item.gone { display: none; }
+.zones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.zone {
+  min-height: 150px; border-radius: 18px; padding: 10px 6px; display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; gap: 4px;
+  border: 2px dashed rgba(255,255,255,.3); cursor: pointer; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
-#zoneGotik { background: rgba(44,36,64,0.12); }
-#zoneCakma { background: linear-gradient(135deg, rgba(255,182,193,0.25), rgba(173,216,230,0.25), rgba(255,250,160,0.25)); }
-.drop-zone .zone-label { width: 100%; text-align: center; margin-bottom: 4px; }
-.drop-zone.hover { border-color: var(--gold); border-style: solid; }
-.drop-zone .placed-icon { font-size: 1.5rem; animation: pop 0.3s ease; }
-@media (max-width: 480px) { .drag-item { width: 70px; } }
+.zone .zl { width: 100%; text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 1rem; margin-bottom: 4px; }
+.zone .zl small { display: block; font-family: var(--font-body); font-weight: 600; font-size: .7rem; color: var(--text-dim); }
+#zGotik { background: linear-gradient(160deg, #0b0718, #2b1745); }
+#zCakma { background: linear-gradient(160deg, rgba(255,158,210,.35), rgba(51,225,255,.25), rgba(255,224,102,.3)); }
+.zone.hover { border-style: solid; border-color: var(--yellow); transform: scale(1.03); box-shadow: 0 0 22px rgba(255,210,63,.5); }
+.zone .placed { font-size: 1.6rem; animation: popIn .35s cubic-bezier(.3,1.7,.6,1); }
+@keyframes popIn { from { transform: scale(0); } }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 3</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">GİZLİ</div>
-    <div class="case-number">// STİL ANALİZİ</div>
-    <div class="cat-photo">🖤</div>
-    <h1>Vaka 3: <em>Çakma Gotik</em></h1>
-    <p class="intro">Zanlının kendini "gotik" olarak tanımlamasıyla ilgili çelişkili raporlar toplandı. İnceleme sonuçları aşağıda. Kodu almadan önce zanlının gardırobunu doğru şekilde sınıflandırman gerekiyor.</p>
-
-    <div class="evidence-list">
-      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlının "gotik" kimliği en çok müzik zevkinde ortaya çıkıyor. Playlist'i incelendiğinde karanlık, ağır ve melankolik parçaların yoğunlukta olduğu tespit edildi.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Ancak sahada ciddi bir çelişki bulundu: zanlı sadece siyah oje sürüyor, geri kalan her şeyi renkli ve özenle, güzel bir şekilde giyiniyor. Yani "gotik" olan sadece on tırnak.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Zanlının gotikliği mevsimsel bir durum. Kendi ifadesiyle sadece kışın gotik oluyor — resmi kayıtlara "kıştan kışa gotik" olarak geçti.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Olay tutanağına geçen ünlü diyalog: siyah ojeli bir günde "ben gotiğim" demiş, "renkli giyinen gotik mi olur" denilince hiç bozulmadan "ben kıştan kışa gotiğim" diye cevap vermiş.</span></div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="hud"><span class="pill">✅ <b id="placed">0</b>/8</span><span class="pill">❌ <b id="miss">0</b> hata</span></div>
+  <div class="arena wardrobe" id="arena">
+    <div class="tray" id="tray"></div>
+    <div class="zones">
+      <div class="zone" data-z="gotik" id="zGotik"><div class="zl">🖤 Gerçek Gotik<small>karanlık taraf</small></div></div>
+      <div class="zone" data-z="cakma" id="zCakma"><div class="zl">🌈 Çakma<small>rengârenk taraf</small></div></div>
     </div>
-
-    <div class="verdict"><b>SONUÇ:</b> Zanlı resmi olarak "Çakma Gotik" ilan edilmiştir — karanlık ruhu sadece oje kutusunda yaşıyor, geri kalanı güneş kadar renkli. Dosyaya not düşüldü: bu suç değil, sadece çok sevimli bir tutarsızlık. 🖤🌈</div>
-
-    <div class="game-section">
-      <div class="game-title">🖤 Mini Görev: Gardırop Ayıklama</div>
-      <div class="game-sub">Kanıtlara göre zanlının hayatındaki hangi şeyler gerçekten "gotik", hangileri "çakma"? Parçaları doğru kutuya sürükle (ya da önce parçaya, sonra kutuya dokun).</div>
-      <div id="gameArea">
-        <div class="sort-wrap">
-          <div class="items-tray" id="itemsTray"></div>
-          <div class="drop-zones">
-            <div class="drop-zone" data-zone="gotik" id="zoneGotik"><span class="zone-label">🖤 Gerçek Gotik</span></div>
-            <div class="drop-zone" data-zone="cakma" id="zoneCakma"><span class="zone-label">🌈 Çakma (renkli)</span></div>
-          </div>
-        </div>
-        <div class="game-status" id="gameStatus">0 / 8 doğru yerleştirildi</div>
-      </div>
-      <div class="game-win" id="gameWin"></div>
-    </div>
-
-    <div id="codeBox"></div>
   </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+  <div class="status" id="status">Sürükle-bırak ya da önce parçaya, sonra kutuya dokun</div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
-const items = [
-  { icon: '💅', label: 'Siyah oje', zone: 'gotik' },
-  { icon: '🎧', label: 'Karanlık playlist', zone: 'gotik' },
-  { icon: '❄️', label: 'Kış mevsimi', zone: 'gotik' },
-  { icon: '🦇', label: 'Yarasa', zone: 'gotik' },
-  { icon: '👗', label: 'Renkli kıyafet', zone: 'cakma' },
-  { icon: '🎀', label: 'Kurdele', zone: 'cakma' },
-  { icon: '☀️', label: 'Yaz güneşi', zone: 'cakma' },
-  { icon: '🌈', label: 'Gökkuşağı', zone: 'cakma' },
+const ITEMS = [
+  { i: '💅', l: 'Siyah oje', z: 'gotik', why: 'Gotik olan tek şey on tırnak!' },
+  { i: '🎧', l: 'Karanlık playlist', z: 'gotik', why: 'Playlist karanlık ve melankolik.' },
+  { i: '❄️', l: 'Kış mevsimi', z: 'gotik', why: 'Kıştan kışa gotik!' },
+  { i: '🦇', l: 'Yarasa', z: 'gotik', why: 'Yarasa tartışmasız gotik.' },
+  { i: '👗', l: 'Renkli kıyafet', z: 'cakma', why: 'Kıyafetler hep renkli!' },
+  { i: '🎀', l: 'Kurdele', z: 'cakma', why: 'Kurdele çok tatlı, gotik olamaz.' },
+  { i: '☀️', l: 'Yaz güneşi', z: 'cakma', why: 'Yazın gotiklik tatile çıkıyor.' },
+  { i: '🌈', l: 'Gökkuşağı', z: 'cakma', why: 'Bu çok renkli!' },
 ];
-const TOTAL = items.length;
-const tray = document.getElementById('itemsTray');
-const zones = [document.getElementById('zoneGotik'), document.getElementById('zoneCakma')];
-const statusEl = document.getElementById('gameStatus');
-let placed = 0, selected = null;
+let tray, zones, statusEl, placed, misses, sel;
 
 function init() {
-  placed = 0; selected = null;
-  statusEl.textContent = '0 / ' + TOTAL + ' doğru yerleştirildi';
-  zones.forEach(z => z.querySelectorAll('.placed-icon').forEach(e => e.remove()));
+  tray = ZY.$('#tray'); zones = [ZY.$('#zGotik'), ZY.$('#zCakma')]; statusEl = ZY.$('#status');
+  placed = 0; misses = 0; sel = null; hud();
+  zones.forEach(z => { z.querySelectorAll('.placed').forEach(p => p.remove()); z.onclick = () => sel && place(sel, z); });
   tray.innerHTML = '';
-  ZY.shuffle(items.slice()).forEach(item => {
+  ZY.shuffle(ITEMS.slice()).forEach((it, k) => {
     const el = document.createElement('div');
-    el.className = 'drag-item';
-    el.innerHTML = '<span class="ic">' + item.icon + '</span><span class="lb">' + item.label + '</span>';
-    el.dataset.zone = item.zone;
-    el.dataset.icon = item.icon;
-    attachDrag(el);
-    tray.appendChild(el);
+    el.className = 'item'; el.style.animationDelay = (k * 0.04) + 's';
+    el.innerHTML = '<span class="ic">' + it.i + '</span><span class="lb">' + it.l + '</span>';
+    el._it = it; drag(el); tray.appendChild(el);
   });
+  statusEl.className = 'status'; statusEl.textContent = 'Sürükle-bırak ya da önce parçaya, sonra kutuya dokun';
 }
+function hud() { ZY.$('#placed').textContent = placed; ZY.$('#miss').textContent = misses; }
 
-function tryPlace(el, zoneEl) {
-  if (!zoneEl) return;
-  if (zoneEl.dataset.zone === el.dataset.zone) {
-    el.classList.add('placed');
-    el.classList.remove('selected');
-    const s = document.createElement('span');
-    s.className = 'placed-icon'; s.textContent = el.dataset.icon;
-    zoneEl.appendChild(s);
-    placed++;
-    ZY.beep(760, 0.08);
-    statusEl.textContent = placed + ' / ' + TOTAL + ' doğru yerleştirildi';
-    if (placed === TOTAL) {
-      statusEl.textContent = 'Sonuç: zanlının gotikliği tırnak, kulaklık ve kış ile sınırlı 💅❄️';
-      ZY.win(3, '🎉 Gardırobu doğru ayırdın, kod artık senin!');
-    }
+function place(el, zone) {
+  if (!zone) return;
+  const it = el._it;
+  if (zone.dataset.z === it.z) {
+    el.classList.add('gone'); el.classList.remove('sel'); sel = null;
+    const s = document.createElement('span'); s.className = 'placed'; s.textContent = it.i; zone.appendChild(s);
+    placed++; hud(); ZY.sfx.good(); ZY.burstAt(s, { count: 12, colors: it.z === 'gotik' ? ['#9b6bff', '#fff', '#333'] : ['#ff9ed2', '#ffd23f', '#33e1ff'] });
+    statusEl.className = 'status good'; statusEl.textContent = '✓ ' + it.why;
+    if (placed === ITEMS.length) setTimeout(() => ZY.complete({
+      stars: misses === 0 ? 3 : misses <= 2 ? 2 : 1, stats: '❌ ' + misses + ' hata',
+      msg: 'Sonuç: gotiklik sadece tırnak, kulaklık ve kış ile sınırlı. 💅🎧❄️',
+    }), 600);
   } else {
-    ZY.beep(180, 0.15, 'square');
-    ZY.shake(el);
-    statusEl.textContent = el.dataset.zone === 'gotik' ? 'Hmm, kanıtlara bir daha bak — bu gerçekten karanlık taraftan 🖤' : 'Yok artık, bu çok renkli! Gotik olamaz 🌈';
+    misses++; hud(); ZY.sfx.bad(); ZY.shake(zone); sel = null; el.classList.remove('sel');
+    statusEl.className = 'status bad';
+    statusEl.textContent = it.z === 'gotik' ? '✗ Kanıtlara bak — bu karanlık taraftan 🖤' : '✗ Yok artık, bu çok renkli! 🌈';
   }
-  selected = null;
 }
+const zoneAt = (x, y) => zones.find(z => { const r = z.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; });
 
-zones.forEach(z => z.addEventListener('click', () => { if (selected) tryPlace(selected, z); }));
-
-function zoneAt(x, y) {
-  return zones.find(z => { const r = z.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom; }) || null;
-}
-
-function attachDrag(el) {
-  el.addEventListener('pointerdown', (e) => {
+function drag(el) {
+  el.addEventListener('pointerdown', e => {
     e.preventDefault();
-    const rect = el.getBoundingClientRect();
-    const ox = e.clientX - rect.left, oy = e.clientY - rect.top;
-    const sx = e.clientX, sy = e.clientY;
-    let moved = false;
-    el.setPointerCapture(e.pointerId);
-    function move(ev) {
+    const r = el.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top, sx = e.clientX, sy = e.clientY;
+    let moved = false; el.setPointerCapture(e.pointerId);
+    const move = ev => {
       if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
-      if (!moved) {
-        moved = true;
-        el.classList.add('dragging');
-        el.style.position = 'fixed'; el.style.zIndex = 1000;
-        el.style.width = rect.width + 'px';
-      }
-      el.style.left = (ev.clientX - ox) + 'px';
-      el.style.top = (ev.clientY - oy) + 'px';
+      if (!moved) { moved = true; el.classList.add('drag'); Object.assign(el.style, { position: 'fixed', width: r.width + 'px' }); }
+      el.style.left = (ev.clientX - ox) + 'px'; el.style.top = (ev.clientY - oy) + 'px';
+      zones.forEach(z => z.classList.toggle('hover', z === zoneAt(ev.clientX, ev.clientY)));
+    };
+    const up = ev => {
+      el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
       zones.forEach(z => z.classList.remove('hover'));
-      const z = zoneAt(ev.clientX, ev.clientY);
-      if (z) z.classList.add('hover');
-    }
-    function up(ev) {
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', up);
-      zones.forEach(z => z.classList.remove('hover'));
-      el.classList.remove('dragging');
-      el.style.position = el.style.left = el.style.top = el.style.zIndex = el.style.width = '';
-      if (moved) {
-        tryPlace(el, zoneAt(ev.clientX, ev.clientY));
-      } else {
-        tray.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
-        selected = el; el.classList.add('selected');
-        statusEl.textContent = 'Şimdi doğru kutuya dokun 👇';
-      }
-    }
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
+      el.classList.remove('drag'); Object.assign(el.style, { position: '', left: '', top: '', width: '' });
+      if (moved) place(el, zoneAt(ev.clientX, ev.clientY));
+      else { tray.querySelectorAll('.sel').forEach(s => s.classList.remove('sel')); sel = el; el.classList.add('sel'); ZY.sfx.tap(); statusEl.className = 'status'; statusEl.textContent = 'Şimdi doğru kutuya dokun 👇'; }
+    };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
   });
 }
 
-ZY.page(3, { init });
+ZY.page(3, {
+  intro: 'Zanlının kendini "gotik" olarak tanımlamasıyla ilgili çelişkili raporlar toplandı. Gardırobunu doğru sınıflandırman gerekiyor.',
+  evidence: [
+    'Zanlının "gotik" kimliği en çok müzik zevkinde ortaya çıkıyor. Playlist\'i incelendiğinde karanlık, ağır ve melankolik parçaların yoğunlukta olduğu tespit edildi.',
+    'Ancak sahada ciddi bir çelişki bulundu: zanlı sadece siyah oje sürüyor, geri kalan her şeyi renkli ve özenle giyiniyor. Yani "gotik" olan sadece on tırnak.',
+    'Zanlının gotikliği mevsimsel bir durum. Kendi ifadesiyle sadece kışın gotik oluyor — resmi kayıtlara "kıştan kışa gotik" olarak geçti.',
+    'Olay tutanağına geçen ünlü diyalog: "Renkli giyinen gotik mi olur?" denilince hiç bozulmadan "ben kıştan kışa gotiğim" diye cevap vermiş.',
+  ],
+  verdict: 'Zanlı resmi olarak "Çakma Gotik" ilan edilmiştir — karanlık ruhu sadece oje kutusunda yaşıyor, geri kalanı güneş kadar renkli. 🖤🌈',
+  mission: { title: '🖤 Gardırop Ayıklama', sub: 'Kanıtlara göre hangileri gerçekten gotik, hangileri çakma? 8 parçayı doğru kutuya yerleştir.', goals: ['Bitir', 'En fazla 2 hata', 'Hatasız'] },
+  init,
+});
 </script>
 </body>
 </html>

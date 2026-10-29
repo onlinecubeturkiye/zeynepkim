@@ -2,183 +2,143 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 5 · Doymayan — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.maze-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 100%; }
-.maze-grid { display: grid; gap: 0; padding: 6px; border-radius: 12px; background: linear-gradient(145deg, var(--night-1), var(--night-2)); box-shadow: 0 8px 18px rgba(0,0,0,0.3); touch-action: none; }
-.maze-cell { width: var(--cell, 20px); height: var(--cell, 20px); display: flex; align-items: center; justify-content: center; font-size: calc(var(--cell, 20px) * 0.78); line-height: 1; background: var(--paper); }
-.maze-cell.wall { background: transparent; }
-.maze-cell.trail { background: #f1dfa8; }
-.maze-cell.goal.locked { filter: grayscale(1) opacity(0.5); }
-.dpad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 52px); gap: 6px; justify-content: center; }
-.dpad button { border: none; border-radius: 12px; font-size: 1.3rem; font-weight: 700; background: var(--gold); color: var(--ink); box-shadow: 0 4px 10px rgba(212,160,23,0.35); touch-action: manipulation; }
-.dpad button:active { transform: scale(0.93); }
-#dpadUp { grid-column: 2; grid-row: 1; } #dpadLeft { grid-column: 1; grid-row: 2; } #dpadDown { grid-column: 2; grid-row: 2; } #dpadRight { grid-column: 3; grid-row: 2; }
-.bag { display: flex; gap: 10px; justify-content: center; font-family: 'Kalam', cursive; font-weight: 700; }
-.bag span { background: rgba(0,0,0,0.07); border-radius: 999px; padding: 4px 12px; opacity: 0.55; }
-.bag span.got { opacity: 1; background: rgba(88,129,87,0.18); color: var(--pin-green); }
+.maze-arena { padding: 12px; display: flex; justify-content: center; }
+.maze { position: relative; display: grid; touch-action: none; border-radius: 12px; overflow: hidden; }
+.cell { width: var(--c); height: var(--c); }
+.cell.w { background: linear-gradient(135deg, #3a2a8a, #24185e); box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); }
+.cell.p { background: rgba(255,255,255,.04); }
+.cell.t { background: rgba(255,138,61,.22); }
+.tok { position: absolute; width: var(--c); height: var(--c); display: grid; place-items: center; font-size: calc(var(--c) * .9); line-height: 1; transition: left .1s ease, top .1s ease; pointer-events: none; }
+.tok.me { z-index: 3; filter: drop-shadow(0 0 6px rgba(255,210,63,.9)); }
+.tok.goal.locked { filter: grayscale(1) opacity(.45); }
+.tok.goal:not(.locked) { animation: pulse 1s ease infinite; filter: drop-shadow(0 0 8px rgba(166,255,77,.9)); }
+.bag { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+.bag .pill { opacity: .45; transition: all .3s ease; }
+.bag .pill.got { opacity: 1; background: rgba(166,255,77,.15); border-color: rgba(166,255,77,.5); color: var(--lime); }
+.dpad { display: grid; grid-template-columns: repeat(3, 64px); grid-template-rows: repeat(2, 56px); gap: 8px; justify-content: center; margin: 4px 0 8px; }
+.dpad .ctrl { width: 64px; height: 56px; }
+.dpad [data-d="u"] { grid-column: 2; } .dpad [data-d="l"] { grid-column: 1; grid-row: 2; } .dpad [data-d="d"] { grid-column: 2; grid-row: 2; } .dpad [data-d="r"] { grid-column: 3; grid-row: 2; }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 5</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">GİZLİ</div>
-    <div class="case-number">// İŞTAH RAPORU</div>
-    <div class="cat-photo">🍗</div>
-    <h1>Vaka 5: <em>Doymayan</em></h1>
-    <p class="intro">Zanlının beslenme alışkanlıklarıyla ilgili gelen ihbarlar değerlendirildi. Bulgular oldukça net: bu bir iştah değil, bir yaşam biçimi. Kodu almadan önce zanlının favori üçlüsünü labirentten toplaman gerekiyor.</p>
-
-    <div class="evidence-list">
-      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlının Popeyes ve çiğköfteye karşı doyma bilmeyen bir zaafı olduğu tespit edildi. Tabağı ne kadar dolu gelirse gelsin, sonunda mutlaka boş kalıyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Beslenme kayıtlarına göre zanlının favori üçlüsü net: Popeyes, çiğköfte ve yanında mutlaka beyaz Monster. Bu üçlü bir araya geldiğinde zanlı "tam kapasite mutluluk" moduna geçiyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Yemek önüne geldiği anda zanlının tavrı bir anda değişiyor, gözünde bir parıltı beliriyor ve yemeğe adeta azarak saldırıyor. Uzmanlar bu ana "iştah patlaması" adını verdi.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Görgü tanıklarına göre zanlı her buluşmaya geldiğinde ilk cümlesi "ben açım" oluyor. Karşısındaki bunu söylemesine bile gerek duymuyor, çünkü zaten biliyor.</span></div>
-    </div>
-
-    <div class="verdict"><b>SONUÇ:</b> Zanlı resmi olarak "Doymayan" ilan edilmiştir — iştahı bulaşıcı, mutluluğu sınırsız, tabağı hep boş. Dosya "zararsız ama tehlikeli derecede aç" kategorisine alınmıştır. 🍗🌯</div>
-
-    <div class="game-section">
-      <div class="game-title">🌯 Mini Görev: Doymayan'ın Labirenti</div>
-      <div class="game-sub">Zanlı 😋 açlıktan ölüyor! Labirentte önce Popeyes 🍗 ve beyaz Monster 🥤'ı topla, sonra çiğköfteye 🌯 ulaş. Ok tuşları, butonlar ya da kaydırma ile ilerle.</div>
-      <div id="gameArea">
-        <div class="maze-wrap" id="mazeWrap">
-          <div class="bag"><span id="bagChicken">🍗 Popeyes</span><span id="bagMonster">🥤 Monster</span><span id="bagCig">🌯 Çiğköfte</span></div>
-          <div class="maze-grid" id="mazeGrid"></div>
-          <div class="dpad">
-            <button id="dpadUp" aria-label="yukarı">↑</button><button id="dpadLeft" aria-label="sol">←</button>
-            <button id="dpadDown" aria-label="aşağı">↓</button><button id="dpadRight" aria-label="sağ">→</button>
-          </div>
-        </div>
-        <div class="game-status" id="gameStatus"></div>
-      </div>
-      <div class="game-win" id="gameWin"></div>
-    </div>
-
-    <div id="codeBox"></div>
-  </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="bag"><span class="pill" id="bC">🍗 Popeyes</span><span class="pill" id="bM">🥤 Monster</span><span class="pill" id="bG">🌯 Çiğköfte</span></div>
+  <div class="hud"><span class="pill">👣 <b id="steps">0</b> adım</span><span class="pill">🎯 en kısa: <b id="best">–</b></span></div>
+  <div class="arena maze-arena" id="arena"><div class="maze" id="maze"></div></div>
+  <div class="dpad"><button class="ctrl" data-d="u">▲</button><button class="ctrl" data-d="l">◀</button><button class="ctrl" data-d="d">▼</button><button class="ctrl" data-d="r">▶</button></div>
+  <div class="status" id="status"></div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
-const ROOMS = 10;
-const grid = document.getElementById('mazeGrid');
-const statusEl = document.getElementById('gameStatus');
-const mazeWrap = document.getElementById('mazeWrap');
-let maze, N, cells, player, goal, items, got, won;
+const ROOMS = 9;
+let mazeEl, statusEl, M, N, cells, me, goal, items, got, steps, won, toks, optimal;
 
-function generate(rooms) {
-  const n = rooms * 2 + 1;
-  const m = Array.from({ length: n }, () => Array(n).fill(1));
-  const seen = Array.from({ length: rooms }, () => Array(rooms).fill(false));
-  const stack = [[0, 0]];
+function gen(rooms) {
+  const n = rooms * 2 + 1, m = Array.from({ length: n }, () => Array(n).fill(1));
+  const seen = Array.from({ length: rooms }, () => Array(rooms).fill(false)), st = [[0, 0]];
   seen[0][0] = true; m[1][1] = 0;
-  while (stack.length) {
-    const [r, c] = stack[stack.length - 1];
-    const opts = [[0,1],[0,-1],[1,0],[-1,0]].filter(([dr, dc]) => {
-      const nr = r + dr, nc = c + dc;
-      return nr >= 0 && nr < rooms && nc >= 0 && nc < rooms && !seen[nr][nc];
-    });
-    if (!opts.length) { stack.pop(); continue; }
-    const [dr, dc] = opts[Math.floor(Math.random() * opts.length)];
-    const nr = r + dr, nc = c + dc;
-    m[2*r+1+dr][2*c+1+dc] = 0; m[2*nr+1][2*nc+1] = 0;
-    seen[nr][nc] = true; stack.push([nr, nc]);
+  while (st.length) {
+    const [r, c] = st[st.length - 1];
+    const o = [[0,1],[0,-1],[1,0],[-1,0]].filter(([a, b]) => { const R = r + a, C = c + b; return R >= 0 && R < rooms && C >= 0 && C < rooms && !seen[R][C]; });
+    if (!o.length) { st.pop(); continue; }
+    const [a, b] = o[Math.floor(Math.random() * o.length)];
+    m[2*r+1+a][2*c+1+b] = 0; m[2*(r+a)+1][2*(c+b)+1] = 0; seen[r+a][c+b] = true; st.push([r+a, c+b]);
   }
+  // birkaç ekstra geçit: tek yol olmasın
+  for (let k = 0; k < rooms; k++) { const r = 1 + Math.floor(Math.random() * (n - 2)), c = 1 + Math.floor(Math.random() * (n - 2)); if ((r + c) % 2 === 1) m[r][c] = 0; }
   return m;
+}
+function bfs(a, b) {
+  const d = Array.from({ length: N }, () => Array(N).fill(-1)), q = [[a.r, a.c]]; d[a.r][a.c] = 0;
+  while (q.length) { const [r, c] = q.shift(); if (r === b.r && c === b.c) return d[r][c];
+    for (const [x, y] of [[0,1],[0,-1],[1,0],[-1,0]]) { const R = r + x, C = c + y; if (!M[R][C] && d[R][C] < 0) { d[R][C] = d[r][c] + 1; q.push([R, C]); } } }
+  return 999;
 }
 
 function init() {
-  maze = generate(ROOMS); N = maze.length;
-  player = { r: 1, c: 1 }; goal = { r: N - 2, c: N - 2 }; won = false;
-  got = { chicken: false, monster: false };
-  // yiyecekleri haritanın farklı köşelerine koy
+  mazeEl = ZY.$('#maze'); statusEl = ZY.$('#status');
+  M = gen(ROOMS); N = M.length; me = { r: 1, c: 1 }; goal = { r: N - 2, c: N - 2 }; got = { C: false, M: false }; steps = 0; won = false;
   const pick = (r0, c0) => ({ r: 2 * (r0 + Math.floor(Math.random() * 3)) + 1, c: 2 * (c0 + Math.floor(Math.random() * 3)) + 1 });
-  items = { chicken: pick(ROOMS - 3, 0), monster: pick(0, ROOMS - 3) };
-  const w = Math.min(380, mazeWrap.clientWidth || window.innerWidth - 60) - 12;
-  grid.style.setProperty('--cell', Math.max(12, Math.floor(w / N)) + 'px');
-  grid.style.gridTemplateColumns = 'repeat(' + N + ', var(--cell))';
-  grid.innerHTML = '';
-  cells = [];
-  for (let r = 0; r < N; r++) {
-    cells.push([]);
-    for (let c = 0; c < N; c++) {
-      const d = document.createElement('div');
-      d.className = 'maze-cell' + (maze[r][c] ? ' wall' : '');
-      grid.appendChild(d); cells[r].push(d);
-    }
-  }
-  updateBag();
-  statusEl.textContent = '😋 "Ben açım" — önce 🍗 ve 🥤';
-  render();
+  items = { C: pick(ROOMS - 3, 0), M: pick(0, ROOMS - 3) };
+  const s = me, C = items.C, Mo = items.M;
+  optimal = Math.min(bfs(s, C) + bfs(C, Mo) + bfs(Mo, goal), bfs(s, Mo) + bfs(Mo, C) + bfs(C, goal));
+  const w = Math.min(400, ZY.$('#arena').clientWidth - 24);
+  const size = Math.floor(w / N);
+  mazeEl.style.setProperty('--c', size + 'px');
+  mazeEl.style.gridTemplateColumns = 'repeat(' + N + ', var(--c))';
+  mazeEl.innerHTML = ''; cells = [];
+  for (let r = 0; r < N; r++) { cells.push([]); for (let c = 0; c < N; c++) { const d = document.createElement('div'); d.className = 'cell ' + (M[r][c] ? 'w' : 'p'); mazeEl.appendChild(d); cells[r].push(d); } }
+  toks = {};
+  const mk = (k, e, pos, cls) => { const t = document.createElement('div'); t.className = 'tok ' + (cls || ''); t.textContent = e; mazeEl.appendChild(t); toks[k] = t; put(t, pos); };
+  mk('C', '🍗', items.C); mk('M', '🥤', items.M); mk('G', '🌯', goal, 'goal locked'); mk('me', '😋', me, 'me');
+  ZY.$('#best').textContent = optimal; hud();
+  statusEl.className = 'status'; statusEl.textContent = '😋 "Ben açım" — önce 🍗 ve 🥤 topla';
 }
-
-function render() {
-  for (const k of ['chicken', 'monster']) {
-    const it = items[k];
-    cells[it.r][it.c].textContent = got[k] ? '' : (k === 'chicken' ? '🍗' : '🥤');
-  }
-  const g = cells[goal.r][goal.c];
-  g.textContent = '🌯';
-  g.className = 'maze-cell goal' + (got.chicken && got.monster ? '' : ' locked');
-  const p = cells[player.r][player.c];
-  p.classList.add('trail');
-  p.textContent = '😋';
-}
-
-function updateBag() {
-  document.getElementById('bagChicken').classList.toggle('got', got.chicken);
-  document.getElementById('bagMonster').classList.toggle('got', got.monster);
-  document.getElementById('bagCig').classList.toggle('got', won);
+function put(t, p) { t.style.left = 'calc(var(--c) * ' + p.c + ')'; t.style.top = 'calc(var(--c) * ' + p.r + ')'; }
+function hud() {
+  ZY.$('#steps').textContent = steps;
+  ZY.$('#bC').classList.toggle('got', got.C); ZY.$('#bM').classList.toggle('got', got.M); ZY.$('#bG').classList.toggle('got', won);
 }
 
 function move(dr, dc) {
-  if (won || !cells) return;
-  const nr = player.r + dr, nc = player.c + dc;
-  if (nr < 0 || nr >= N || nc < 0 || nc >= N || maze[nr][nc]) { statusEl.textContent = 'Duvar! Başka yoldan dene 🧱'; return; }
-  if (nr === goal.r && nc === goal.c && !(got.chicken && got.monster)) {
-    statusEl.textContent = 'Çiğköfte bekliyor ama favori üçlü eksik! 🍗🥤 olmadan olmaz.';
-    ZY.shake(grid); return;
+  if (won || !M) return;
+  const r = me.r + dr, c = me.c + dc;
+  if (M[r][c]) { ZY.beep(140, .06, 'square', .06); return; }
+  if (r === goal.r && c === goal.c && !(got.C && got.M)) { statusEl.className = 'status bad'; statusEl.textContent = 'Favori üçlü eksik! 🍗🥤 olmadan çiğköfte olmaz.'; ZY.shake(toks.G); ZY.sfx.bad(); return; }
+  cells[me.r][me.c].className = 'cell t';
+  me = { r, c }; steps++; put(toks.me, me); ZY.beep(420 + (steps % 4) * 30, .03, 'triangle', .05);
+  for (const k of ['C', 'M']) if (!got[k] && items[k].r === r && items[k].c === c) {
+    got[k] = true; toks[k].remove(); ZY.sfx.good(); ZY.burstAt(toks.me, { count: 16, colors: ['#ff8a3d', '#ffd23f', '#fff'] });
+    statusEl.className = 'status good'; statusEl.textContent = k === 'C' ? 'Popeyes alındı! 🍗 Göz parıltısı başladı.' : 'Beyaz Monster alındı! 🥤 Enerji %200.';
+    if (got.C && got.M) { toks.G.classList.remove('locked'); statusEl.textContent += ' Şimdi çiğköfteye! 🌯'; }
   }
-  cells[player.r][player.c].textContent = '';
-  player = { r: nr, c: nc };
-  for (const k of ['chicken', 'monster']) {
-    if (!got[k] && items[k].r === nr && items[k].c === nc) {
-      got[k] = true;
-      ZY.beep(880, 0.12);
-      statusEl.textContent = k === 'chicken' ? 'Popeyes alındı! 🍗 Göz parıltısı başladı.' : 'Beyaz Monster alındı! 🥤 Enerji %200.';
-      if (got.chicken && got.monster) statusEl.textContent += ' Şimdi çiğköfteye! 🌯';
-      updateBag();
-    }
-  }
-  render();
-  if (nr === goal.r && nc === goal.c) {
-    won = true; updateBag();
-    statusEl.textContent = '😋 Tam kapasite mutluluk modu: AKTİF';
-    ZY.win(5, '🎉 Zanlı sonunda doydu (kısa süreliğine), kod artık senin!');
+  hud();
+  if (r === goal.r && c === goal.c) {
+    won = true; hud(); ZY.burstAt(toks.me, { count: 30 });
+    const ratio = steps / optimal;
+    ZY.complete({ stars: ratio <= 1.25 ? 3 : ratio <= 1.7 ? 2 : 1, stats: '👣 ' + steps + ' adım (en kısa yol: ' + optimal + ')', msg: '😋 Tam kapasite mutluluk modu: AKTİF' });
   }
 }
 
-document.addEventListener('keydown', (e) => {
-  const map = { ArrowUp: [-1,0], ArrowDown: [1,0], ArrowLeft: [0,-1], ArrowRight: [0,1] };
-  if (!map[e.key] || document.getElementById('gameArea').style.display === 'none') return;
-  e.preventDefault(); move(...map[e.key]);
+const DIRS = { u: [-1, 0], d: [1, 0], l: [0, -1], r: [0, 1] };
+document.addEventListener('keydown', e => { const k = { ArrowUp: 'u', ArrowDown: 'd', ArrowLeft: 'l', ArrowRight: 'r' }[e.key]; if (k) { e.preventDefault(); move(...DIRS[k]); } });
+let hold = null;
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.dpad .ctrl'); if (!b) return; e.preventDefault();
+  const d = DIRS[b.dataset.d]; move(...d); clearInterval(hold); hold = setInterval(() => move(...d), 140);
 });
-[['dpadUp',-1,0],['dpadDown',1,0],['dpadLeft',0,-1],['dpadRight',0,1]].forEach(([id, dr, dc]) =>
-  document.getElementById(id).addEventListener('click', () => move(dr, dc)));
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => document.addEventListener(t, () => clearInterval(hold)));
 let sw = null;
-grid.addEventListener('pointerdown', e => { sw = { x: e.clientX, y: e.clientY }; });
-grid.addEventListener('pointerup', e => {
-  if (!sw) return;
-  const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
-  if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
-  if (Math.abs(dx) > Math.abs(dy)) move(0, dx > 0 ? 1 : -1); else move(dy > 0 ? 1 : -1, 0);
+document.addEventListener('pointerdown', e => { if (e.target.closest('#maze')) sw = { x: e.clientX, y: e.clientY }; });
+document.addEventListener('pointerup', e => {
+  if (!sw) return; const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+  // kaydırınca kavşağa kadar kay
+  const d = Math.abs(dx) > Math.abs(dy) ? [0, dx > 0 ? 1 : -1] : [dy > 0 ? 1 : -1, 0];
+  let n = 0; const slide = () => { const before = steps; move(...d); if (steps === before || ++n > 20 || won) return;
+    const side = d[0] ? [[0,1],[0,-1]] : [[1,0],[-1,0]]; if (side.some(([a, b]) => !M[me.r + a][me.c + b])) return; setTimeout(slide, 45); };
+  slide();
 });
 
-ZY.page(5, { init });
+ZY.page(5, {
+  intro: 'Zanlının beslenme alışkanlıklarıyla ilgili ihbarlar değerlendirildi. Bulgular net: bu bir iştah değil, bir yaşam biçimi.',
+  evidence: [
+    'Zanlının Popeyes ve çiğköfteye karşı doyma bilmeyen bir zaafı olduğu tespit edildi. Tabağı ne kadar dolu gelirse gelsin, sonunda mutlaka boş kalıyor.',
+    'Beslenme kayıtlarına göre favori üçlüsü net: Popeyes, çiğköfte ve yanında mutlaka beyaz Monster. Bu üçlü bir araya geldiğinde zanlı "tam kapasite mutluluk" moduna geçiyor.',
+    'Yemek önüne geldiği anda gözünde bir parıltı beliriyor ve yemeğe adeta azarak saldırıyor. Uzmanlar bu ana "iştah patlaması" adını verdi.',
+    'Görgü tanıklarına göre her buluşmada ilk cümlesi "ben açım" oluyor. Karşısındaki bunu söylemesine bile gerek duymuyor, çünkü zaten biliyor.',
+  ],
+  verdict: 'Zanlı resmi olarak "Doymayan" ilan edilmiştir — iştahı bulaşıcı, mutluluğu sınırsız, tabağı hep boş. 🍗🌯',
+  mission: { title: '🌯 Doymayan\'ın Labirenti', sub: 'Önce 🍗 Popeyes ve 🥤 Monster\'ı topla, sonra çiğköfteye 🌯 ulaş. Kaydır (kavşağa kadar kayar), ok tuşları ya da butonlar.', goals: ['Bitir', 'Kısa yol ×1.7', 'Kısa yol ×1.25'] },
+  init,
+});
 </script>
 </body>
 </html>

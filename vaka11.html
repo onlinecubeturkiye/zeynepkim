@@ -2,149 +2,91 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 11 · Son Dosya — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.stage { display: none; animation: slide-in 0.5s ease both; }
-.stage.on { display: block; }
-.section-title { font-family: 'Kalam', cursive; font-weight: 700; font-size: 1.25rem; color: var(--stamp); text-align: center; margin-bottom: 6px; }
-.section-sub { font-family: 'Kalam', cursive; color: var(--ink-soft); text-align: center; max-width: 520px; margin: 0 auto 18px; line-height: 1.5; }
-
-/* şifre */
-.code-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 420px; margin: 0 auto 16px; }
-.code-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.code-cell label { font-size: 0.68rem; font-weight: 700; color: var(--muted); }
-.code-cell input {
-  width: 100%; max-width: 64px; text-align: center; font-family: 'Special Elite', monospace; font-size: 1.5rem; letter-spacing: 3px;
-  padding: 8px 0; border: 2px solid rgba(43,32,19,0.25); border-radius: 10px; background: rgba(255,255,255,0.7); color: var(--stamp);
-}
-.code-cell input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,160,23,0.25); }
-.code-cell input.bad { border-color: var(--pin-red); background: rgba(230,57,70,0.08); }
-.code-cell input.good { border-color: var(--pin-green); }
-.row-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-
-/* sorgu */
-.q-card { max-width: 480px; margin: 0 auto; background: rgba(255,255,255,0.5); border-radius: 14px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-.q-head { display: flex; justify-content: space-between; font-family: 'Special Elite', monospace; font-size: 0.78rem; color: var(--stamp); margin-bottom: 8px; }
-.q-text { font-weight: 700; font-size: 1.02rem; margin-bottom: 14px; line-height: 1.45; }
-.q-opts { display: flex; flex-direction: column; gap: 8px; }
-.q-opt { text-align: left; border: 2px solid rgba(43,32,19,0.2); background: var(--paper); border-radius: 12px; padding: 10px 14px; font-size: 0.92rem; cursor: pointer; color: var(--ink); }
-.q-opt:hover { border-color: var(--gold); }
-.q-opt.wrong { border-color: var(--pin-red); background: rgba(230,57,70,0.1); }
-.q-opt.right { border-color: var(--pin-green); background: rgba(88,129,87,0.15); }
-.q-hint { font-family: 'Kalam', cursive; min-height: 24px; margin-top: 10px; text-align: center; font-size: 0.95rem; }
-.q-progress { display: flex; gap: 4px; justify-content: center; margin: 0 auto 14px; }
-.q-progress i { width: 26px; height: 6px; border-radius: 999px; background: rgba(0,0,0,0.12); display: block; }
-.q-progress i.on { background: var(--pin-green); }
-
-/* açıklama */
-.reveal-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
-.reveal-title span { color: var(--stamp); }
-.aliases { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0 26px; }
-.alias {
-  background: var(--paper); border-radius: 10px; padding: 12px 12px 10px; box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-  opacity: 0; transform: scale(0.7) rotate(var(--r, 0deg)); transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.3,1.6,.6,1);
-  position: relative; border-top: 5px solid var(--c, var(--gold));
-}
-.alias.on { opacity: 1; transform: scale(1) rotate(var(--r, 0deg)); }
-.alias .e { font-size: 1.6rem; }
-.alias .n { font-weight: 800; font-size: 0.88rem; margin: 2px 0; }
-.alias .m { font-family: 'Kalam', cursive; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.3; }
-.alias .crossed { font-size: 0.75rem; font-family: 'Special Elite', monospace; color: var(--muted); text-decoration: line-through; }
-.equation { text-align: center; font-family: 'Kalam', cursive; font-size: 1.15rem; line-height: 1.6; margin: 0 auto 24px; max-width: 540px; opacity: 0; transition: opacity 0.8s ease; }
-.equation.on { opacity: 1; }
-.equation b { color: var(--stamp); font-size: 1.3rem; }
-.letter {
-  max-width: 560px; margin: 0 auto; background: #fffaf0; border-radius: 4px; padding: 26px 24px 22px;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.2); transform: rotate(0.6deg); position: relative;
-  background-image: repeating-linear-gradient(transparent 0 29px, rgba(230,57,70,0.12) 29px 30px);
-  opacity: 0; transition: opacity 0.8s ease;
-}
+.stage { display: none; } .stage.on { display: block; animation: rise .5s ease both; }
+.st-title { font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; text-align: center; }
+.st-sub { color: var(--text-dim); text-align: center; max-width: 480px; margin: 4px auto 16px; line-height: 1.5; font-size: .95rem; }
+.vault { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-width: 420px; margin: 0 auto 16px; }
+.vc { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.vc label { font-size: .7rem; font-weight: 800; color: var(--text-faint); }
+.vc input { width: 100%; max-width: 66px; text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 1.35rem; letter-spacing: 2px; padding: 10px 0;
+  border-radius: 14px; border: 2px solid var(--line); background: rgba(0,0,0,.3); color: var(--yellow); transition: border-color .2s, box-shadow .2s; }
+.vc input:focus { outline: none; border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+.vc input.good { border-color: var(--lime); box-shadow: 0 0 12px rgba(166,255,77,.4); }
+.vc input.bad { border-color: var(--red); box-shadow: 0 0 12px rgba(255,77,94,.5); }
+.dial { width: 120px; height: 120px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font-size: 3rem;
+  background: radial-gradient(circle at 35% 30%, #6d5bd0, #2a1d6b); border: 6px solid rgba(255,210,63,.6); box-shadow: 0 0 30px rgba(255,210,63,.35), inset 0 0 20px rgba(0,0,0,.5); transition: transform .8s cubic-bezier(.3,1.4,.6,1); }
+.dial.open { transform: rotate(360deg) scale(1.1); border-color: var(--lime); box-shadow: 0 0 40px rgba(166,255,77,.6); }
+.qprog { display: flex; gap: 4px; justify-content: center; margin-bottom: 14px; }
+.qprog i { width: 22px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.12); }
+.qprog i.on { background: var(--grad-lime); }
+.qcard { max-width: 480px; margin: 0 auto; }
+.qhead { display: flex; justify-content: space-between; font-family: var(--font-mono); font-weight: 700; font-size: .7rem; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px; }
+.qtext { font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; line-height: 1.3; margin-bottom: 14px; }
+.qopt { width: 100%; text-align: left; margin-bottom: 8px; padding: 13px 15px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface-2); font-size: .95rem; cursor: pointer; animation: rise .3s ease both; }
+.qopt.right { border-color: var(--lime); background: rgba(166,255,77,.16); }
+.qopt.wrong { border-color: var(--red); background: rgba(255,77,94,.14); opacity: .7; }
+.qhint { min-height: 24px; text-align: center; font-weight: 700; margin-top: 6px; }
+.reveal-h { text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 2rem; line-height: 1.1; }
+.reveal-h em { font-style: normal; background: var(--grad-hot); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.aliases { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 18px 0 22px; }
+.alias { padding: 12px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); position: relative; overflow: hidden;
+  opacity: 0; transform: scale(.6) rotate(var(--r)); transition: all .5s cubic-bezier(.3,1.6,.6,1); }
+.alias::before { content: ''; position: absolute; inset: 0 0 auto; height: 4px; background: var(--g); }
+.alias.on { opacity: 1; transform: scale(1) rotate(var(--r)); }
+.alias .e { font-size: 1.7rem; } .alias .x { font-family: var(--font-mono); font-size: .68rem; color: var(--text-faint); text-decoration: line-through; }
+.alias .m { font-weight: 700; font-size: .88rem; line-height: 1.3; margin-top: 2px; }
+.eq { text-align: center; line-height: 1.7; color: var(--text-dim); opacity: 0; transition: opacity .8s; margin-bottom: 22px; }
+.eq.on { opacity: 1; } .eq b { font-family: var(--font-head); font-size: 1.6rem; background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.letter { max-width: 560px; margin: 0 auto; padding: 26px 22px; border-radius: 22px; background: #fff8ee; color: #2a1a3e; transform: rotate(.5deg);
+  box-shadow: 0 20px 40px rgba(0,0,0,.45); opacity: 0; transition: opacity .8s; background-image: repeating-linear-gradient(transparent 0 29px, rgba(255,77,157,.13) 29px 30px); }
 .letter.on { opacity: 1; }
-.letter::before { content: ''; position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-3deg); width: 120px; height: 26px; background: var(--tape); }
-.letter-body { text-align: left; font-family: 'Kalam', cursive; font-size: 1.12rem; line-height: 30px; white-space: pre-wrap; color: #2a1f14; min-height: 120px; }
-.letter-sign { font-family: 'Kalam', cursive; font-weight: 700; text-align: right; margin-top: 10px; color: var(--stamp); opacity: 0; transition: opacity 0.6s ease; }
+.letter-body { font-size: 1.05rem; line-height: 30px; white-space: pre-wrap; min-height: 120px; font-weight: 600; }
+.letter-sign { text-align: right; font-family: var(--font-head); font-weight: 700; color: #d6246e; margin-top: 8px; opacity: 0; transition: opacity .6s; }
 .letter-sign.on { opacity: 1; }
-.closed-stamp {
-  display: block; width: fit-content; margin: 28px auto 6px; border: 4px double var(--pin-green); color: var(--pin-green);
-  font-family: 'Special Elite', monospace; font-size: 1.1rem; letter-spacing: 3px; padding: 8px 18px; border-radius: 8px;
-  transform: rotate(-6deg) scale(2); opacity: 0; transition: all 0.45s cubic-bezier(.3,1.6,.6,1);
-}
-.closed-stamp.on { opacity: 0.9; transform: rotate(-6deg) scale(1); }
-.end-btns { display: none; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
-.end-btns.on { display: flex; }
-@media (max-width: 480px) {
-  .code-grid { gap: 8px; }
-  .code-cell input { font-size: 1.25rem; letter-spacing: 1px; }
-  .aliases { grid-template-columns: 1fr 1fr; }
-}
+.closed { display: block; width: fit-content; margin: 26px auto 8px; padding: 8px 18px; border: 3px double var(--lime); color: var(--lime); border-radius: 10px;
+  font-family: var(--font-mono); font-weight: 700; letter-spacing: 3px; transform: rotate(-6deg) scale(2.2); opacity: 0; transition: all .45s cubic-bezier(.3,1.6,.6,1); }
+.closed.on { opacity: 1; transform: rotate(-6deg) scale(1); }
+.end { display: none; } .end.on { display: flex; }
+.secret-tease { margin-top: 16px; text-align: center; padding: 14px; border-radius: 16px; border: 1px dashed rgba(51,225,255,.5); background: rgba(51,225,255,.08); }
+@media (max-width: 480px) { .aliases { grid-template-columns: 1fr 1fr; } .vc input { font-size: 1.15rem; letter-spacing: 1px; } }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 11 · SON</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">ÇOK GİZLİ</div>
-    <div class="case-number">// ŞİFRE ÇÖZÜMÜ</div>
-    <div class="cat-photo">🗝️</div>
-    <h1>Vaka 11: <em>Son Dosya</em></h1>
-    <p class="intro">On dosya, on lakap, on kod. Hepsi aynı soruya çıkıyor: Zeynep gerçekten kim? Cevap bu dosyanın içinde — ama önce şifreyi çözmen ve son sorgudan geçmen gerekiyor.</p>
-
-    <!-- 1: şifre -->
-    <div class="stage on" id="stageCode">
-      <div class="game-section">
-        <div class="section-title">🔐 Adım 1: Ana Şifre</div>
-        <div class="section-sub">Her vakadan aldığın kodu sırasıyla gir. 10 kod birleşince son dosyanın kasası açılacak.</div>
-        <div class="code-grid" id="codeGrid"></div>
-        <div class="row-btns">
-          <button class="btn btn-gold" id="fillBtn">📒 Kod Defterinden Doldur</button>
-          <button class="btn btn-red" id="checkBtn">🔓 Kasayı Aç</button>
-        </div>
-        <div class="game-status" id="codeStatus"></div>
-      </div>
-    </div>
-
-    <!-- 2: sorgu -->
-    <div class="stage" id="stageQuiz">
-      <div class="game-section">
-        <div class="section-title">🕵️ Adım 2: Son Sorgu</div>
-        <div class="section-sub">Kasa açıldı ama içerideki dosyayı sadece kanıtları gerçekten okuyan biri görebilir. Her vakadan bir soru. Yanlış cevap olursa ipucu verilecek.</div>
-        <div class="q-progress" id="qProgress"></div>
-        <div class="q-card">
-          <div class="q-head"><span id="qCase"></span><span id="qNum"></span></div>
-          <div class="q-text" id="qText"></div>
-          <div class="q-opts" id="qOpts"></div>
-          <div class="q-hint" id="qHint"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3: açıklama -->
-    <div class="stage" id="stageReveal">
-      <div class="game-section">
-        <div class="reveal-title">Zeynep Gerçekten <span>Kim?</span></div>
-        <div class="section-sub">Dosyadaki tüm lakaplar yan yana konunca, soruşturma ekibi bambaşka bir şey gördü...</div>
-        <div class="aliases" id="aliases"></div>
-        <div class="equation" id="equation">
-          Hırsız + Spastik + Çakma Gotik + Lolcu + Doymayan + Midesiz + Yürüyemeyen + Uzaylı + Abi + Sevimli<br>
-          = <b>Zeynep</b><br>
-          Yani tek bir insanda on ayrı güzellik. Bu bir suç dosyası değilmiş; bir teşekkür dosyasıymış. 💛
-        </div>
-        <div class="letter" id="letter">
-          <div class="letter-body" id="letterBody"></div>
-          <div class="letter-sign" id="letterSign"></div>
-        </div>
-        <div class="closed-stamp" id="closedStamp">DOSYA KAPANDI ✓</div>
-        <div class="end-btns" id="endBtns">
-          <a class="btn btn-gold" href="index.html">🗂 Dosyalara Dön</a>
-          <button class="btn btn-dark" id="replayBtn">💌 Mektubu Tekrar Oku</button>
-        </div>
-      </div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="section-label">🔐 Adım 1 · Ana Şifre</div>
+  <div class="card stage on" id="sCode">
+    <div class="dial" id="dial">🔒</div>
+    <div class="st-title">Kasayı aç</div>
+    <p class="st-sub">Her vakadan aldığın kodu sırasıyla gir. 10 kod birleşince kasa açılır.</p>
+    <div class="vault" id="vault"></div>
+    <div class="btn-row"><button class="btn ghost small" id="fillBtn">📒 Defterden doldur</button><button class="btn gold" id="checkBtn">🔓 Kasayı Aç</button></div>
+    <div class="status" id="codeStatus"></div>
+  </div>
+  <div class="card stage" id="sQuiz">
+    <div class="st-title">🕵️ Son Sorgu</div>
+    <p class="st-sub">Dosyayı sadece kanıtları gerçekten okuyan biri görebilir. Her vakadan bir soru — hatasız bitirirsen 3 yıldız!</p>
+    <div class="qprog" id="qprog"></div>
+    <div class="qcard"><div class="qhead"><span id="qcase"></span><span id="qnum"></span></div><div class="qtext" id="qtext"></div><div id="qopts"></div><div class="qhint" id="qhint"></div></div>
+  </div>
+  <div class="stage" id="sReveal">
+    <div class="card">
+      <div class="reveal-h">Zeynep Gerçekten <em>Kim?</em></div>
+      <p class="st-sub">Tüm lakaplar yan yana konunca soruşturma ekibi bambaşka bir şey gördü...</p>
+      <div class="aliases" id="aliases"></div>
+      <div class="eq" id="eq">Hırsız + Spastik + Çakma Gotik + Lolcu + Doymayan + Midesiz + Yürüyemeyen + Uzaylı + Abi + Sevimli<br>= <b>Zeynep</b><br>Tek bir insanda on ayrı güzellik. Bu bir suç dosyası değilmiş; bir teşekkür dosyasıymış. 💛</div>
+      <div class="letter" id="letter"><div class="letter-body" id="lbody"></div><div class="letter-sign" id="lsign"></div></div>
+      <div class="closed" id="closed">DOSYA KAPANDI ✓</div>
+      <div class="btn-row end" id="end"><a class="btn cool" href="index.html">🗺 Haritaya Dön</a><button class="btn ghost" id="replay">💌 Tekrar oku</button></div>
+      <div class="secret-tease" id="tease" style="display:none"></div>
     </div>
   </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
@@ -161,190 +103,121 @@ Bir kedi, bir köpek, bir uzaylı, bir abi... ve hepsinden önce, hayatımızda 
 İyi ki varsın. 💛`;
 const SIGN = '— Dosyayı hazırlayan, en sadık dedektifin 🐾';
 
-const TRUE_NAMES = [
-  'Gülümsemeleri çalıp yerine huzur bırakan',
-  'Herkesin gününü kurtaran bulaşıcı enerji',
-  'Kıştan kışa gotik, her mevsim rengârenk',
-  'Gecenin 3\'ünde bile sadık, bitmeyen neşe',
-  'Hayattan tat almayı en iyi bilen',
-  '"Bir şey olmaz ya" cesareti',
-  'Düşse bile ilk gülen',
-  'Farklı olmaktan korkmayan, herkesi seven',
-  'Pati kadar yumuşak, kaya kadar sağlam',
-  'Ölçülemeyecek kadar sevimli',
-];
-const COLORS = ['#e63946','#8a8a5c','#2c2440','#457b9d','#d4a017','#b5716a','#588157','#7b5ea7','#b5252c','#ff6fa5'];
-
+const TRUE = ['Gülümsemeleri çalıp yerine huzur bırakan', 'Herkesin gününü kurtaran bulaşıcı enerji', 'Kıştan kışa gotik, her mevsim rengârenk', 'Gecenin 3\'ünde bile sadık, bitmeyen neşe', 'Hayattan tat almayı en iyi bilen', '"Bir şey olmaz ya" cesareti', 'Düşse bile ilk gülen', 'Farklı olmaktan korkmayan, herkesi seven', 'Pati kadar yumuşak, kaya kadar sağlam', 'Ölçülemeyecek kadar sevimli'];
 const QUIZ = [
-  { c: 1, q: 'Hırsız Kedi ortamlardan aslında neyi çalıyor?', a: ['İnsanların gülümsemesini', 'Kolyeleri ve parayı', 'Herkesin patateslerini'], hint: 'Tanıklar "kalbim eksik döndü" diyordu...' },
-  { c: 2, q: 'Spastik zanlı salıncakta sallanırken ne yapıyor?', a: ['Kafasında koca bir dünya kurup overthink ediyor', 'Uyuyakalıyor', 'Opera söylüyor'], hint: 'Vücut sakin, kafa 200 km hızla...' },
-  { c: 3, q: 'Çakma Gotik\'in üzerinde gerçekten gotik olan tek şey ne?', a: ['Siyah oje', 'Siyah botlar', 'Siyah ruj'], hint: '"Gotik olan sadece on tırnak."' },
-  { c: 4, q: 'Lolcu Köpek kimliği en çok ne zaman ortaya çıkıyor?', a: ['Gecenin 3\'ünde', 'Sabah 7\'de', 'Öğle arasında'], hint: 'Herkes uyurken o hâlâ nöbette.' },
-  { c: 5, q: 'Doymayan\'ın "tam kapasite mutluluk" üçlüsü hangisi?', a: ['Popeyes + çiğköfte + beyaz Monster', 'Pizza + kola + dondurma', 'Salata + su + yoğurt'], hint: 'Labirentte topladıklarını hatırla 🍗🥤🌯' },
-  { c: 6, q: 'Midesiz zanlının tek düşmanı ne?', a: ['Diyet salatası', 'Acı biber', 'Soğuk pizza'], hint: 'Oyunda can götüren şey 🥗' },
-  { c: 7, q: 'Düz kaldırımda tökezleyince zanlının ifadesi neydi?', a: ['"Yer beni itti."', '"Ayakkabım kaydı."', '"Bilerek yaptım."'], hint: 'Suç her zaman yerde.' },
-  { c: 8, q: 'Uzaylı Kedi\'ye Dünya\'da ne verildi?', a: ['Kalıcı oturma izni', 'Sınır dışı kararı', '3 günlük turist vizesi'], hint: 'Tehdit değil, kazanç olduğu anlaşıldı.' },
-  { c: 9, q: 'Pisicik Abi, bir arkadaşı üzülünce ne der?', a: ['"Adını ver, gerisini ben hallederim."', '"Takma, geçer."', '"Bana ne."'], hint: 'İçerideki koca abi konuşuyor 😼' },
-  { c: 10, q: 'Önceki dokuz dosyadaki tüm "suçların" ortak sebebi ne çıktı?', a: ['Zanlının fazlasıyla sevimli olması', 'Uykusuzluk', 'Kötü şans'], hint: 'Ölçüm cihazları bu yüzden bozuldu 😻' },
+  { c: 1, q: 'Hırsız Kedi ortamlardan aslında neyi çalıyor?', a: ['İnsanların gülümsemesini', 'Kolyeleri ve parayı', 'Herkesin patateslerini'], h: 'Tanıklar "kalbim eksik döndü" diyordu...' },
+  { c: 2, q: 'Spastik zanlı salıncakta sallanırken ne yapıyor?', a: ['Kafasında koca bir dünya kurup overthink ediyor', 'Uyuyakalıyor', 'Opera söylüyor'], h: 'Vücut sakin, kafa 200 km hızla...' },
+  { c: 3, q: 'Çakma Gotik\'in üzerinde gerçekten gotik olan tek şey ne?', a: ['Siyah oje', 'Siyah botlar', 'Siyah ruj'], h: '"Gotik olan sadece on tırnak."' },
+  { c: 4, q: 'Lolcu Köpek kimliği en çok ne zaman ortaya çıkıyor?', a: ['Gecenin 3\'ünde', 'Sabah 7\'de', 'Öğle arasında'], h: 'Herkes uyurken o hâlâ nöbette.' },
+  { c: 5, q: 'Doymayan\'ın "tam kapasite mutluluk" üçlüsü hangisi?', a: ['Popeyes + çiğköfte + beyaz Monster', 'Pizza + kola + dondurma', 'Salata + su + yoğurt'], h: 'Labirentte topladıklarını hatırla 🍗🥤🌯' },
+  { c: 6, q: 'Midesiz zanlının tek düşmanı ne?', a: ['Diyet salatası', 'Acı biber', 'Soğuk pizza'], h: 'Oyunda can götüren şey 🥗' },
+  { c: 7, q: 'Düz kaldırımda tökezleyince zanlının ifadesi neydi?', a: ['"Yer beni itti."', '"Ayakkabım kaydı."', '"Bilerek yaptım."'], h: 'Suç her zaman yerde.' },
+  { c: 8, q: 'Uzaylı Kedi\'ye Dünya\'da ne verildi?', a: ['Kalıcı oturma izni', 'Sınır dışı kararı', '3 günlük turist vizesi'], h: 'Tehdit değil, kazanç olduğu anlaşıldı.' },
+  { c: 9, q: 'Pisicik Abi, bir arkadaşı üzülünce ne der?', a: ['"Adını ver, gerisini ben hallederim."', '"Takma, geçer."', '"Bana ne."'], h: 'İçerideki koca abi konuşuyor 😼' },
+  { c: 10, q: 'Önceki dokuz dosyadaki tüm "suçların" ortak sebebi ne çıktı?', a: ['Zanlının fazlasıyla sevimli olması', 'Uykusuzluk', 'Kötü şans'], h: 'Ölçüm cihazları bu yüzden bozuldu 😻' },
 ];
+const $ = ZY.$;
+function go(id) { ['sCode', 'sQuiz', 'sReveal'].forEach(s => $('#' + s).classList.toggle('on', s === id)); $('#' + id).scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
-const $ = id => document.getElementById(id);
-function go(stage) {
-  ['stageCode', 'stageQuiz', 'stageReveal'].forEach(s => $(s).classList.toggle('on', s === stage));
-  window.scrollTo({ top: $(stage).getBoundingClientRect().top + window.scrollY - 40, behavior: 'smooth' });
-}
-
-// ---- 1: şifre ----
-const codeCases = ZY.CASES.slice(0, 10);
-const inputs = codeCases.map((c, i) => {
-  const cell = document.createElement('div');
-  cell.className = 'code-cell';
-  cell.innerHTML = '<label>' + c.emoji + ' ' + c.n + '</label><input inputmode="numeric" maxlength="2" autocomplete="off" aria-label="' + c.n + '. vaka kodu">';
-  $('codeGrid').appendChild(cell);
-  const inp = cell.querySelector('input');
-  inp.addEventListener('input', () => {
-    inp.value = inp.value.replace(/\D/g, '').slice(0, 2);
-    inp.classList.remove('bad', 'good');
-    if (inp.value.length === 2 && i < 9) codeCasesInputs()[i + 1].focus();
+let inputs = [], qi = 0, wrong = 0;
+function init() {
+  const v = $('#vault');
+  inputs = ZY.MAIN.map((c, i) => {
+    const d = document.createElement('div'); d.className = 'vc';
+    d.innerHTML = '<label>' + c.emoji + ' ' + c.n + '</label><input inputmode="numeric" maxlength="2" autocomplete="off" aria-label="' + c.n + '. vaka kodu">';
+    v.appendChild(d);
+    const inp = d.querySelector('input');
+    inp.oninput = () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 2); inp.classList.remove('good', 'bad'); if (inp.value.length === 2 && inputs[i + 1]) inputs[i + 1].focus(); };
+    inp.onkeydown = e => { if (e.key === 'Backspace' && !inp.value && i) inputs[i - 1].focus(); if (e.key === 'Enter') check(); };
+    return inp;
   });
-  inp.addEventListener('keydown', e => {
-    if (e.key === 'Backspace' && !inp.value && i > 0) codeCasesInputs()[i - 1].focus();
-    if (e.key === 'Enter') check();
-  });
-  return inp;
-});
-function codeCasesInputs() { return inputs; }
-
-$('fillBtn').addEventListener('click', () => {
-  let n = 0;
-  codeCases.forEach((c, i) => { if (ZY.isSolved(c.n)) { inputs[i].value = c.code; n++; } });
-  $('codeStatus').textContent = n === 10 ? '📒 Defterde 10 kodun hepsi var!' : '📒 Defterde ' + n + ' kod bulundu. Eksikleri kendin gir.';
-});
-
-function check() {
-  let ok = true;
-  codeCases.forEach((c, i) => {
-    const good = inputs[i].value === c.code;
-    inputs[i].classList.toggle('good', good);
-    inputs[i].classList.toggle('bad', !good);
-    if (!good) ok = false;
-  });
-  if (ok) {
-    ZY.beep(520, 0.12); setTimeout(() => ZY.beep(780, 0.12), 120); setTimeout(() => ZY.beep(1040, 0.3), 240);
-    $('codeStatus').textContent = '🔓 Şifre doğru: ' + ZY.FULL_CODE;
-    ZY.confetti(['🔓','✨','🗝️']);
-    setTimeout(() => { go('stageQuiz'); showQ(); }, 1100);
-  } else {
-    ZY.beep(150, 0.3, 'square');
-    ZY.shake($('codeGrid'));
-    const bad = codeCases.filter((c, i) => inputs[i].value !== c.code).map(c => c.n);
-    $('codeStatus').textContent = '❌ Şifre hatalı. Kırmızı kutuları kontrol et (vaka: ' + bad.join(', ') + ').';
+  $('#fillBtn').onclick = () => {
+    let n = 0; ZY.MAIN.forEach((c, i) => { if (ZY.isSolved(c.n)) { inputs[i].value = c.code; n++; } });
+    $('#codeStatus').className = 'status'; $('#codeStatus').textContent = n === 10 ? '📒 Defterde 10 kodun hepsi var!' : '📒 Defterde ' + n + ' kod bulundu, eksikleri kendin gir.';
+    ZY.sfx.tap();
+  };
+  $('#checkBtn').onclick = check;
+  QUIZ.forEach(() => $('#qprog').appendChild(document.createElement('i')));
+  $('#replay').onclick = typeLetter;
+  if (ZY.isSolved(11)) {
+    $('#codeStatus').textContent = '✅ Bu dosyayı daha önce çözdün.';
+    const b = document.createElement('button'); b.className = 'btn cool small'; b.textContent = '💌 Doğrudan sona git';
+    b.onclick = () => { go('sReveal'); reveal(); }; $('#sCode .btn-row').appendChild(b);
   }
 }
-$('checkBtn').addEventListener('click', check);
-
-// ---- 2: sorgu ----
-let qi = 0;
-QUIZ.forEach(() => $('qProgress').appendChild(document.createElement('i')));
+function check() {
+  let ok = true;
+  ZY.MAIN.forEach((c, i) => { const g = inputs[i].value === c.code; inputs[i].classList.toggle('good', g); inputs[i].classList.toggle('bad', !g); if (!g) ok = false; });
+  const st = $('#codeStatus');
+  if (!ok) {
+    ZY.sfx.bad(); ZY.shake($('#vault'));
+    st.className = 'status bad'; st.textContent = '❌ Şifre hatalı. Kırmızı kutuları kontrol et.'; return;
+  }
+  $('#dial').classList.add('open'); $('#dial').textContent = '🔓'; ZY.sfx.win(); ZY.burstAt($('#dial'), { count: 40 });
+  st.className = 'status good'; st.textContent = '🔓 ' + ZY.FULL_CODE;
+  setTimeout(() => { go('sQuiz'); qi = 0; wrong = 0; showQ(); }, 1300);
+}
 function showQ() {
   const q = QUIZ[qi];
-  [...$('qProgress').children].forEach((d, i) => d.classList.toggle('on', i < qi));
-  $('qCase').textContent = 'VAKA ' + q.c + ' · ' + ZY.CASES[q.c - 1].alias.toUpperCase();
-  $('qNum').textContent = (qi + 1) + ' / ' + QUIZ.length;
-  $('qText').textContent = q.q;
-  $('qHint').textContent = '';
-  $('qOpts').innerHTML = '';
-  ZY.shuffle(q.a.map((t, i) => ({ t, ok: i === 0 }))).forEach(o => {
-    const b = document.createElement('button');
-    b.className = 'q-opt'; b.textContent = o.t;
-    b.onclick = () => answer(o, b);
-    $('qOpts').appendChild(b);
+  [...$('#qprog').children].forEach((d, i) => d.classList.toggle('on', i < qi));
+  $('#qcase').textContent = 'VAKA ' + q.c + ' · ' + ZY.CASES[q.c - 1].alias.toUpperCase(); $('#qnum').textContent = (qi + 1) + '/' + QUIZ.length;
+  $('#qtext').textContent = q.q; $('#qhint').textContent = ''; $('#qopts').innerHTML = '';
+  ZY.shuffle(q.a.map((t, i) => ({ t, ok: !i }))).forEach((o, k) => {
+    const b = document.createElement('button'); b.className = 'qopt'; b.style.animationDelay = (k * .06) + 's'; b.textContent = o.t;
+    b.onclick = () => answer(o, b); $('#qopts').appendChild(b);
   });
 }
 function answer(o, b) {
-  if (o.ok) {
-    b.classList.add('right');
-    $('qOpts').querySelectorAll('button').forEach(x => x.disabled = true);
-    ZY.beep(800, 0.1);
-    $('qHint').style.color = 'var(--pin-green)';
-    $('qHint').textContent = '✅ Doğru!';
-    setTimeout(() => {
-      qi++;
-      if (qi >= QUIZ.length) {
-        [...$('qProgress').children].forEach(d => d.classList.add('on'));
-        go('stageReveal'); reveal();
-      } else showQ();
-    }, 750);
-  } else {
-    b.classList.add('wrong'); b.disabled = true;
-    ZY.beep(160, 0.2, 'square'); ZY.shake(b);
-    $('qHint').style.color = 'var(--pin-red)';
-    $('qHint').textContent = '🔍 İpucu: ' + QUIZ[qi].hint;
-  }
+  const h = $('#qhint');
+  if (!o.ok) { wrong++; b.classList.add('wrong'); b.disabled = true; ZY.sfx.bad(); ZY.shake(b); h.style.color = 'var(--red)'; h.textContent = '🔍 İpucu: ' + QUIZ[qi].h; return; }
+  b.classList.add('right'); $('#qopts').querySelectorAll('button').forEach(x => x.disabled = true); ZY.sfx.good(); ZY.burstAt(b, { count: 10, colors: ['#a6ff4d', '#fff'] });
+  h.style.color = 'var(--lime)'; h.textContent = '✓ Doğru!';
+  setTimeout(() => { qi++; if (qi < QUIZ.length) return showQ(); [...$('#qprog').children].forEach(d => d.classList.add('on')); go('sReveal'); reveal(); }, 750);
 }
-
-// ---- 3: büyük açıklama ----
-const wait = ms => new Promise(r => setTimeout(r, ms));
 let revealed = false;
 async function reveal() {
   if (revealed) return; revealed = true;
+  const first = !ZY.isSolved(11);
   ZY.markSolved(11);
-  const box = $('aliases');
-  box.innerHTML = '';
-  const els = codeCases.map((c, i) => {
-    const d = document.createElement('div');
-    d.className = 'alias';
-    d.style.setProperty('--r', ((i % 2 ? 1 : -1) * (1 + Math.random() * 2)).toFixed(1) + 'deg');
-    d.style.setProperty('--c', COLORS[i]);
-    d.innerHTML = '<div class="e">' + c.emoji + '</div><div class="crossed">"' + c.alias + '"</div><div class="n">Vaka ' + c.n + '</div><div class="m">' + TRUE_NAMES[i] + '</div>';
-    box.appendChild(d);
-    return d;
+  if (QUIZ.length && qi >= QUIZ.length) ZY.setStars(11, wrong === 0 ? 3 : wrong <= 2 ? 2 : 1);
+  const box = $('#aliases'); box.innerHTML = '';
+  const els = ZY.MAIN.map((c, i) => {
+    const d = document.createElement('div'); d.className = 'alias';
+    d.style.setProperty('--r', ((i % 2 ? 1 : -1) * (1 + Math.random() * 2)).toFixed(1) + 'deg'); d.style.setProperty('--g', c.grad);
+    d.innerHTML = '<div class="e">' + c.emoji + '</div><div class="x">"' + c.alias + '"</div><div class="m">' + TRUE[i] + '</div>';
+    box.appendChild(d); return d;
   });
-  await wait(500);
-  for (const d of els) { d.classList.add('on'); ZY.beep(500 + Math.random() * 400, 0.06); await wait(320); }
-  await wait(400);
-  $('equation').classList.add('on');
-  await wait(1400);
-  $('letter').classList.add('on');
-  await wait(500);
+  await ZY.wait(500);
+  for (const d of els) { d.classList.add('on'); ZY.beep(500 + Math.random() * 500, .06, 'triangle', .08); await ZY.wait(300); }
+  await ZY.wait(300); $('#eq').classList.add('on'); await ZY.wait(1300);
+  $('#letter').classList.add('on'); await ZY.wait(400);
   await typeLetter();
+  if (first) ZY.toast('⭐ Son sorgu: ' + ZY.stars(11) + ' yıldız');
 }
-
 async function typeLetter() {
-  const body = $('letterBody');
-  body.textContent = '';
-  $('letterSign').classList.remove('on');
-  $('closedStamp').classList.remove('on');
-  $('endBtns').classList.remove('on');
-  let skip = false;
-  const skipper = () => { skip = true; };
-  $('letter').addEventListener('click', skipper, { once: true });
+  const body = $('#lbody'); body.textContent = '';
+  ['#lsign', '#closed', '#end'].forEach(s => $(s).classList.remove('on'));
+  let skip = false; $('#letter').addEventListener('click', () => skip = true, { once: true });
   for (let i = 0; i < LETTER.length; i++) {
     if (skip) { body.textContent = LETTER; break; }
     body.textContent += LETTER[i];
-    const ch = LETTER[i];
-    await wait(ch === '\n' ? 180 : '.,?!'.includes(ch) ? 120 : 24);
+    await ZY.wait(LETTER[i] === '\n' ? 170 : '.,?!'.includes(LETTER[i]) ? 110 : 22);
   }
-  $('letterSign').textContent = SIGN;
-  $('letterSign').classList.add('on');
-  await wait(700);
-  $('closedStamp').classList.add('on');
-  ZY.beep(220, 0.25, 'triangle');
-  ZY.confetti(['💛','🐾','✨','😻','🎉','👽','🐶','🌯'], 40);
-  await wait(600);
-  $('endBtns').classList.add('on');
+  $('#lsign').textContent = SIGN; $('#lsign').classList.add('on'); await ZY.wait(600);
+  $('#closed').classList.add('on'); ZY.beep(220, .3, 'triangle'); ZY.buzz(80); ZY.confetti(160); await ZY.wait(500);
+  $('#end').classList.add('on');
+  const t = $('#tease'), total = ZY.totalStars();
+  t.style.display = 'block';
+  t.innerHTML = total >= ZY.STARS_NEEDED
+    ? '🌌 <b>Gizli dosya açıldı!</b><br><a class="btn cool small" style="margin-top:10px" href="vaka12.html">12. Vakaya git →</a>'
+    : '🌌 <b>Psst...</b> Bir dosya daha var. İlk 10 vakadan <b>' + ZY.STARS_NEEDED + ' yıldızın hepsini</b> toplarsan gizli 12. dosya açılır. Şu an: <b>' + total + ' / ' + ZY.STARS_NEEDED + ' ⭐</b>';
 }
-$('replayBtn').addEventListener('click', () => { typeLetter(); });
 
-ZY.page(11);
-if (ZY.isSolved(11)) {
-  // daha önce bitirildiyse doğrudan sona geç
-  $('codeStatus').textContent = '✅ Bu dosyayı daha önce çözdün.';
-  const skip = document.createElement('button');
-  skip.className = 'btn btn-dark'; skip.textContent = '💌 Doğrudan sona git';
-  skip.onclick = () => { go('stageReveal'); reveal(); };
-  document.querySelector('#stageCode .row-btns').appendChild(skip);
-}
+ZY.page(11, {
+  stamp: 'ÇOK GİZLİ',
+  intro: 'On dosya, on lakap, on kod. Hepsi aynı soruya çıkıyor: Zeynep gerçekten kim? Cevap bu dosyada — ama önce şifreyi çözmen ve son sorgudan geçmen gerekiyor.',
+  init,
+});
 </script>
 </body>
 </html>

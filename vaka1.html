@@ -2,184 +2,131 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 1 · Hırsız Kedi — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.play-area { height: 240px; }
-.fleeing-cat {
-  position: absolute; font-size: 2rem; background: none; border: none; cursor: pointer; line-height: 1;
-  padding: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); animation: pop-in 0.15s ease;
+.roof { height: 320px; }
+.roof .moon { position: absolute; top: 16px; right: 22px; width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff8d6, #ffd23f); box-shadow: 0 0 40px rgba(255,210,63,0.6); }
+.roof .skyline { position: absolute; left: 0; right: 0; bottom: 0; height: 70px; background:
+  linear-gradient(#0c0726, #0c0726) 0 30px / 18% 100% no-repeat, linear-gradient(#0c0726, #0c0726) 20% 10px / 14% 100% no-repeat,
+  linear-gradient(#0c0726, #0c0726) 38% 40px / 20% 100% no-repeat, linear-gradient(#0c0726, #0c0726) 62% 0 / 12% 100% no-repeat,
+  linear-gradient(#0c0726, #0c0726) 78% 26px / 24% 100% no-repeat; opacity: 0.9; }
+.target {
+  position: absolute; width: 62px; height: 62px; margin: -31px 0 0 -31px; border: none; background: none; cursor: pointer; z-index: 3;
+  display: grid; place-items: center; font-size: 2.2rem; animation: popIn 0.22s cubic-bezier(.3,1.7,.6,1);
 }
-.fleeing-cat.bomb { filter: drop-shadow(0 0 8px rgba(230,57,70,0.9)); }
-.fleeing-cat.heart { filter: drop-shadow(0 0 8px rgba(255,200,80,0.9)); }
-.catch-fx { position: absolute; pointer-events: none; font-family: 'Kalam', cursive; font-weight: 700; color: var(--gold); animation: float-up 0.7s ease forwards; }
-@keyframes float-up { to { transform: translateY(-30px); opacity: 0; } }
-@keyframes pop-in { from { transform: scale(0); } to { transform: scale(1); } }
-.timer-bar { height: 6px; background: rgba(0,0,0,0.12); border-radius: 999px; max-width: 480px; margin: 0 auto 10px; overflow: hidden; }
-.timer-bar div { height: 100%; width: 100%; background: linear-gradient(90deg, var(--pin-red), var(--gold)); transition: width 1s linear; }
-@media (max-width: 480px) { .play-area { height: 210px; } }
+.target::before { content: ''; position: absolute; inset: 2px; border-radius: 50%; border: 3px solid var(--ring, var(--cyan)); opacity: 0.9;
+  animation: ring var(--life, 900ms) linear forwards; box-shadow: 0 0 14px var(--ring, var(--cyan)); }
+.target.bomb { --ring: var(--red); } .target.heart { --ring: var(--yellow); }
+.target span { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+@keyframes ring { from { transform: scale(1); } to { transform: scale(0.35); opacity: 0.2; } }
+@keyframes popIn { from { transform: scale(0); } }
+.combo { position: absolute; top: 12px; left: 14px; z-index: 4; font-family: var(--font-head); font-weight: 800; color: var(--yellow); font-size: 1.1rem; opacity: 0; transition: opacity .2s; text-shadow: 0 0 12px rgba(255,210,63,.6); }
+.combo.on { opacity: 1; animation: pulse .3s ease; }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 1</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">GİZLİ</div>
-    <div class="case-number">// DAVRANIŞ KAYDI</div>
-    <div class="cat-photo">🐱</div>
-    <h1>Vaka 1: <em>Hırsız Kedi</em></h1>
-    <p class="intro">Zanlı hakkında bir süredir gelen şikayetleri değerlendirdik. Bulgular aşağıda, dikkatlice incele (son dosyada sorulacak 👀). Kodu almadan önce zanlıyı bizzat yakalaman gerekiyor.</p>
-
-    <div class="evidence-list">
-      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlı, girdiği her ortamdan bir şeyler çalmakla suçlanıyor. Ancak çaldığı şey ne kolye ne de para — sadece insanların gülümsemesi. Tanıklar "yanına gittim, kalbim eksik döndü" diyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Olay yerinde sürekli aynı sahne tekrarlanıyor: biri kötü bir günden bahsediyor, zanlı üç cümle içinde o kişiyi güldürmeyi başarıyor. Bu bir tesadüf değil, bir yetenek.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Çevresindekilerin "iyi ki varsın" cümlesini normalden çok daha sık kurduğu tespit edildi. Bunun sebebi hâlâ araştırılıyor ama ipuçları zanlının kendisine işaret ediyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Arkadaşları arasında "onunla konuşunca içim rahatlıyor" şeklinde tekrar eden ifadeler var. Bu da bir tür hırsızlık sayılır: içindeki huzursuzluğu çalıp yerine iyi bir şey bırakmak.</span></div>
-    </div>
-
-    <div class="verdict"><b>SONUÇ:</b> Zanlı suçlu bulunmuştur. Ama çaldığı her şeyin karşılığında insanlara daha fazlasını bıraktığı görülmüş, bu yüzden dosya "af edilebilir hırsız" kategorisine alınmıştır. 🐾💛</div>
-
-    <div class="game-section">
-      <div class="game-title">🐾 Mini Görev: Hırsız Kediyi Yakala</div>
-      <div class="game-sub">20 saniyede 12 kediye dokun. Arada çalınan bir kalp 💛 çıkarsa yakala, +2 sayılır. Ama bomba 💣 karışıyor — ona basarsan oyun biter!</div>
-      <div id="gameArea">
-        <div class="game-meta">
-          <span>⏱ <b id="timeLeft">20</b>s</span>
-          <span>🐱 <b id="caughtCount">0</b> / 12</span>
-        </div>
-        <div class="timer-bar"><div id="timerFill"></div></div>
-        <div class="night-box play-area" id="playArea">
-          <div class="hint-text" id="hintText">Başlamak için aşağıdaki düğmeye bas 👇</div>
-        </div>
-        <button class="btn btn-gold start-btn" id="startBtn">🐾 Yakalamaya Başla</button>
-        <div class="game-status" id="gameStatus"></div>
-      </div>
-      <div class="game-win" id="gameWin"></div>
-    </div>
-
-    <div id="codeBox"></div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="hud">
+    <span class="pill">⏱ <b id="time">20</b>s</span>
+    <span class="pill">🐱 <b id="score">0</b>/12</span>
   </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+  <div class="bar"><div id="timeBar" style="width:100%"></div></div>
+  <div class="arena roof" id="arena">
+    <div class="moon"></div><div class="skyline"></div><div class="combo" id="combo"></div>
+  </div>
+  <button class="btn" id="startBtn">🐾 Yakalamaya Başla</button>
+  <div class="status" id="status"></div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
-const TARGET = 12, GAME_SECONDS = 20;
-let caught = 0, timeLeft = GAME_SECONDS, timerId = null, spawnId = null, gameActive = false;
+const TARGET = 12, SECONDS = 20, CATS = ['🐱','🐈','😼','🙀','🐈‍⬛'];
+let arena, timeEl, scoreEl, bar, startBtn, statusEl, comboEl;
+let running = false, score = 0, left = SECONDS, tick = null, spawnT = null, combo = 0, lastHit = 0;
 
-const playArea = document.getElementById('playArea');
-const hintText = document.getElementById('hintText');
-const startBtn = document.getElementById('startBtn');
-const timeLeftEl = document.getElementById('timeLeft');
-const caughtCountEl = document.getElementById('caughtCount');
-const gameStatus = document.getElementById('gameStatus');
-const timerFill = document.getElementById('timerFill');
-const catEmojis = ['🐱','🐈','😼','🙀','🐈‍⬛'];
+function init() {
+  arena = ZY.$('#arena'); timeEl = ZY.$('#time'); scoreEl = ZY.$('#score'); bar = ZY.$('#timeBar');
+  startBtn = ZY.$('#startBtn'); statusEl = ZY.$('#status'); comboEl = ZY.$('#combo');
+  stop(); score = 0; left = SECONDS; hud();
+  ZY.arenaMsg(arena, '😼', 'Hırsız kedi çatılarda!', 'Kedilere dokun, 💣 bombalardan uzak dur');
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🐾 Yakalamaya Başla';
+  startBtn.onclick = start; statusEl.textContent = '';
+}
+function hud() { timeEl.textContent = left; scoreEl.textContent = Math.min(score, TARGET); bar.style.width = (left / SECONDS * 100) + '%'; }
+function stop() { running = false; clearInterval(tick); clearTimeout(spawnT); arena && arena.querySelectorAll('.target').forEach(t => t.remove()); }
 
-function resetUI(msg, btnText) {
-  playArea.querySelectorAll('.fleeing-cat').forEach(el => el.remove());
-  startBtn.disabled = false;
-  startBtn.textContent = btnText;
-  hintText.style.display = 'flex';
-  hintText.textContent = msg;
+async function start() {
+  startBtn.disabled = true; ZY.arenaMsg(arena);
+  score = 0; left = SECONDS; combo = 0; hud();
+  await ZY.countdown(arena);
+  running = true; startBtn.style.display = 'none';
+  tick = setInterval(() => { left--; hud(); if (left <= 3 && left > 0) ZY.sfx.tick(); if (left <= 0) lose('⌛', 'Süre bitti, zanlı kaçtı!', score + '/' + TARGET + ' kedi yakaladın'); }, 1000);
+  spawn();
 }
 
-function stopTimers() { gameActive = false; clearInterval(timerId); clearTimeout(spawnId); }
-
-function startGame() {
-  if (gameActive) return;
-  gameActive = true;
-  caught = 0; timeLeft = GAME_SECONDS;
-  caughtCountEl.textContent = caught;
-  timeLeftEl.textContent = timeLeft;
-  timerFill.style.width = '100%';
-  gameStatus.textContent = '';
-  hintText.style.display = 'none';
-  startBtn.disabled = true;
-  timerId = setInterval(() => {
-    timeLeft--;
-    timeLeftEl.textContent = timeLeft;
-    timerFill.style.width = (timeLeft / GAME_SECONDS * 100) + '%';
-    if (timeLeft <= 0) endGame(caught >= TARGET);
-  }, 1000);
-  spawnLoop();
-}
-
-function spawnLoop() {
-  if (!gameActive) return;
-  spawnCat();
-  // zaman azaldıkça kediler hızlanıyor
-  const speed = 650 + (timeLeft / GAME_SECONDS) * 350;
-  spawnId = setTimeout(spawnLoop, speed);
-}
-
-function spawnCat() {
-  const size = 48;
-  const x = Math.random() * (playArea.clientWidth - size);
-  const y = Math.random() * (playArea.clientHeight - size);
-  const r = Math.random();
-  const type = r < 0.2 ? 'bomb' : r < 0.28 ? 'heart' : 'cat';
-  const cat = document.createElement('button');
-  cat.className = 'fleeing-cat ' + type;
-  cat.textContent = type === 'bomb' ? '💣' : type === 'heart' ? '💛' : catEmojis[Math.floor(Math.random() * catEmojis.length)];
-  cat.style.left = x + 'px';
-  cat.style.top = y + 'px';
-  const life = type === 'bomb' ? 1300 : 700 + (timeLeft / GAME_SECONDS) * 300;
-  const escapeTimer = setTimeout(() => cat.remove(), life);
-  cat.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    if (!gameActive) return;
-    clearTimeout(escapeTimer);
-    cat.remove();
-    if (type === 'bomb') return gameOverByBomb();
-    const pts = type === 'heart' ? 2 : 1;
-    caught += pts;
-    caughtCountEl.textContent = Math.min(caught, TARGET);
-    fx(x, y, '+' + pts);
-    ZY.beep(type === 'heart' ? 880 : 600, 0.08);
-    if (caught >= TARGET) endGame(true);
+function spawn() {
+  if (!running) return;
+  const r = Math.random(), type = r < 0.2 ? 'bomb' : r < 0.28 ? 'heart' : 'cat';
+  const life = type === 'bomb' ? 1400 : Math.round(650 + (left / SECONDS) * 350);
+  const t = document.createElement('button');
+  t.className = 'target ' + type;
+  t.style.setProperty('--life', life + 'ms');
+  t.innerHTML = '<span>' + (type === 'bomb' ? '💣' : type === 'heart' ? '💛' : CATS[Math.floor(Math.random() * CATS.length)]) + '</span>';
+  const W = arena.clientWidth, H = arena.clientHeight - 60;
+  const x = 36 + Math.random() * (W - 72), y = 40 + Math.random() * (H - 50);
+  t.style.left = x + 'px'; t.style.top = y + 'px';
+  const gone = setTimeout(() => { t.remove(); if (type !== 'bomb') combo = 0; }, life);
+  t.addEventListener('pointerdown', e => {
+    e.preventDefault(); if (!running) return;
+    clearTimeout(gone); t.remove();
+    const rect = arena.getBoundingClientRect();
+    if (type === 'bomb') {
+      ZY.burst(rect.left + x, rect.top + y, { colors: ['#ff4d5e', '#ff8a3d', '#ffd23f', '#333'], count: 40, speed: 8 });
+      ZY.sfx.bad(); ZY.buzz(200); ZY.shake(arena);
+      return lose('💥', 'BOOM! Bombaya bastın.', 'Baştan başla');
+    }
+    const now = performance.now(); combo = now - lastHit < 900 ? combo + 1 : 1; lastHit = now;
+    const pts = type === 'heart' ? 2 : 1; score += pts; hud();
+    ZY.burst(rect.left + x, rect.top + y, { colors: type === 'heart' ? ['#ffd23f', '#fff'] : ['#33e1ff', '#ff4d9d', '#fff'], count: 16 });
+    ZY.floatText(arena, x, y, '+' + pts);
+    ZY.beep(520 + combo * 60, 0.08, 'triangle'); ZY.buzz(15);
+    if (combo >= 3) { comboEl.textContent = '🔥 KOMBO x' + combo; comboEl.classList.remove('on'); void comboEl.offsetWidth; comboEl.classList.add('on'); }
+    else comboEl.classList.remove('on');
+    if (score >= TARGET) win();
   });
-  playArea.appendChild(cat);
+  arena.appendChild(t);
+  spawnT = setTimeout(spawn, 560 + (left / SECONDS) * 380);
 }
 
-function fx(x, y, text) {
-  const f = document.createElement('div');
-  f.className = 'catch-fx'; f.textContent = text;
-  f.style.left = (x + 14) + 'px'; f.style.top = y + 'px';
-  playArea.appendChild(f);
-  setTimeout(() => f.remove(), 700);
+function lose(big, text, small) {
+  stop(); comboEl.classList.remove('on');
+  ZY.arenaMsg(arena, big, text, small);
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Dene';
 }
 
-function gameOverByBomb() {
-  stopTimers();
-  ZY.beep(120, 0.4, 'sawtooth');
-  ZY.shake(playArea);
-  gameStatus.textContent = '💥 BOOM! Bombaya bastın, baştan başlıyorsun.';
-  resetUI('Baştan başlamak için düğmeye bas 👇', '🔁 Baştan Başla');
+function win() {
+  const remaining = left; stop(); comboEl.classList.remove('on');
+  ZY.arenaMsg(arena, '😼', 'Yakalandı!', 'Gülümsemeleri iade etmeyi reddediyor');
+  ZY.complete({ stars: remaining >= 8 ? 3 : remaining >= 4 ? 2 : 1, stats: '🐱 12 kedi · ⏱ ' + remaining + ' sn kala', msg: 'Zanlıyı suçüstü yakaladın!' });
 }
 
-function endGame(won) {
-  stopTimers();
-  if (won) {
-    playArea.querySelectorAll('.fleeing-cat').forEach(el => el.remove());
-    hintText.style.display = 'flex';
-    hintText.textContent = '😼 Yakalandı! (Gülümsemeleri iade etmeyi reddediyor.)';
-    startBtn.style.display = 'none';
-    gameStatus.textContent = '';
-    ZY.win(1, '🎉 Zanlıyı yakaladın, kod artık senin!');
-  } else {
-    gameStatus.textContent = 'Süre bitti, zanlı kaçtı! (' + caught + '/' + TARGET + ') Tekrar dene 🐾';
-    resetUI('Tekrar denemek için düğmeye bas 👇', '🔁 Tekrar Dene');
-  }
-}
-
-startBtn.addEventListener('click', startGame);
-ZY.page(1, { init() {
-  stopTimers();
-  startBtn.style.display = '';
-  resetUI('Başlamak için aşağıdaki düğmeye bas 👇', '🐾 Yakalamaya Başla');
-}});
+ZY.onHidden(() => { if (running) lose('⏸', 'Oyun duraklatıldı', 'Tekrar başlat'); });
+ZY.page(1, {
+  intro: 'Zanlı hakkında bir süredir gelen şikayetleri değerlendirdik. Kanıtları dikkatle oku — son dosyada sorulacak. 👀',
+  evidence: [
+    'Zanlı, girdiği her ortamdan bir şeyler çalmakla suçlanıyor. Ancak çaldığı şey ne kolye ne de para — sadece insanların gülümsemesi. Tanıklar "yanına gittim, kalbim eksik döndü" diyor.',
+    'Olay yerinde sürekli aynı sahne tekrarlanıyor: biri kötü bir günden bahsediyor, zanlı üç cümle içinde o kişiyi güldürmeyi başarıyor. Bu bir tesadüf değil, bir yetenek.',
+    'Çevresindekilerin "iyi ki varsın" cümlesini normalden çok daha sık kurduğu tespit edildi. İpuçları zanlının kendisine işaret ediyor.',
+    'Arkadaşları arasında "onunla konuşunca içim rahatlıyor" şeklinde tekrar eden ifadeler var. Bu da bir tür hırsızlık: içindeki huzursuzluğu çalıp yerine iyi bir şey bırakmak.',
+  ],
+  verdict: 'Zanlı suçlu bulunmuştur. Ama çaldığı her şeyin karşılığında daha fazlasını bıraktığı için dosya "af edilebilir hırsız" kategorisine alınmıştır. 🐾💛',
+  mission: { title: '🐾 Hırsız Kediyi Yakala', sub: '20 saniyede 12 kediye dokun. Halka küçülmeden yakala! 💛 kalp +2 sayılır, 💣 bomba oyunu bitirir.', goals: ['Bitir', '4 sn kala', '8 sn kala'] },
+  init,
+});
 </script>
 </body>
 </html>

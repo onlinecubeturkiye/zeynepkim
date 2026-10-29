@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
+<title>Vaka 12 · Gizli Dosya — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.sky { height: 380px; background: radial-gradient(circle at 50% 40%, rgba(155,107,255,.35), transparent 60%), linear-gradient(180deg, #070418, #160c3a); touch-action: manipulation; }
+.sky svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sky line { stroke: #ffd23f; stroke-width: 2.5; stroke-linecap: round; filter: drop-shadow(0 0 6px #ffd23f); stroke-dasharray: 400; stroke-dashoffset: 400; animation: draw .4s ease forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.sky .heart-fill { fill: rgba(255,77,157,.0); transition: fill 1.5s ease; } .sky .heart-fill.on { fill: rgba(255,77,157,.35); filter: drop-shadow(0 0 20px rgba(255,77,157,.9)); }
+.dust { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: .5; animation: tw 3s ease-in-out infinite; }
+@keyframes tw { 50% { opacity: .1; } }
+.star { position: absolute; width: 46px; height: 46px; margin: -23px; border: none; background: none; cursor: pointer; z-index: 3; display: grid; place-items: center; }
+.star::before { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px rgba(51,225,255,.8); transition: transform .2s; }
+.star.next::before { animation: pulse .9s ease infinite; box-shadow: 0 0 14px #fff, 0 0 30px var(--cyan); }
+.star.done::before { background: var(--yellow); box-shadow: 0 0 14px var(--yellow), 0 0 30px rgba(255,210,63,.8); transform: scale(1.2); }
+.star span { position: absolute; top: -2px; left: 32px; font-family: var(--font-mono); font-size: .65rem; color: rgba(255,255,255,.6); }
+.star.done span { color: var(--yellow); }
+.name { position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 1.4rem; opacity: 0; transition: opacity 1s; z-index: 4; text-shadow: 0 0 16px rgba(255,77,157,.9); }
+.name.on { opacity: 1; }
+.fortunes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; perspective: 900px; }
+.fc { aspect-ratio: 1 / 1.05; position: relative; cursor: pointer; }
+.fc .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,1.3,.6,1); }
+.fc.open .in { transform: rotateY(180deg); }
+.fc .f { position: absolute; inset: 0; border-radius: 18px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px; }
+.fc .fr { background: linear-gradient(135deg, #3a2a8a, #1d1350); border: 1px solid rgba(255,210,63,.4); box-shadow: inset 0 0 30px rgba(155,107,255,.4); font-size: 2.2rem; }
+.fc .fr small { font-size: .7rem; font-family: var(--font-mono); color: var(--yellow); margin-top: 6px; letter-spacing: 1px; }
+.fc .bk { transform: rotateY(180deg); background: #fff8ee; color: #2a1a3e; font-size: .85rem; font-weight: 700; line-height: 1.35; }
+.fc .bk b { font-size: 1.7rem; display: block; margin-bottom: 4px; }
+.badge { text-align: center; padding: 18px; }
+.badge .medal { width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; display: grid; place-items: center; font-size: 3.4rem; background: var(--grad-gold); box-shadow: 0 0 40px rgba(255,210,63,.6), inset 0 4px 0 rgba(255,255,255,.5); animation: bob 3s ease-in-out infinite; }
+#afterGame { display: none; } #afterGame.on { display: block; animation: rise .6s ease both; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="hud"><span class="pill">✨ <b id="cnt">0</b>/12</span><span class="pill">❌ <b id="miss">0</b></span></div>
+  <div class="arena sky" id="sky"><svg id="svg"></svg><div class="name" id="name">Takımyıldızı: ZEYNEP 💛</div></div>
+  <div class="status" id="status">1'den başlayarak yıldızları sırayla birleştir</div>
+</template>
+
+<script src="assets/zy11.js"></script>
+<script>
+const FORTUNES = [
+  ['🍗', 'Önümüzdeki 10 yıl içinde Popeyes\'ta adına bir menü çıkacak.'],
+  ['🐈', 'Yolda tanıştığı kedi sayısı rekor kıracak; mahalledeki her kedi onu tanıyacak.'],
+  ['🎮', 'Gecenin 3\'ünde attığı bir pentakill efsane olacak. Komşular yine uyanacak.'],
+  ['🖤', 'Bir kış gerçekten tepeden tırnağa siyah giyinecek. Sonra bahar gelecek ve her şey yine renklenecek.'],
+  ['👽', 'Uzaylılar onu geri çağıracak. "Arkadaşlarım burada" deyip kalacak.'],
+  ['💛', 'En kesin kehanet: Bu dosyayı hazırlayanlar onu hep sevmeye devam edecek.'],
+];
+const N = 12;
+let sky, svg, pts, nextI, miss, done;
+
+function heartPts() {
+  // kalp eğrisini sık örnekle, sonra yay uzunluğuna göre eşit aralıklı 12 nokta seç
+  const f = t => ({ x: 16 * Math.pow(Math.sin(t), 3), y: -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) });
+  const dense = [], M = 600;
+  for (let i = 0; i <= M; i++) dense.push(f(i / M * Math.PI * 2));
+  const cum = [0];
+  for (let i = 1; i <= M; i++) cum.push(cum[i - 1] + Math.hypot(dense[i].x - dense[i - 1].x, dense[i].y - dense[i - 1].y));
+  const total = cum[M], a = [];
+  for (let k = 0; k < N; k++) {
+    const target = k / N * total; let j = 0;
+    while (cum[j] < target) j++;
+    a.push(dense[j]);
+  }
+  return a;
+}
+function init() {
+  sky = ZY.$('#sky'); svg = ZY.$('#svg');
+  for (let i = 0; i < 40; i++) { const d = document.createElement('div'); d.className = 'dust'; d.style.left = Math.random() * 100 + '%'; d.style.top = Math.random() * 100 + '%'; d.style.animationDelay = Math.random() * 3 + 's'; sky.appendChild(d); }
+  const W = sky.clientWidth, H = sky.clientHeight, s = Math.min(W, H) / 40;
+  pts = heartPts().map(p => ({ x: W / 2 + p.x * s, y: H / 2 - 20 + p.y * s }));
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  nextI = 0; miss = 0; done = false;
+  // yıldızları karışık sırayla numarala ki şekil önceden belli olmasın
+  pts.forEach((p, i) => {
+    const b = document.createElement('button'); b.className = 'star' + (i === 0 ? ' next' : '');
+    b.style.left = p.x + 'px'; b.style.top = p.y + 'px'; b.innerHTML = '<span>' + (i + 1) + '</span>';
+    b.onpointerdown = e => { e.preventDefault(); tap(i, b); }; p.el = b; sky.appendChild(b);
+  });
+}
+function line(a, b) { const l = document.createElementNS('http://www.w3.org/2000/svg', 'line'); l.setAttribute('x1', a.x); l.setAttribute('y1', a.y); l.setAttribute('x2', b.x); l.setAttribute('y2', b.y); svg.appendChild(l); }
+function tap(i, b) {
+  if (done) return;
+  if (i !== nextI) { miss++; ZY.$('#miss').textContent = miss; ZY.sfx.bad(); ZY.shake(b); ZY.$('#status').className = 'status bad'; ZY.$('#status').textContent = 'Sıradaki yıldız: ' + (nextI + 1) + ' ✨'; return; }
+  b.classList.remove('next'); b.classList.add('done');
+  if (i > 0) line(pts[i - 1], pts[i]);
+  ZY.beep(440 * Math.pow(2, i / 12), .25, 'sine', .12); ZY.burstAt(b, { count: 8, colors: ['#ffd23f', '#fff'], shape: 'star', speed: 3 }); ZY.buzz(10);
+  nextI++; ZY.$('#cnt').textContent = nextI;
+  ZY.$('#status').className = 'status good'; ZY.$('#status').textContent = ['Bir yıldız...', 'İki yıldız...', 'Bir şekil beliriyor...', '', '', 'Bu bir... ', '', '', 'Neredeyse!', '', 'Son yıldız!', ''][i] || '✨';
+  if (nextI < N) pts[nextI].el.classList.add('next');
+  else finish();
+}
+async function finish() {
+  done = true; line(pts[N - 1], pts[0]);
+  await ZY.wait(400);
+  const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  poly.setAttribute('points', pts.map(p => p.x + ',' + p.y).join(' ')); poly.setAttribute('class', 'heart-fill'); svg.insertBefore(poly, svg.firstChild);
+  requestAnimationFrame(() => poly.classList.add('on'));
+  ZY.$('#name').classList.add('on'); ZY.sfx.win(); ZY.confetti(140);
+  ZY.$('#status').className = 'status good'; ZY.$('#status').textContent = 'Gökyüzündeki en parlak takımyıldızı 💛';
+  ZY.markSolved(12);
+  await ZY.wait(1600);
+  showAfter();
+}
+function showAfter() {
+  const a = ZY.$('#afterGame'); a.classList.add('on');
+  const box = ZY.$('#fortunes'); box.innerHTML = '';
+  FORTUNES.forEach(([e, t], i) => {
+    const c = document.createElement('div'); c.className = 'fc';
+    c.innerHTML = '<div class="in"><div class="f fr">🔮<small>KEHANET ' + (i + 1) + '</small></div><div class="f bk"><b>' + e + '</b>' + t + '</div></div>';
+    c.onclick = () => { if (!c.classList.contains('open')) { c.classList.add('open'); ZY.sfx.good(); ZY.burstAt(c, { count: 12, colors: ['#9b6bff', '#ffd23f', '#fff'] }); } };
+    box.appendChild(c);
+  });
+  setTimeout(() => a.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+}
+
+ZY.page(12, {
+  stamp: 'SADECE 30 ⭐',
+  intro: 'Bu dosyanın varlığını sadece 30 yıldızın hepsini toplayan dedektifler bilir. Tebrikler, sen onlardan birisin. 🌟 Zanlının adı gökyüzüne yazılmış — bul bakalım.',
+  mission: { title: '🌌 Yıldız Haritası', sub: 'Gökyüzündeki 12 yıldızı 1\'den 12\'ye sırayla birleştir. Bakalım hangi takımyıldızı ortaya çıkacak?' },
+  init,
+});
+// oyunun altına kehanetler ve rozet
+ZY.$('#footerNav').insertAdjacentHTML('beforebegin',
+  '<div id="afterGame"><div class="section-label">🔮 Gelecek Raporu</div><p style="color:var(--text-dim);margin:0 4px 12px">Ajansımızın kâhinleri zanlının geleceğine baktı. Kartlara dokun:</p>' +
+  '<div class="fortunes" id="fortunes"></div>' +
+  '<div class="card badge" style="margin-top:16px"><div class="medal">🕵️‍♀️</div><div style="font-family:var(--font-head);font-weight:800;font-size:1.3rem">Altın Dedektif</div>' +
+  '<p style="color:var(--text-dim);margin-top:4px">30 yıldızın hepsini topladın ve gizli dosyayı çözdün. Haritadaki rozetin artık altın! 🏅</p></div></div>');
+if (ZY.isSolved(12)) { ZY.$('#status').textContent = '✅ Bu dosyayı daha önce çözdün. Yine de yıldızları birleştirebilirsin.'; showAfter(); }
+</script>
+</body>
+</html>
