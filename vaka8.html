@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaka 8 · Uzaylı Kedi — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.signal { max-width: 320px; padding: 18px; }
+.signal::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px); background-size: 34px 34px; opacity: 0.25; pointer-events: none; }
+.pads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; }
+.pad {
+  aspect-ratio: 1 / 1; border: none; border-radius: 18px; font-size: 2.6rem; cursor: pointer;
+  opacity: 0.55; transition: opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; touch-action: manipulation;
+}
+.pad[data-i="0"] { background: #6bd66b; } .pad[data-i="1"] { background: #e08bd8; }
+.pad[data-i="2"] { background: #5fb8e8; } .pad[data-i="3"] { background: #f2c94c; }
+.pad.lit { opacity: 1; transform: scale(1.05); box-shadow: 0 0 24px currentColor, 0 0 0 3px #fff; color: #fff; }
+.pad:disabled { cursor: default; }
+.screen { font-family: 'Special Elite', monospace; color: #9effa0; background: #0d1a10; border-radius: 10px; padding: 10px 12px; margin: 0 auto 12px; max-width: 320px; min-height: 44px; font-size: 0.9rem; letter-spacing: 1px; text-align: left; box-shadow: inset 0 0 12px rgba(0,255,100,0.2); }
+.screen .cursor { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.decoded { display: none; font-family: 'Kalam', cursive; font-size: 1.05rem; color: var(--ink); background: rgba(158,255,160,0.18); border: 1.5px dashed var(--pin-green); border-radius: 10px; padding: 10px 14px; max-width: 420px; margin: 10px auto; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 8</div>
+  <div class="file-sheet">
+    <div class="stamp-corner">ÇOK GİZLİ</div>
+    <div class="case-number">// SOSYAL ANOMALİ</div>
+    <div class="cat-photo">👽</div>
+    <h1>Vaka 8: <em>Uzaylı Kedi</em></h1>
+    <p class="intro">Zanlının bu gezegene ait olmadığına dair şüpheler giderek artıyor. Toplanan veriler NASA'ya gönderildi, NASA "bizim bölümümüz değil" diyerek geri yolladı.</p>
+
+    <div class="evidence-list">
+      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlının kendine ait bir dili var. "Miyav", "mrrr" ve henüz hiçbir sözlükte bulunmayan seslerden oluşan bu dil, yalnızca kediler ve en yakın arkadaşları tarafından çözülebiliyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Ortamın en sessiz anında, hiçbir sebep yokken tuhaf bir ses çıkarıp herkesi kahkahaya boğduğu defalarca gözlemlendi. Bu sinyallerin uzaya mı yoksa arkadaş grubuna mı gönderildiği bilinmiyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Dünya'nın sosyal kurallarına uymakta zaman zaman zorlanıyor: herkesin "normal" dediği şeylere "ama neden?" diye soruyor, kimsenin aklına gelmeyen şeyleri ise çok doğal karşılıyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">En büyük anomali şu: bu kadar "uzaylı" olmasına rağmen girdiği her ortamda birkaç dakika içinde herkesle kaynaşıyor. Uzmanlara göre gezegenimizi istila etmek yerine sevmeye karar vermiş.</span></div>
+    </div>
+
+    <div class="verdict"><b>SONUÇ:</b> Zanlının uzaylı olduğu kesinleşmiştir. Ancak Dünya için tehdit değil, tam tersine bir kazanç olduğu anlaşıldığından kendisine "kalıcı oturma izni" verilmiştir. 👽🐱🌍</div>
+
+    <div class="game-section">
+      <div class="game-title">🛸 Mini Görev: Uzaylı Sinyalini Çöz</div>
+      <div class="game-sub">Zanlı uzaydan bir mesaj gönderiyor. Yanan sembolleri izle, sonra aynı sırayla dokun. 6 sinyali çözersen mesaj Türkçeye çevrilecek!</div>
+      <div id="gameArea">
+        <div class="game-meta"><span>📡 Sinyal: <b id="level">0</b> / 6</span></div>
+        <div class="screen" id="screen">&gt; bağlantı bekleniyor<span class="cursor">_</span></div>
+        <div class="night-box signal">
+          <div class="pads" id="pads">
+            <button class="pad" data-i="0" disabled>👽</button>
+            <button class="pad" data-i="1" disabled>🐱</button>
+            <button class="pad" data-i="2" disabled>🛸</button>
+            <button class="pad" data-i="3" disabled>⭐</button>
+          </div>
+        </div>
+        <button class="btn btn-gold start-btn" id="startBtn">📡 Sinyali Al</button>
+        <div class="game-status" id="gameStatus"></div>
+      </div>
+      <div class="decoded" id="decoded"></div>
+      <div class="game-win" id="gameWin"></div>
+    </div>
+
+    <div id="codeBox"></div>
+  </div>
+  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
+</div>
+
+<script src="assets/zy11.js"></script>
+<script>
+const TARGET = 6;
+const TONES = [330, 415, 494, 622];
+const WORDS = ['mrrr', 'miyav', 'bip', 'zıp'];
+const pads = [...document.querySelectorAll('.pad')];
+const screen = document.getElementById('screen');
+const statusEl = document.getElementById('gameStatus');
+const levelEl = document.getElementById('level');
+const startBtn = document.getElementById('startBtn');
+const decoded = document.getElementById('decoded');
+let seq = [], pos = 0, accepting = false, playing = false;
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function say(t) { screen.innerHTML = '&gt; ' + t + '<span class="cursor">_</span>'; }
+function setPads(on) { pads.forEach(p => p.disabled = !on); }
+
+async function flash(i, ms) {
+  pads[i].classList.add('lit');
+  ZY.beep(TONES[i], ms / 1000, 'triangle');
+  await wait(ms);
+  pads[i].classList.remove('lit');
+}
+
+function init() {
+  seq = []; pos = 0; accepting = false; playing = false;
+  levelEl.textContent = 0; setPads(false);
+  say('bağlantı bekleniyor');
+  statusEl.textContent = ''; decoded.style.display = 'none';
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '📡 Sinyali Al';
+}
+
+async function start() {
+  startBtn.disabled = true;
+  seq = []; levelEl.textContent = 0;
+  statusEl.textContent = '';
+  await nextLevel();
+}
+
+async function nextLevel() {
+  seq.push(Math.floor(Math.random() * 4));
+  pos = 0; accepting = false; setPads(false);
+  say('sinyal ' + seq.length + ' geliyor...');
+  await wait(700);
+  const speed = Math.max(300, 560 - seq.length * 40);
+  for (const i of seq) { await flash(i, speed); await wait(140); }
+  say('sıra sende: ' + seq.length + ' sembol');
+  accepting = true; setPads(true);
+}
+
+pads.forEach(p => p.addEventListener('pointerdown', async (e) => {
+  e.preventDefault();
+  if (!accepting) return;
+  const i = +p.dataset.i;
+  flash(i, 220);
+  if (i !== seq[pos]) {
+    accepting = false; setPads(false);
+    ZY.beep(110, 0.4, 'sawtooth');
+    say('HATA: sinyal bozuldu 📵');
+    statusEl.textContent = 'Uzaylı dili zor! Baştan alıyoruz. (' + (seq.length - 1) + '. sinyale kadar geldin)';
+    startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Bağlan';
+    return;
+  }
+  say(seq.slice(0, pos + 1).map(x => WORDS[x]).join(' '));
+  pos++;
+  if (pos === seq.length) {
+    accepting = false; setPads(false);
+    levelEl.textContent = seq.length;
+    if (seq.length >= TARGET) return done();
+    statusEl.textContent = ['Kedi frekansı yakalandı 🐱', 'Sinyal güçleniyor 📶', 'Mrrr onaylandı', 'Neredeyse çözüldü! 🛸', 'Son bir sinyal!'][seq.length - 1] || '';
+    await wait(650);
+    nextLevel();
+  }
+}));
+
+async function done() {
+  say('çeviri yapılıyor...');
+  statusEl.textContent = '';
+  await wait(900);
+  say('ÇEVRİLDİ ✓');
+  decoded.style.display = 'block';
+  decoded.innerHTML = '📨 <b>Çözülen mesaj:</b> "Merhaba Dünyalılar. Ben buraya istila için gelmiştim ama sizi çok sevdim, kalıyorum. Not: Bir de karnım aç." 👽💛';
+  startBtn.style.display = 'none';
+  ZY.win(8, '🎉 Uzaylı sinyalini çözdün, kod artık senin!');
+}
+
+startBtn.addEventListener('click', start);
+ZY.page(8, { init });
+</script>
+</body>
+</html>

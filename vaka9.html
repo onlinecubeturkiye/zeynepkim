@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaka 9 · Pisicik Abi — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.scene { max-width: 460px; margin: 0 auto; text-align: left; }
+.chat { background: linear-gradient(145deg, var(--night-1), var(--night-2)); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: inset 0 0 0 2px var(--gold); min-height: 120px; }
+.msg { background: var(--paper); border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 0.92rem; line-height: 1.45; max-width: 88%; animation: pop 0.3s ease; }
+.msg .who { display: block; font-family: 'Kalam', cursive; font-weight: 700; font-size: 0.8rem; color: var(--stamp); margin-bottom: 2px; }
+.msg.me { margin: 10px 0 0 auto; border-radius: 14px 14px 4px 14px; background: #dff0d8; }
+.msg.me .who { color: var(--pin-green); text-align: right; }
+.options { display: flex; flex-direction: column; gap: 8px; }
+.opt { text-align: left; border: 2px solid rgba(43,32,19,0.2); background: rgba(255,255,255,0.6); border-radius: 12px; padding: 10px 14px; font-size: 0.9rem; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; line-height: 1.4; color: var(--ink); }
+.opt:hover { border-color: var(--gold); }
+.opt.wrong { border-color: var(--pin-red); background: rgba(230,57,70,0.1); }
+.opt:disabled { cursor: default; }
+.meter { display: flex; align-items: center; gap: 8px; max-width: 460px; margin: 0 auto 12px; font-family: 'Kalam', cursive; font-weight: 700; font-size: 0.85rem; }
+.meter .bar { flex: 1; height: 10px; background: rgba(0,0,0,0.1); border-radius: 999px; overflow: hidden; }
+.meter .bar div { height: 100%; width: 0; background: linear-gradient(90deg, #f6a5c0, var(--stamp)); transition: width 0.4s ease; }
+.feedback { font-family: 'Kalam', cursive; font-size: 0.95rem; min-height: 24px; margin: 10px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 9</div>
+  <div class="file-sheet">
+    <div class="stamp-corner">GİZLİ</div>
+    <div class="case-number">// KARAKTER ANALİZİ</div>
+    <div class="cat-photo">😼</div>
+    <h1>Vaka 9: <em>Pisicik Abi</em></h1>
+    <p class="intro">Zanlıda iki farklı kişilik tespit edildi: dışarıdan minik, tatlı bir pisicik; içeride ise "kim üzdü seni, söyle bana" diyen koca bir abi. Uzmanlar bu duruma "Pisicik Abi Sendromu" adını verdi.</p>
+
+    <div class="evidence-list">
+      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Görünüşte en sevimli, en minik kişi. Ama arkadaşlarından biri üzüldüğünde ses tonu bir anda değişiyor: "Adını ver, gerisini ben hallederim."</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Birisi dertlendiğinde önce sarılıyor, sonra gerçekçi bir abi tavsiyesi veriyor: "Bak canım, seni seviyorum ama burada sen haksızsın." Hem şefkat hem dürüstlük aynı pakette.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Grupta kimse karar veremediğinde "tamam, şöyle yapıyoruz" diyerek dümene geçen kişi o. Pisicik boyutunda bir kaptan.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Kendisi zor bir gün geçirse bile önce başkalarına "sen iyi misin?" diye soruyor. Arkadaşları bunu fark ettiğinde, sıranın ona da geldiğini hatırlatmak zorunda kalıyor.</span></div>
+    </div>
+
+    <div class="verdict"><b>SONUÇ:</b> Zanlı resmi olarak "Pisicik Abi" ilan edilmiştir — pati kadar yumuşak, kaya kadar sağlam. Herkesin yanında olmak isteyeceği türden bir koruyucu. Dosya "dokunanı yakar, sevenini korur" kategorisine alınmıştır. 😼🛡️</div>
+
+    <div class="game-section">
+      <div class="game-title">🛡️ Mini Görev: Pisicik Abi Gibi Konuş</div>
+      <div class="game-sub">Arkadaşlar dertleriyle geliyor. Her durumda gerçek bir Pisicik Abi'nin vereceği cevabı seç: hem tatlı 🐱 hem sağlam 💪 olmalı. 5 durumu doğru geç.</div>
+      <div id="gameArea">
+        <div class="meter"><span>🐱</span><div class="bar"><div id="bar"></div></div><span>😼 <b id="step">0</b>/5</span></div>
+        <div class="scene">
+          <div class="chat" id="chat"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      </div>
+      <div class="game-win" id="gameWin"></div>
+    </div>
+
+    <div id="codeBox"></div>
+  </div>
+  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
+</div>
+
+<script src="assets/zy11.js"></script>
+<script>
+const SCENES = [
+  { who: 'Arkadaş 1', text: 'Biri bana bugün çok kaba davrandı, ağlayasım geliyor 😢',
+    opts: [
+      { t: 'Hmm, olur öyle. Sen de takma.', why: 'Fazla soğuk! Pisicik önce sarılır.' },
+      { t: 'Gel buraya, sarılayım önce 🫂 Sonra adını ver, gerisini ben hallederim 😼', ok: true, reply: 'Hahah tamam, şimdiden daha iyiyim 🥹' },
+      { t: 'Ben de çok ağladım bugün aslında, dinle bak...', why: 'Pisicik Abi önce karşısındakini dinler.' },
+    ] },
+  { who: 'Arkadaş 2', text: 'Arkadaşımla kavga ettim. Ama itiraf edeyim, biraz ben haksızdım...',
+    opts: [
+      { t: 'Kesinlikle o haksız, sen hep haklısın!', why: 'Abi tarafı dürüsttür, boş yere hak vermez.' },
+      { t: 'Bilmem, kendiniz çözün.', why: 'Bu ne soğukluk! Pisicik umursar.' },
+      { t: 'Seni çok seviyorum ama burada sen haksızsın canım. Git bir özür dile, sonra beraber çiğköfte yeriz 🌯', ok: true, reply: 'Peki abi... (ama çiğköfte sözü kaydedildi)' },
+    ] },
+  { who: 'Grup Sohbeti', text: 'Bu akşam ne yapıyoruz? Kimse karar veremiyor, 2 saattir konuşuyoruz 🙃',
+    opts: [
+      { t: 'Tamam, şöyle yapıyoruz: 8\'de buluşuyoruz, önce yemek, sonra yürüyüş. İtiraz eden bulaşıkları yıkar 😼', ok: true, reply: 'Kaptan geldi! Herkes onayladı 🫡' },
+      { t: 'Bana fark etmez, siz bilirsiniz 🤷‍♀️', why: 'Pisicik boyutunda bir kaptan dümene geçer!' },
+      { t: '*sohbeti sessize alır*', why: 'Grubun kaptanı gemiyi terk etmez.' },
+    ] },
+  { who: 'Arkadaş 3', text: 'Sınavdan kötü not aldım, ben hiçbir şeyi başaramıyorum galiba...',
+    opts: [
+      { t: 'Ya evet, biraz daha çalışman lazımdı.', why: 'Doğru olabilir ama önce moral! Tatlı taraf nerede?' },
+      { t: 'Bir not seni tanımlamaz. Sen bildiğim en zeki insanlardan birisin. Hadi yarın beraber çalışalım, ben de geliyorum 💪', ok: true, reply: 'Gerçekten mi? Tamam, yarın kütüphane! 📚' },
+      { t: 'Boşver, okul önemli değil zaten.', why: 'Abi tavsiyesi gerçekçi olur, kaçamak değil.' },
+    ] },
+  { who: 'Arkadaş 4', text: 'Sen bugün biraz durgun gibisin... İyi misin?',
+    opts: [
+      { t: 'İyiyim iyiyim, sen asıl nasılsın? Senin sorunu çözelim 😼', why: 'Tipik Pisicik Abi hatası! Kanıt #4: bazen sıra ona da gelmeli.' },
+      { t: 'Yok bir şey, boşver.', why: 'Kapıyı kapatma, seni seven biri soruyor.' },
+      { t: 'Aslında... evet, biraz zor bir gündü. Anlatsam dinler misin? 🥺', ok: true, reply: 'Tabii ki! Bu sefer sıra bende, gel bakalım 🫂' },
+    ] },
+];
+
+const chat = document.getElementById('chat');
+const optionsEl = document.getElementById('options');
+const feedback = document.getElementById('feedback');
+const bar = document.getElementById('bar');
+const stepEl = document.getElementById('step');
+let idx = 0;
+
+function init() { idx = 0; show(); }
+
+function show() {
+  stepEl.textContent = idx;
+  bar.style.width = (idx / SCENES.length * 100) + '%';
+  const s = SCENES[idx];
+  chat.innerHTML = '<div class="msg"><span class="who">' + s.who + '</span>' + s.text + '</div>';
+  feedback.textContent = '';
+  optionsEl.innerHTML = '';
+  ZY.shuffle(s.opts.slice()).forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.textContent = o.t;
+    b.onclick = () => choose(o, b);
+    optionsEl.appendChild(b);
+  });
+}
+
+function choose(o, b) {
+  if (o.ok) {
+    optionsEl.querySelectorAll('.opt').forEach(x => x.disabled = true);
+    ZY.beep(780, 0.12);
+    chat.insertAdjacentHTML('beforeend', '<div class="msg me"><span class="who">Pisicik Abi 😼</span>' + o.t + '</div>');
+    setTimeout(() => chat.insertAdjacentHTML('beforeend', '<div class="msg"><span class="who">' + SCENES[idx].who + '</span>' + o.reply + '</div>'), 600);
+    feedback.textContent = '✅ Tam bir Pisicik Abi cevabı!';
+    feedback.style.color = 'var(--pin-green)';
+    setTimeout(() => {
+      idx++;
+      if (idx >= SCENES.length) {
+        stepEl.textContent = idx; bar.style.width = '100%';
+        optionsEl.innerHTML = '';
+        feedback.textContent = '😼 5/5 — Sertifikalı Pisicik Abi!';
+        ZY.win(9, '🎉 Pati kadar yumuşak, kaya kadar sağlam. Kod artık senin!');
+      } else show();
+    }, 2000);
+  } else {
+    b.classList.add('wrong'); b.disabled = true;
+    ZY.beep(170, 0.2, 'square');
+    ZY.shake(b);
+    feedback.textContent = '❌ ' + o.why;
+    feedback.style.color = 'var(--pin-red)';
+  }
+}
+
+ZY.page(9, { init });
+</script>
+</body>
+</html>

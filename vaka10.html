@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaka 10 · Sevimli Kedi — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.pet-area { height: 280px; display: flex; align-items: center; justify-content: center; touch-action: none; cursor: grab; }
+.pet-area .kitty { font-size: 6.5rem; line-height: 1; transition: transform 0.15s ease; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4)); }
+.pet-area .kitty.purr { animation: purr 0.25s ease infinite alternate; }
+.pet-area .kitty.grumpy { transform: scale(1.1); filter: drop-shadow(0 0 14px rgba(230,57,70,0.9)); }
+@keyframes purr { from { transform: rotate(-3deg) scale(1.02); } to { transform: rotate(3deg) scale(1.05); } }
+.pet-area .heart { position: absolute; pointer-events: none; font-size: 1.3rem; animation: rise 1.1s ease-out forwards; }
+@keyframes rise { to { transform: translateY(-70px) scale(1.4); opacity: 0; } }
+.pet-area .warn { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-family: 'Kalam', cursive; font-weight: 700; color: var(--paper); background: var(--pin-red); padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; display: none; white-space: nowrap; }
+.gauge { max-width: 480px; margin: 0 auto 12px; }
+.gauge .lbl { display: flex; justify-content: space-between; font-family: 'Kalam', cursive; font-weight: 700; font-size: 0.85rem; margin-bottom: 4px; }
+.gauge .bar { height: 16px; border-radius: 999px; background: rgba(0,0,0,0.12); overflow: hidden; border: 1px solid rgba(0,0,0,0.15); }
+.gauge .bar div { height: 100%; width: 0; background: linear-gradient(90deg, #f6a5c0, #ff6fa5, var(--gold)); transition: width 0.15s linear; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 10</div>
+  <div class="file-sheet">
+    <div class="stamp-corner">GİZLİ</div>
+    <div class="case-number">// SEVİMLİLİK ÖLÇÜMÜ</div>
+    <div class="cat-photo">😻</div>
+    <h1>Vaka 10: <em>Sevimli Kedi</em></h1>
+    <p class="intro">Son kanıt dosyası. Laboratuvarımız zanlının sevimlilik seviyesini ölçmeye çalıştı. Üç cihaz bozuldu, dördüncüsü "ölçüm sınırı aşıldı" yazıp kendini kapattı.</p>
+
+    <div class="evidence-list">
+      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Bir şey istediğinde yaptığı "kocaman gözler" bakışına karşı koyabilen tek bir kişi bile tespit edilemedi. Tanıklar "hayır diyecektim ama ağzımdan evet çıktı" diyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Mutlu olduğunda çıkardığı sesler kayıtlara "insan mırlaması" olarak geçti. Duyan herkesin yüzünde istemsiz bir gülümseme oluşuyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Tıpkı bir kedi gibi: sevgisini kazanmak biraz zaman alabilir, ama bir kere kazandın mı, seni seçtiğini her gün belli ediyor. Bazen de durduk yere trip atıp sonra kafasını omzuna yaslıyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Önceki dokuz dosyadaki tüm "suçlar" (hırsızlık, spastiklik, gotiklik, lolculuk, doymazlık, midesizlik, yürüyememe, uzaylılık, abilik) bu dosyadaki tek bir gerçeğin yan etkisi olarak değerlendirildi: zanlı fazlasıyla sevimli.</span></div>
+    </div>
+
+    <div class="verdict"><b>SONUÇ:</b> Zanlının sevimliliği ölçülemez olarak kayda geçmiştir. Bu dosya, diğer tüm dosyaların ortak paydasıdır. Son dosyanın kilidi bu vakada saklı. 😻💛</div>
+
+    <div class="game-section">
+      <div class="game-title">😻 Mini Görev: Sevimlilik Ölçer</div>
+      <div class="game-sub">Kediyi sev! Parmağını / fareyi kedinin üstünde gezdir, sevgi göstergesi dolsun. Ama dikkat: arada trip atıp 😾 olur — o anda sevmeyi bırak, yoksa gösterge düşer! 30 saniyen var.</div>
+      <div id="gameArea">
+        <div class="gauge">
+          <div class="lbl"><span>💗 Sevgi: <span id="pct">0</span>%</span><span>⏱ <span id="time">30</span>s</span></div>
+          <div class="bar"><div id="fill"></div></div>
+        </div>
+        <div class="night-box pet-area" id="area">
+          <div class="warn" id="warn">TRİP ATIYOR! DOKUNMA 😾</div>
+          <div class="kitty" id="kitty">😺</div>
+        </div>
+        <button class="btn btn-gold start-btn" id="startBtn">😻 Sevmeye Başla</button>
+        <div class="game-status" id="gameStatus"></div>
+      </div>
+      <div class="game-win" id="gameWin"></div>
+    </div>
+
+    <div id="codeBox"></div>
+  </div>
+  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
+</div>
+
+<script src="assets/zy11.js"></script>
+<script>
+const SECONDS = 30;
+const area = document.getElementById('area');
+const kitty = document.getElementById('kitty');
+const warn = document.getElementById('warn');
+const fill = document.getElementById('fill');
+const pctEl = document.getElementById('pct');
+const timeEl = document.getElementById('time');
+const startBtn = document.getElementById('startBtn');
+const statusEl = document.getElementById('gameStatus');
+
+let love = 0, running = false, grumpy = false, timeLeft = SECONDS, tick = null, moodT = null, last = null, lastPet = 0, heartAcc = 0;
+
+function hud() { const v = Math.max(0, Math.min(100, love)); fill.style.width = v + '%'; pctEl.textContent = Math.floor(v); }
+
+function init() {
+  stop(); love = 0; timeLeft = SECONDS; hud(); timeEl.textContent = SECONDS;
+  kitty.textContent = '😺'; kitty.className = 'kitty';
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '😻 Sevmeye Başla';
+  statusEl.textContent = '';
+}
+
+function stop() { running = false; clearInterval(tick); clearTimeout(moodT); grumpy = false; warn.style.display = 'none'; }
+
+function start() {
+  love = 0; timeLeft = SECONDS; hud(); timeEl.textContent = timeLeft;
+  running = true; startBtn.disabled = true;
+  kitty.textContent = '😺'; statusEl.textContent = 'Yavaşça sev, mırlamaya başlasın...';
+  tick = setInterval(() => {
+    timeLeft--; timeEl.textContent = timeLeft;
+    if (!grumpy && performance.now() - lastPet > 600) { love -= 0.8; hud(); kitty.classList.remove('purr'); }
+    if (timeLeft <= 0) lose();
+  }, 1000);
+  scheduleMood();
+}
+
+function scheduleMood() {
+  moodT = setTimeout(() => {
+    if (!running) return;
+    grumpy = true;
+    kitty.textContent = '😾'; kitty.className = 'kitty grumpy';
+    warn.style.display = 'block';
+    ZY.beep(220, 0.2, 'sawtooth');
+    moodT = setTimeout(() => {
+      if (!running) return;
+      grumpy = false;
+      kitty.textContent = '😺'; kitty.className = 'kitty';
+      warn.style.display = 'none';
+      statusEl.textContent = 'Trip bitti, kafasını omzuna yasladı 🥹';
+      scheduleMood();
+    }, 1200 + Math.random() * 900);
+  }, 2200 + Math.random() * 2500);
+}
+
+function heart(x, y) {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = ['💗','💛','💕','✨'][Math.floor(Math.random() * 4)];
+  h.style.left = (x - 10) + 'px'; h.style.top = (y - 10) + 'px';
+  area.appendChild(h); setTimeout(() => h.remove(), 1100);
+}
+
+area.addEventListener('pointerdown', e => { e.preventDefault(); last = { x: e.clientX, y: e.clientY }; });
+area.addEventListener('pointerleave', () => { last = null; });
+area.addEventListener('pointermove', e => {
+  if (!running) return;
+  const r = area.getBoundingClientRect();
+  const x = e.clientX - r.left, y = e.clientY - r.top;
+  if (!last) { last = { x: e.clientX, y: e.clientY }; return; }
+  const d = Math.hypot(e.clientX - last.x, e.clientY - last.y);
+  last = { x: e.clientX, y: e.clientY };
+  // sadece kedinin etrafında sayılır
+  if (Math.hypot(x - r.width / 2, y - r.height / 2) > 110) return;
+  if (grumpy) {
+    love -= d * 0.06; hud();
+    if (Math.random() < 0.08) { ZY.beep(160, 0.1, 'square'); statusEl.textContent = 'Hıhh! Trip atarken sevilmez 😾'; ZY.shake(kitty); }
+    return;
+  }
+  lastPet = performance.now();
+  love += Math.min(d, 40) * 0.045; hud();
+  kitty.textContent = love > 60 ? '😻' : '😸'; kitty.classList.add('purr');
+  heartAcc += d;
+  if (heartAcc > 70) { heartAcc = 0; heart(x, y); if (Math.random() < 0.3) ZY.beep(900 + Math.random() * 300, 0.05); }
+  if (love > 50 && love < 52) statusEl.textContent = 'Mırr mırr... insan mırlaması tespit edildi 🎶';
+  if (love >= 100) winRound();
+});
+
+function lose() {
+  stop(); kitty.className = 'kitty'; kitty.textContent = '😿';
+  statusEl.textContent = 'Süre bitti! Sevgi %' + Math.floor(Math.max(0, love)) + '. Kedi daha fazla ilgi istiyor 🥺';
+  startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Sev';
+}
+
+function winRound() {
+  stop(); love = 100; hud();
+  kitty.className = 'kitty purr'; kitty.textContent = '😻';
+  for (let i = 0; i < 12; i++) setTimeout(() => heart(area.clientWidth / 2 + (Math.random() - 0.5) * 160, area.clientHeight / 2 + (Math.random() - 0.5) * 80), i * 60);
+  startBtn.style.display = 'none';
+  statusEl.textContent = '⚠️ SEVİMLİLİK ÖLÇÜM SINIRI AŞILDI ⚠️';
+  ZY.win(10, '🎉 Sevimlilik ölçer patladı! Son kod artık senin.');
+}
+
+startBtn.addEventListener('click', start);
+ZY.page(10, { init });
+</script>
+</body>
+</html>

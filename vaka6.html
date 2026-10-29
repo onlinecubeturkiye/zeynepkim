@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaka 6 · Midesiz — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.catch-area { height: 320px; cursor: none; touch-action: none; }
+.catch-area .food { position: absolute; font-size: 1.8rem; line-height: 1; pointer-events: none; will-change: transform; }
+.catch-area .eater { position: absolute; bottom: 8px; font-size: 2.4rem; line-height: 1; pointer-events: none; transform: translateX(-50%); transition: transform 0.08s; }
+.catch-area .eater.chomp { transform: translateX(-50%) scale(1.25); }
+.catch-area .pop { position: absolute; font-family: 'Kalam', cursive; font-weight: 700; color: var(--gold); pointer-events: none; animation: up 0.7s ease forwards; }
+.catch-area .pop.bad { color: var(--pin-red); }
+@keyframes up { to { transform: translateY(-34px); opacity: 0; } }
+.lives { letter-spacing: 2px; }
+@media (max-width: 480px) { .catch-area { height: 290px; } }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 6</div>
+  <div class="file-sheet">
+    <div class="stamp-corner">GİZLİ</div>
+    <div class="case-number">// LAKAP DOSYASI</div>
+    <div class="cat-photo">🌶️</div>
+    <h1>Vaka 6: <em>Midesiz</em></h1>
+    <p class="intro">5. vakanın devam dosyası. "Doymayan" lakabı yetmediği için ikinci bir soruşturma açıldı. Bu sefer soru şu: zanlının midesi gerçekten var mı?</p>
+
+    <div class="evidence-list">
+      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlının yediği kombinasyonlar bilim insanlarını şaşkına çevirdi: turşunun yanına çikolata, sabah kahvaltısında soğuk pizza, gece yarısı acılı dürüm. Hepsinden sonra tek yorumu: "Bir şey olmaz ya."</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Herkesin "bu çok acı" diyerek bıraktığı yemeği zanlı tek kaşta bitirip "bence biraz daha acı olabilirdi" dedi. Olay yerindeki tanıklar hâlâ su içiyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Yemekten yeni kalkmışken "tatlı başka mide" diyerek ikinci bir bölmenin varlığını iddia etti. Ama ilk bölmenin nerede olduğu hâlâ tespit edilemedi.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Zanlının tek bir düşmanı var: diyet salatası 🥗. Gördüğü anda yüz ifadesi değişiyor ve yavaşça uzaklaşıyor.</span></div>
+    </div>
+
+    <div class="verdict"><b>SONUÇ:</b> Zanlının midesi bulunamamıştır — yerinde sadece "bir şey olmaz ya" yazan küçük bir kara delik tespit edilmiştir. Dosya "bilim için açıklanamaz" kategorisine alınmıştır. 🌶️🕳️</div>
+
+    <div class="game-section">
+      <div class="game-title">🍕 Mini Görev: Kara Delik Mide</div>
+      <div class="game-sub">Zanlıyı 😋 parmağınla / fareyle sağa sola kaydır ve yağan yemeklerden 15 tanesini yakala. Diyet salatası 🥗 yakalarsan bir can gider — 3 canın var!</div>
+      <div id="gameArea">
+        <div class="game-meta">
+          <span>🍽 <b id="score">0</b> / 15</span>
+          <span class="lives" id="lives">❤️❤️❤️</span>
+        </div>
+        <div class="night-box catch-area" id="area">
+          <div class="eater" id="eater">😋</div>
+          <div class="hint-text" id="hint">Başlamak için düğmeye bas 👇</div>
+        </div>
+        <button class="btn btn-gold start-btn" id="startBtn">🍕 Yemek Yağmurunu Başlat</button>
+        <div class="game-status" id="gameStatus"></div>
+      </div>
+      <div class="game-win" id="gameWin"></div>
+    </div>
+
+    <div id="codeBox"></div>
+  </div>
+  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
+</div>
+
+<script src="assets/zy11.js"></script>
+<script>
+const TARGET = 15;
+const FOODS = ['🍕','🌭','🍟','🌶️','🥙','🍫','🥒','🍝','🍔','🧄','🍩','🌮'];
+const area = document.getElementById('area');
+const eater = document.getElementById('eater');
+const hint = document.getElementById('hint');
+const startBtn = document.getElementById('startBtn');
+const scoreEl = document.getElementById('score');
+const livesEl = document.getElementById('lives');
+const statusEl = document.getElementById('gameStatus');
+const LINES = { '🌶️': 'Acı mı? Hiç hissetmedi.', '🥒': 'Turşu + çikolata kombosu hazır!', '🍫': 'Tatlı başka mide 🍫', '🍕': 'Soğuk pizza, kahvaltılık.' };
+
+let running = false, foods = [], score = 0, lives = 3, eaterX = 0.5, lastSpawn = 0, lastT = 0, raf = null, speedBoost = 1;
+
+function setEater(x) {
+  eaterX = Math.max(0.06, Math.min(0.94, x));
+  eater.style.left = (eaterX * 100) + '%';
+}
+function areaX(clientX) { const r = area.getBoundingClientRect(); return (clientX - r.left) / r.width; }
+area.addEventListener('pointerdown', e => { e.preventDefault(); setEater(areaX(e.clientX)); });
+area.addEventListener('pointermove', e => { if (running) setEater(areaX(e.clientX)); });
+document.addEventListener('keydown', e => {
+  if (!running) return;
+  if (e.key === 'ArrowLeft') { setEater(eaterX - 0.08); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { setEater(eaterX + 0.08); e.preventDefault(); }
+});
+
+function clear() { foods.forEach(f => f.el.remove()); foods = []; }
+
+function init() {
+  running = false; cancelAnimationFrame(raf); clear();
+  score = 0; lives = 3; updateHud();
+  setEater(0.5);
+  hint.style.display = 'flex'; hint.textContent = 'Başlamak için düğmeye bas 👇';
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🍕 Yemek Yağmurunu Başlat';
+  statusEl.textContent = '';
+}
+
+function updateHud() {
+  scoreEl.textContent = score;
+  livesEl.textContent = '❤️'.repeat(lives) + '🤍'.repeat(3 - lives);
+}
+
+function start() {
+  clear(); score = 0; lives = 3; updateHud();
+  running = true; startBtn.disabled = true; hint.style.display = 'none';
+  statusEl.textContent = '"Bir şey olmaz ya." 😋';
+  lastT = performance.now(); lastSpawn = 0;
+  raf = requestAnimationFrame(loop);
+}
+
+function spawn() {
+  const bad = Math.random() < 0.27;
+  const el = document.createElement('div');
+  el.className = 'food';
+  el.textContent = bad ? '🥗' : FOODS[Math.floor(Math.random() * FOODS.length)];
+  area.appendChild(el);
+  const x = 0.06 + Math.random() * 0.88;
+  foods.push({ el, x, y: -40, v: (120 + Math.random() * 90) * speedBoost, bad });
+}
+
+function pop(x, y, text, bad) {
+  const p = document.createElement('div');
+  p.className = 'pop' + (bad ? ' bad' : '');
+  p.textContent = text;
+  p.style.left = (x * 100) + '%'; p.style.top = y + 'px';
+  area.appendChild(p);
+  setTimeout(() => p.remove(), 700);
+}
+
+function loop(t) {
+  if (!running) return;
+  const dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
+  speedBoost = 1 + score * 0.04;
+  lastSpawn += dt;
+  if (lastSpawn > Math.max(0.45, 0.9 - score * 0.025)) { lastSpawn = 0; spawn(); }
+  const H = area.clientHeight, W = area.clientWidth;
+  const eaterY = H - 44;
+  for (let i = foods.length - 1; i >= 0; i--) {
+    const f = foods[i];
+    f.y += f.v * dt;
+    f.el.style.transform = 'translate(' + (f.x * W - 14) + 'px,' + f.y + 'px)';
+    if (f.y > eaterY - 20 && f.y < eaterY + 20 && Math.abs(f.x - eaterX) * W < 34) {
+      f.el.remove(); foods.splice(i, 1);
+      eater.classList.add('chomp'); setTimeout(() => eater.classList.remove('chomp'), 120);
+      if (f.bad) {
+        lives--; updateHud(); ZY.beep(150, 0.25, 'square'); ZY.shake(area);
+        pop(f.x, eaterY - 30, '🤢 salata!', true);
+        statusEl.textContent = 'Diyet salatası! Zanlı yavaşça uzaklaşıyor...';
+        if (lives <= 0) return lose();
+      } else {
+        score++; updateHud(); ZY.beep(500 + score * 25, 0.07);
+        pop(f.x, eaterY - 30, '+1');
+        if (LINES[f.el.textContent] && Math.random() < 0.5) statusEl.textContent = LINES[f.el.textContent];
+        if (score >= TARGET) return winRound();
+      }
+    } else if (f.y > H + 10) {
+      f.el.remove(); foods.splice(i, 1);
+    }
+  }
+  raf = requestAnimationFrame(loop);
+}
+
+function lose() {
+  running = false; clear();
+  hint.style.display = 'flex'; hint.textContent = '🥗🥗🥗 Salata kazandı. Tekrar dene!';
+  startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Dene';
+  statusEl.textContent = score + ' yemek yedin ama salatalar seni durdurdu.';
+}
+
+function winRound() {
+  running = false; clear();
+  hint.style.display = 'flex'; hint.textContent = '🕳️ 15 yemek yok oldu. Mide hâlâ bulunamadı.';
+  startBtn.style.display = 'none';
+  statusEl.textContent = 'Zanlı: "Tatlı var mı?" 🍩';
+  ZY.win(6, '🎉 Kara delik doymadı ama görev tamam, kod artık senin!');
+}
+
+startBtn.addEventListener('click', start);
+ZY.page(6, { init });
+</script>
+</body>
+</html>
