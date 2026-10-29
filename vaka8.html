@@ -2,160 +2,109 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 8 · Uzaylı Kedi — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.signal { max-width: 320px; padding: 18px; }
-.signal::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px); background-size: 34px 34px; opacity: 0.25; pointer-events: none; }
-.pads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: relative; }
+.space { max-width: 360px; padding: 22px; background: radial-gradient(circle at 50% 50%, rgba(61,220,132,.25), transparent 60%), linear-gradient(160deg, #0d1f2a, #120b33); }
+.radar { position: absolute; inset: 0; pointer-events: none; background: conic-gradient(from 0deg, rgba(61,220,132,.28), transparent 25%); border-radius: inherit; animation: spin 4s linear infinite; opacity: .5; }
+@keyframes spin { to { transform: rotate(1turn); } }
+.pads { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .pad {
-  aspect-ratio: 1 / 1; border: none; border-radius: 18px; font-size: 2.6rem; cursor: pointer;
-  opacity: 0.55; transition: opacity 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; touch-action: manipulation;
+  aspect-ratio: 1; border-radius: 28px; border: none; font-size: 2.8rem; cursor: pointer; touch-action: manipulation; position: relative;
+  background: var(--pc); opacity: .5; box-shadow: 0 8px 0 var(--ps), 0 12px 18px rgba(0,0,0,.4); transition: opacity .1s, transform .1s, box-shadow .1s, filter .1s;
 }
-.pad[data-i="0"] { background: #6bd66b; } .pad[data-i="1"] { background: #e08bd8; }
-.pad[data-i="2"] { background: #5fb8e8; } .pad[data-i="3"] { background: #f2c94c; }
-.pad.lit { opacity: 1; transform: scale(1.05); box-shadow: 0 0 24px currentColor, 0 0 0 3px #fff; color: #fff; }
+.pad[data-i="0"] { --pc: linear-gradient(135deg, #a6ff4d, #3ddc84); --ps: #1f8a4a; --gl: #a6ff4d; }
+.pad[data-i="1"] { --pc: linear-gradient(135deg, #ff9ed2, #ff4d9d); --ps: #a3245d; --gl: #ff4d9d; }
+.pad[data-i="2"] { --pc: linear-gradient(135deg, #7ff0ff, #33a8ff); --ps: #1a5d99; --gl: #33e1ff; }
+.pad[data-i="3"] { --pc: linear-gradient(135deg, #ffe066, #ffb627); --ps: #a36a00; --gl: #ffd23f; }
+.pad.lit { opacity: 1; transform: translateY(4px) scale(1.04); box-shadow: 0 4px 0 var(--ps), 0 0 40px var(--gl), 0 0 0 4px #fff; filter: brightness(1.15); }
 .pad:disabled { cursor: default; }
-.screen { font-family: 'Special Elite', monospace; color: #9effa0; background: #0d1a10; border-radius: 10px; padding: 10px 12px; margin: 0 auto 12px; max-width: 320px; min-height: 44px; font-size: 0.9rem; letter-spacing: 1px; text-align: left; box-shadow: inset 0 0 12px rgba(0,255,100,0.2); }
-.screen .cursor { animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.decoded { display: none; font-family: 'Kalam', cursive; font-size: 1.05rem; color: var(--ink); background: rgba(158,255,160,0.18); border: 1.5px dashed var(--pin-green); border-radius: 10px; padding: 10px 14px; max-width: 420px; margin: 10px auto; }
+.center { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 1.3rem; background: #0d1f2a; border: 3px solid rgba(61,220,132,.6); box-shadow: 0 0 20px rgba(61,220,132,.5); z-index: 2; color: var(--lime); }
+.term { font-family: var(--font-mono); font-size: .85rem; color: #9effa0; background: #07130c; border: 1px solid rgba(61,220,132,.4); border-radius: 12px; padding: 10px 14px; margin: 0 auto 12px; max-width: 360px; min-height: 44px; text-align: left; box-shadow: inset 0 0 14px rgba(61,220,132,.2); }
+.term .cur { animation: blink 1s steps(1) infinite; } @keyframes blink { 50% { opacity: 0; } }
+.decoded { display: none; max-width: 400px; margin: 12px auto 0; padding: 14px; border-radius: 16px; background: rgba(61,220,132,.12); border: 1px dashed rgba(166,255,77,.6); line-height: 1.5; animation: pop .4s ease; }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 8</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">ÇOK GİZLİ</div>
-    <div class="case-number">// SOSYAL ANOMALİ</div>
-    <div class="cat-photo">👽</div>
-    <h1>Vaka 8: <em>Uzaylı Kedi</em></h1>
-    <p class="intro">Zanlının bu gezegene ait olmadığına dair şüpheler giderek artıyor. Toplanan veriler NASA'ya gönderildi, NASA "bizim bölümümüz değil" diyerek geri yolladı.</p>
-
-    <div class="evidence-list">
-      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Zanlının kendine ait bir dili var. "Miyav", "mrrr" ve henüz hiçbir sözlükte bulunmayan seslerden oluşan bu dil, yalnızca kediler ve en yakın arkadaşları tarafından çözülebiliyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Ortamın en sessiz anında, hiçbir sebep yokken tuhaf bir ses çıkarıp herkesi kahkahaya boğduğu defalarca gözlemlendi. Bu sinyallerin uzaya mı yoksa arkadaş grubuna mı gönderildiği bilinmiyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Dünya'nın sosyal kurallarına uymakta zaman zaman zorlanıyor: herkesin "normal" dediği şeylere "ama neden?" diye soruyor, kimsenin aklına gelmeyen şeyleri ise çok doğal karşılıyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">En büyük anomali şu: bu kadar "uzaylı" olmasına rağmen girdiği her ortamda birkaç dakika içinde herkesle kaynaşıyor. Uzmanlara göre gezegenimizi istila etmek yerine sevmeye karar vermiş.</span></div>
-    </div>
-
-    <div class="verdict"><b>SONUÇ:</b> Zanlının uzaylı olduğu kesinleşmiştir. Ancak Dünya için tehdit değil, tam tersine bir kazanç olduğu anlaşıldığından kendisine "kalıcı oturma izni" verilmiştir. 👽🐱🌍</div>
-
-    <div class="game-section">
-      <div class="game-title">🛸 Mini Görev: Uzaylı Sinyalini Çöz</div>
-      <div class="game-sub">Zanlı uzaydan bir mesaj gönderiyor. Yanan sembolleri izle, sonra aynı sırayla dokun. 6 sinyali çözersen mesaj Türkçeye çevrilecek!</div>
-      <div id="gameArea">
-        <div class="game-meta"><span>📡 Sinyal: <b id="level">0</b> / 6</span></div>
-        <div class="screen" id="screen">&gt; bağlantı bekleniyor<span class="cursor">_</span></div>
-        <div class="night-box signal">
-          <div class="pads" id="pads">
-            <button class="pad" data-i="0" disabled>👽</button>
-            <button class="pad" data-i="1" disabled>🐱</button>
-            <button class="pad" data-i="2" disabled>🛸</button>
-            <button class="pad" data-i="3" disabled>⭐</button>
-          </div>
-        </div>
-        <button class="btn btn-gold start-btn" id="startBtn">📡 Sinyali Al</button>
-        <div class="game-status" id="gameStatus"></div>
-      </div>
-      <div class="decoded" id="decoded"></div>
-      <div class="game-win" id="gameWin"></div>
-    </div>
-
-    <div id="codeBox"></div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="hud"><span class="pill">📡 <b id="lvl">0</b>/6</span><span class="pill">📵 <b id="fails">0</b> hata</span></div>
+  <div class="term" id="term">&gt; bağlantı bekleniyor<span class="cur">_</span></div>
+  <div class="arena space" id="arena"><div class="radar"></div>
+    <div class="pads"><button class="pad" data-i="0" disabled>👽</button><button class="pad" data-i="1" disabled>🐱</button><button class="pad" data-i="2" disabled>🛸</button><button class="pad" data-i="3" disabled>⭐</button><div class="center" id="center">?</div></div>
   </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+  <button class="btn cool" id="startBtn">📡 Sinyali Al</button>
+  <div class="status" id="status"></div>
+  <div class="decoded" id="decoded"></div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
-const TARGET = 6;
-const TONES = [330, 415, 494, 622];
-const WORDS = ['mrrr', 'miyav', 'bip', 'zıp'];
-const pads = [...document.querySelectorAll('.pad')];
-const screen = document.getElementById('screen');
-const statusEl = document.getElementById('gameStatus');
-const levelEl = document.getElementById('level');
-const startBtn = document.getElementById('startBtn');
-const decoded = document.getElementById('decoded');
-let seq = [], pos = 0, accepting = false, playing = false;
-
-const wait = ms => new Promise(r => setTimeout(r, ms));
-function say(t) { screen.innerHTML = '&gt; ' + t + '<span class="cursor">_</span>'; }
-function setPads(on) { pads.forEach(p => p.disabled = !on); }
-
-async function flash(i, ms) {
-  pads[i].classList.add('lit');
-  ZY.beep(TONES[i], ms / 1000, 'triangle');
-  await wait(ms);
-  pads[i].classList.remove('lit');
-}
+const TARGET = 6, TONES = [330, 415, 494, 622], WORDS = ['mrrr', 'miyav', 'bip', 'zıp'];
+let pads, term, statusEl, seq, pos, accepting, fails, session = 0;
+const say = t => term.innerHTML = '&gt; ' + t + '<span class="cur">_</span>';
+const setPads = on => pads.forEach(p => p.disabled = !on);
+async function flash(i, ms) { pads[i].classList.add('lit'); ZY.beep(TONES[i], ms / 1000, 'triangle', .14); await ZY.wait(ms); pads[i].classList.remove('lit'); }
 
 function init() {
-  seq = []; pos = 0; accepting = false; playing = false;
-  levelEl.textContent = 0; setPads(false);
-  say('bağlantı bekleniyor');
-  statusEl.textContent = ''; decoded.style.display = 'none';
-  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '📡 Sinyali Al';
+  pads = [...document.querySelectorAll('.pad')]; term = ZY.$('#term'); statusEl = ZY.$('#status');
+  session++; seq = []; pos = 0; accepting = false; fails = 0; setPads(false);
+  ZY.$('#lvl').textContent = 0; ZY.$('#fails').textContent = 0; ZY.$('#center').textContent = '?'; ZY.$('#decoded').style.display = 'none';
+  say('bağlantı bekleniyor'); statusEl.textContent = '';
+  const b = ZY.$('#startBtn'); b.style.display = ''; b.disabled = false; b.textContent = '📡 Sinyali Al'; b.onclick = start;
+  pads.forEach(p => p.onpointerdown = e => { e.preventDefault(); press(+p.dataset.i); });
 }
-
-async function start() {
-  startBtn.disabled = true;
-  seq = []; levelEl.textContent = 0;
-  statusEl.textContent = '';
-  await nextLevel();
+async function start() { const b = ZY.$('#startBtn'); b.style.display = 'none'; seq = []; statusEl.textContent = ''; await next(); }
+async function next() {
+  const my = session;
+  seq.push(Math.floor(Math.random() * 4)); pos = 0; accepting = false; setPads(false);
+  ZY.$('#center').textContent = seq.length; say('sinyal ' + seq.length + ' geliyor...');
+  await ZY.wait(700);
+  const sp = Math.max(300, 560 - seq.length * 40);
+  for (const i of seq) { if (my !== session) return; await flash(i, sp); await ZY.wait(130); }
+  say('sıra sende · ' + seq.length + ' sembol'); accepting = true; setPads(true);
 }
-
-async function nextLevel() {
-  seq.push(Math.floor(Math.random() * 4));
-  pos = 0; accepting = false; setPads(false);
-  say('sinyal ' + seq.length + ' geliyor...');
-  await wait(700);
-  const speed = Math.max(300, 560 - seq.length * 40);
-  for (const i of seq) { await flash(i, speed); await wait(140); }
-  say('sıra sende: ' + seq.length + ' sembol');
-  accepting = true; setPads(true);
-}
-
-pads.forEach(p => p.addEventListener('pointerdown', async (e) => {
-  e.preventDefault();
+async function press(i) {
   if (!accepting) return;
-  const i = +p.dataset.i;
-  flash(i, 220);
+  flash(i, 200); ZY.buzz(10);
   if (i !== seq[pos]) {
-    accepting = false; setPads(false);
-    ZY.beep(110, 0.4, 'sawtooth');
+    accepting = false; setPads(false); fails++; ZY.$('#fails').textContent = fails;
+    ZY.beep(110, .4, 'sawtooth'); ZY.buzz(150); ZY.shake(ZY.$('#arena'));
     say('HATA: sinyal bozuldu 📵');
-    statusEl.textContent = 'Uzaylı dili zor! Baştan alıyoruz. (' + (seq.length - 1) + '. sinyale kadar geldin)';
-    startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Bağlan';
-    return;
+    statusEl.className = 'status bad'; statusEl.textContent = 'Uzaylı dili zor! Baştan alıyoruz (' + (seq.length - 1) + '. sinyale kadar geldin)';
+    const b = ZY.$('#startBtn'); b.style.display = ''; b.textContent = '🔁 Tekrar Bağlan'; return;
   }
-  say(seq.slice(0, pos + 1).map(x => WORDS[x]).join(' '));
-  pos++;
+  say(seq.slice(0, pos + 1).map(x => WORDS[x]).join(' ')); pos++;
   if (pos === seq.length) {
-    accepting = false; setPads(false);
-    levelEl.textContent = seq.length;
+    accepting = false; setPads(false); ZY.$('#lvl').textContent = seq.length;
+    ZY.burstAt(ZY.$('#center'), { count: 16, colors: ['#a6ff4d', '#3ddc84', '#fff'] }); ZY.sfx.good();
     if (seq.length >= TARGET) return done();
-    statusEl.textContent = ['Kedi frekansı yakalandı 🐱', 'Sinyal güçleniyor 📶', 'Mrrr onaylandı', 'Neredeyse çözüldü! 🛸', 'Son bir sinyal!'][seq.length - 1] || '';
-    await wait(650);
-    nextLevel();
+    statusEl.className = 'status good'; statusEl.textContent = ['Kedi frekansı yakalandı 🐱', 'Sinyal güçleniyor 📶', 'Mrrr onaylandı', 'Neredeyse çözüldü! 🛸', 'Son bir sinyal!'][seq.length - 1];
+    await ZY.wait(650); next();
   }
-}));
-
+}
 async function done() {
-  say('çeviri yapılıyor...');
-  statusEl.textContent = '';
-  await wait(900);
-  say('ÇEVRİLDİ ✓');
-  decoded.style.display = 'block';
-  decoded.innerHTML = '📨 <b>Çözülen mesaj:</b> "Merhaba Dünyalılar. Ben buraya istila için gelmiştim ama sizi çok sevdim, kalıyorum. Not: Bir de karnım aç." 👽💛';
-  startBtn.style.display = 'none';
-  ZY.win(8, '🎉 Uzaylı sinyalini çözdün, kod artık senin!');
+  say('çeviri yapılıyor...'); statusEl.textContent = ''; await ZY.wait(900); say('ÇEVRİLDİ ✓'); ZY.$('#center').textContent = '✓';
+  const d = ZY.$('#decoded'); d.style.display = 'block';
+  d.innerHTML = '📨 <b>Çözülen mesaj:</b> "Merhaba Dünyalılar. Buraya istila için gelmiştim ama sizi çok sevdim, kalıyorum. Not: Karnım aç." 👽💛';
+  ZY.complete({ stars: fails === 0 ? 3 : fails === 1 ? 2 : 1, stats: '📵 ' + fails + ' bozuk sinyal', msg: 'Uzaylı mesajı çözüldü! 👽' });
 }
 
-startBtn.addEventListener('click', start);
-ZY.page(8, { init });
+ZY.page(8, {
+  stamp: 'ÇOK GİZLİ',
+  intro: 'Zanlının bu gezegene ait olmadığına dair şüpheler giderek artıyor. Veriler NASA\'ya gönderildi, NASA "bizim bölümümüz değil" diyerek geri yolladı.',
+  evidence: [
+    'Zanlının kendine ait bir dili var. "Miyav", "mrrr" ve hiçbir sözlükte bulunmayan seslerden oluşan bu dil, yalnızca kediler ve en yakın arkadaşları tarafından çözülebiliyor.',
+    'Ortamın en sessiz anında, hiçbir sebep yokken tuhaf bir ses çıkarıp herkesi kahkahaya boğduğu defalarca gözlemlendi. Sinyallerin uzaya mı arkadaş grubuna mı gönderildiği bilinmiyor.',
+    'Dünya\'nın sosyal kurallarına uymakta zaman zaman zorlanıyor: herkesin "normal" dediği şeylere "ama neden?" diye soruyor, kimsenin aklına gelmeyenleri ise çok doğal karşılıyor.',
+    'En büyük anomali: bu kadar "uzaylı" olmasına rağmen girdiği her ortamda birkaç dakikada herkesle kaynaşıyor. Gezegenimizi istila etmek yerine sevmeye karar vermiş.',
+  ],
+  verdict: 'Zanlının uzaylı olduğu kesinleşmiştir. Ancak Dünya için tehdit değil kazanç olduğu anlaşıldığından kendisine "kalıcı oturma izni" verilmiştir. 👽🌍',
+  mission: { title: '🛸 Uzaylı Sinyalini Çöz', sub: 'Yanan sembolleri izle, aynı sırayla dokun. 6 sinyali çözersen mesaj Türkçeye çevrilecek!', goals: ['Çöz', '1 hata', 'Hatasız'] },
+  init,
+});
 </script>
 </body>
 </html>

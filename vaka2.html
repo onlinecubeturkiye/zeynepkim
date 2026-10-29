@@ -2,108 +2,114 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1145">
 <title>Vaka 2 · Spastik — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 340px; margin: 0 auto 6px; perspective: 600px; }
-.memory-card { aspect-ratio: 1 / 1; position: relative; cursor: pointer; user-select: none; }
-.memory-card .inner { position: absolute; inset: 0; transition: transform 0.35s ease; transform-style: preserve-3d; }
-.memory-card.flipped .inner, .memory-card.matched .inner { transform: rotateY(180deg); }
-.memory-card .face {
-  position: absolute; inset: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-  font-size: 1.7rem; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+.mem-arena { padding: 16px; }
+.memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; perspective: 800px; }
+.mcard { aspect-ratio: 3 / 4; position: relative; cursor: pointer; }
+.mcard .inner { position: absolute; inset: 0; transition: transform 0.45s cubic-bezier(.3,1.4,.6,1); transform-style: preserve-3d; }
+.mcard.flipped .inner, .mcard.matched .inner { transform: rotateY(180deg); }
+.mcard .face { position: absolute; inset: 0; border-radius: 14px; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.mcard .back {
+  background: linear-gradient(135deg, #ffd23f, #ff8a3d); box-shadow: 0 6px 0 #b8541a, 0 8px 14px rgba(0,0,0,.4);
+  font-size: 1.4rem; color: rgba(90,30,0,.45);
 }
-.memory-card .back { background: linear-gradient(145deg, var(--night-1), var(--night-2)); color: var(--gold); font-size: 1.3rem; }
-.memory-card .front { background: var(--paper); transform: rotateY(180deg); border: 2px solid var(--gold); }
-.memory-card.matched .front { background: rgba(88,129,87,0.2); border-color: var(--pin-green); }
-.memory-card:not(.flipped):not(.matched):hover .inner { transform: scale(1.05); }
-@media (max-width: 480px) { .memory-grid { max-width: 290px; } }
+.mcard .back::before { content: ''; position: absolute; inset: 6px; border-radius: 10px; border: 2px dashed rgba(255,255,255,.45); }
+.mcard .front { transform: rotateY(180deg); background: #fff; font-size: 2rem; box-shadow: 0 6px 0 #c9c2e8, 0 8px 14px rgba(0,0,0,.4); }
+.mcard.matched .front { background: linear-gradient(135deg, #d9ffb8, #a6ff4d); box-shadow: 0 6px 0 #5aa61f, 0 0 18px rgba(166,255,77,.6); }
+.mcard.matched .inner { animation: matchPop .45s ease .35s; }
+@keyframes matchPop { 50% { transform: rotateY(180deg) scale(1.12); } }
+.mcard.nope .inner { animation: nope .4s ease; }
+@keyframes nope { 25% { transform: rotateY(180deg) rotate(-6deg); } 75% { transform: rotateY(180deg) rotate(6deg); } }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 2</div>
-  <div class="file-sheet">
-    <div class="stamp-corner">GİZLİ</div>
-    <div class="case-number">// ENERJİ RAPORU</div>
-    <div class="cat-photo">⚡</div>
-    <h1>Vaka 2: <em>Spastik</em></h1>
-    <p class="intro">Zanlının enerji seviyesiyle ilgili birden fazla ihbar aldık. Ölçümler yapıldı, sonuçlar oldukça çarpıcı çıktı. Kodu almadan önce senden küçük bir görev tamamlamanı istiyoruz.</p>
-
-    <div class="evidence-list">
-      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Bir kedi görüldüğü anda zanlının davranışları anında değişiyor: garip sesler çıkarmaya, bilinmeyen bir dilde konuşmaya başlıyor. Uzmanlar buna "kedi modu" adını verdi, tedavisi de aranmıyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Salıncakta sallanırken aynı anda kafasında koca bir dünya kurup overthink etme alışkanlığı tespit edildi. Vücut sakin, kafa 200 km hızla gidiyor.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Enerjisi o kadar bulaşıcı ki bir arkadaş grubunun tamamını kendi frekansına çekmeyi başardı — herkes birbirine "bu senin yüzünden böyle olduk" diyor ama kimse şikayetçi değil.</span></div>
-      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">"Dur biraz" dedirtip iki dakika sonra yine başladığı tek şey: mükemmel espriler. Durdurulması imkansız, dinlenmesi ise zorunlu.</span></div>
-    </div>
-
-    <div class="verdict"><b>SONUÇ:</b> Zanlının enerjisi bir suç unsuru değil, aksine etrafındaki herkesin gününü kurtaran gizli bir güç olarak değerlendirilmiştir. Dosya "tehlikeli derecede sevimli" kategorisine alınmıştır. 🐾⚡</div>
-
-    <div class="game-section">
-      <div class="game-title">🧠 Mini Görev: Enerji Testi</div>
-      <div class="game-sub">Zanlının kafası 200 km hızla gidiyor, seninki yetişebilir mi? Bütün çiftleri bul.</div>
-      <div id="gameArea">
-        <div class="game-meta"><span>🔗 <b id="pairCount">0</b> / 6 çift</span><span>👆 <b id="moveCount">0</b> hamle</span></div>
-        <div class="memory-grid" id="memoryGrid"></div>
-        <div class="game-status" id="gameStatus"></div>
-      </div>
-      <div class="game-win" id="gameWin"></div>
-    </div>
-
-    <div id="codeBox"></div>
+<div class="app" id="app"></div>
+<template id="mission">
+  <div class="hud">
+    <span class="pill">🔗 <b id="pairs">0</b>/6</span>
+    <span class="pill">👆 <b id="moves">0</b> hamle</span>
+    <span class="pill">⏱ <b id="time">0</b>s</span>
   </div>
-  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
-</div>
+  <div class="arena mem-arena" id="arena"><div class="memory-grid" id="grid"></div></div>
+  <button class="btn" id="startBtn">⚡ Testi Başlat</button>
+  <div class="status" id="status"></div>
+</template>
 
 <script src="assets/zy11.js"></script>
 <script>
-const symbols = ['⚡','🐱','🎾','💥','🔋','😹'];
-const grid = document.getElementById('memoryGrid');
-const pairEl = document.getElementById('pairCount');
-const moveEl = document.getElementById('moveCount');
-const statusEl = document.getElementById('gameStatus');
-let deck, first, lock, matched, moves;
+const SYMBOLS = ['⚡','🐱','🎾','💥','🔋','😹'];
+let grid, arena, deck, first, lock, matched, moves, secs, tick, running;
 
 function init() {
-  deck = ZY.shuffle([...symbols, ...symbols]).map(s => ({ s }));
-  first = null; lock = false; matched = 0; moves = 0;
-  pairEl.textContent = 0; moveEl.textContent = 0; statusEl.textContent = '';
+  grid = ZY.$('#grid'); arena = ZY.$('#arena');
+  clearInterval(tick); running = false;
+  deck = ZY.shuffle([...SYMBOLS, ...SYMBOLS]).map(s => ({ s }));
+  first = null; lock = true; matched = 0; moves = 0; secs = 0;
+  ZY.$('#pairs').textContent = 0; ZY.$('#moves').textContent = 0; ZY.$('#time').textContent = 0; ZY.$('#status').textContent = '';
   grid.innerHTML = '';
-  deck.forEach((card, i) => {
+  deck.forEach((c, i) => {
     const el = document.createElement('div');
-    el.className = 'memory-card';
-    el.innerHTML = '<div class="inner"><div class="face back">❔</div><div class="face front">' + card.s + '</div></div>';
-    el.addEventListener('click', () => flip(i));
-    card.el = el;
-    grid.appendChild(el);
+    el.className = 'mcard';
+    el.innerHTML = '<div class="inner"><div class="face back">⚡</div><div class="face front">' + c.s + '</div></div>';
+    el.addEventListener('pointerdown', e => { e.preventDefault(); flip(i); });
+    c.el = el; grid.appendChild(el);
   });
+  const b = ZY.$('#startBtn'); b.style.display = ''; b.disabled = false; b.onclick = start;
+  ZY.arenaMsg(arena, '🧠', 'Kafa 200 km hızla gidiyor', 'Kartlar 1 saniyeliğine açılacak, iyi bak!');
+}
+
+async function start() {
+  ZY.$('#startBtn').style.display = 'none'; ZY.arenaMsg(arena);
+  deck.forEach((c, i) => setTimeout(() => c.el.classList.add('flipped'), i * 40));
+  await ZY.wait(1400);
+  deck.forEach(c => c.el.classList.remove('flipped'));
+  await ZY.wait(450);
+  lock = false; running = true;
+  tick = setInterval(() => { secs++; ZY.$('#time').textContent = secs; }, 1000);
 }
 
 function flip(i) {
   const c = deck[i];
   if (lock || c.el.classList.contains('flipped') || c.el.classList.contains('matched')) return;
-  c.el.classList.add('flipped');
-  ZY.beep(520, 0.06);
+  c.el.classList.add('flipped'); ZY.sfx.tap();
   if (first === null) { first = i; return; }
-  moves++; moveEl.textContent = moves;
-  const a = deck[first], b = c;
-  first = null;
-  if (a.s === b.s) {
-    a.el.classList.add('matched'); b.el.classList.add('matched');
-    matched++; pairEl.textContent = matched;
-    ZY.beep(880, 0.12);
-    if (matched === symbols.length) {
-      statusEl.textContent = moves + ' hamlede bitirdin' + (moves <= 10 ? ' — zanlı seviyesinde hızlısın! ⚡' : '.');
-      ZY.win(2, '🎉 Enerjini kontrol edebiliyorsun, tebrikler! Kod artık senin.');
+  moves++; ZY.$('#moves').textContent = moves;
+  const a = deck[first]; first = null;
+  if (a.s === c.s) {
+    a.el.classList.add('matched'); c.el.classList.add('matched');
+    matched++; ZY.$('#pairs').textContent = matched;
+    setTimeout(() => { ZY.burstAt(c.el, { count: 14, colors: ['#a6ff4d', '#fff', '#ffd23f'] }); ZY.sfx.good(); ZY.buzz(20); }, 300);
+    if (matched === SYMBOLS.length) {
+      clearInterval(tick); running = false;
+      setTimeout(() => ZY.complete({
+        stars: moves <= 8 ? 3 : moves <= 11 ? 2 : 1,
+        stats: '👆 ' + moves + ' hamle · ⏱ ' + secs + ' sn',
+        msg: moves <= 8 ? 'Zanlı seviyesinde hızlı bir kafa! ⚡' : 'Enerjini kontrol edebiliyorsun.',
+      }), 900);
     }
   } else {
     lock = true;
-    setTimeout(() => { a.el.classList.remove('flipped'); b.el.classList.remove('flipped'); lock = false; }, 750);
+    setTimeout(() => { a.el.classList.add('nope'); c.el.classList.add('nope'); }, 380);
+    setTimeout(() => { [a, c].forEach(x => x.el.classList.remove('flipped', 'nope')); lock = false; }, 900);
   }
 }
 
-ZY.page(2, { init });
+ZY.page(2, {
+  intro: 'Zanlının enerji seviyesiyle ilgili birden fazla ihbar aldık. Ölçümler yapıldı, sonuçlar oldukça çarpıcı çıktı.',
+  evidence: [
+    'Bir kedi görüldüğü anda zanlının davranışları anında değişiyor: garip sesler çıkarmaya, bilinmeyen bir dilde konuşmaya başlıyor. Uzmanlar buna "kedi modu" adını verdi, tedavisi de aranmıyor.',
+    'Salıncakta sallanırken aynı anda kafasında koca bir dünya kurup overthink etme alışkanlığı tespit edildi. Vücut sakin, kafa 200 km hızla gidiyor.',
+    'Enerjisi o kadar bulaşıcı ki bir arkadaş grubunun tamamını kendi frekansına çekmeyi başardı — herkes "bu senin yüzünden böyle olduk" diyor ama kimse şikayetçi değil.',
+    '"Dur biraz" dedirtip iki dakika sonra yine başladığı tek şey: mükemmel espriler. Durdurulması imkansız, dinlenmesi ise zorunlu.',
+  ],
+  verdict: 'Zanlının enerjisi bir suç unsuru değil, etrafındaki herkesin gününü kurtaran gizli bir güç olarak değerlendirilmiştir. Dosya "tehlikeli derecede sevimli" kategorisine alınmıştır. ⚡',
+  mission: { title: '🧠 Enerji Testi', sub: 'Kartları ezberle, sonra 6 çifti bul. Ne kadar az hamle, o kadar çok yıldız!', goals: ['Bitir', '11 hamle', '8 hamle'] },
+  init,
+});
 </script>
 </body>
 </html>
