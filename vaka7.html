@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaka 7 · Yolda Yürüyemeyen Kız — ZY-11</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.road { height: 340px; max-width: 330px; background: linear-gradient(180deg, #4a4a52, #3a3a40); }
+.road::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, transparent calc(33.33% - 2px), rgba(255,255,255,0.35) calc(33.33% - 2px), rgba(255,255,255,0.35) calc(33.33% + 2px), transparent calc(33.33% + 2px)),
+    linear-gradient(90deg, transparent calc(66.66% - 2px), rgba(255,255,255,0.35) calc(66.66% - 2px), rgba(255,255,255,0.35) calc(66.66% + 2px), transparent calc(66.66% + 2px));
+  -webkit-mask: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 44px);
+          mask: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 44px);
+  -webkit-mask-position: 0 var(--off, 0px); mask-position: 0 var(--off, 0px);
+}
+.road .walker { position: absolute; bottom: 14px; font-size: 2.3rem; line-height: 1; transform: translateX(-50%); transition: left 0.12s ease; pointer-events: none; }
+.road .walker.hit { animation: wobble 0.5s ease; }
+@keyframes wobble { 0%,100% { transform: translateX(-50%) rotate(0); } 25% { transform: translateX(-50%) rotate(-25deg); } 75% { transform: translateX(-50%) rotate(25deg); } }
+.road .obs { position: absolute; font-size: 2rem; line-height: 1; transform: translateX(-50%); pointer-events: none; }
+.road .bubble { position: absolute; bottom: 60px; transform: translateX(-50%); background: var(--paper); color: var(--ink); font-family: 'Kalam', cursive; font-weight: 700; font-size: 0.8rem; padding: 3px 10px; border-radius: 10px; white-space: nowrap; animation: up 1s ease forwards; pointer-events: none; }
+@keyframes up { to { transform: translate(-50%, -24px); opacity: 0; } }
+.lane-btns { display: flex; gap: 12px; justify-content: center; margin-bottom: 8px; }
+.lane-btns button { width: 84px; height: 52px; border: none; border-radius: 12px; background: var(--gold); font-size: 1.4rem; font-weight: 700; box-shadow: 0 4px 10px rgba(212,160,23,0.35); touch-action: manipulation; }
+.lane-btns button:active { transform: scale(0.93); }
+.progress { max-width: 330px; height: 8px; margin: 0 auto 12px; background: rgba(0,0,0,0.12); border-radius: 999px; overflow: hidden; }
+.progress div { height: 100%; width: 0; background: linear-gradient(90deg, var(--pin-green), var(--gold)); }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="folder-tab">DOSYA NO: ZY-11 / VAKA 7</div>
+  <div class="file-sheet">
+    <div class="stamp-corner">GİZLİ</div>
+    <div class="case-number">// SAHA GÖZLEMİ</div>
+    <div class="cat-photo">🚶‍♀️</div>
+    <h1>Vaka 7: <em>Yolda Yürüyemeyen Kız</em></h1>
+    <p class="intro">Ekiplerimiz zanlıyı bir hafta boyunca sokakta takip etti. A noktasından B noktasına düz bir çizgide gidebildiği tek bir an bile kaydedilemedi.</p>
+
+    <div class="evidence-list">
+      <div class="evidence-item"><span class="ev-num">KANIT #1</span><span class="ev-text">Konuşurken yürümeyi unuttuğu tespit edildi: hikâyenin heyecanlı yerine gelince olduğu yerde duruyor, el kol hareketleriyle anlatıyor, sonra "nerede kalmıştık" diyerek yanlış yöne yürümeye devam ediyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #2</span><span class="ev-text">Tamamen düz bir kaldırımda, hiçbir engel yokken tökezlediği kamera kayıtlarına geçti. Zanlının ifadesi: "Yer beni itti."</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #3</span><span class="ev-text">Yol üstündeki her kedi bir durak noktası sayılıyor. Beş dakikalık yol, kedi yoğunluğuna bağlı olarak yirmi dakikaya kadar uzayabiliyor.</span></div>
+      <div class="evidence-item"><span class="ev-num">KANIT #4</span><span class="ev-text">Arkadaşlarının onu direklerden, çukurlardan ve bisikletlerden korumak için kolundan tutarak yürüdüğü görüldü. Zanlı bunu "eskort hizmeti" olarak adlandırıyor.</span></div>
+    </div>
+
+    <div class="verdict"><b>SONUÇ:</b> Zanlının yürüme yeteneği "deneysel" olarak sınıflandırılmıştır. Ancak her tökezlemeden sonra en çok gülen yine kendisi olduğu için dosya "neşeli kaza" kategorisine alınmıştır. Önerilen tedbir: daima kolundan tutun. 🚶‍♀️💫</div>
+
+    <div class="game-section">
+      <div class="game-title">🚧 Mini Görev: Eskort Hizmeti</div>
+      <div class="game-sub">Zanlıyı eve sağ salim ulaştır! Direk 🪧, çukur 🕳️, bisiklet 🚲 ve dikkat dağıtan kediler 🐈'den kaçır. Sağa-sola geçmek için butonları, ok tuşlarını kullan ya da yolun sağına/soluna dokun. 3 canın var.</div>
+      <div id="gameArea">
+        <div class="game-meta"><span>🏠 Eve: <b id="dist">300</b> m</span><span id="lives">❤️❤️❤️</span></div>
+        <div class="progress"><div id="prog"></div></div>
+        <div class="night-box road" id="road">
+          <div class="walker" id="walker">🚶‍♀️</div>
+          <div class="hint-text" id="hint">Başlamak için düğmeye bas 👇</div>
+        </div>
+        <div class="lane-btns"><button id="leftBtn" aria-label="sola">←</button><button id="rightBtn" aria-label="sağa">→</button></div>
+        <button class="btn btn-gold start-btn" id="startBtn">🚶‍♀️ Yürüyüşe Başla</button>
+        <div class="game-status" id="gameStatus"></div>
+      </div>
+      <div class="game-win" id="gameWin"></div>
+    </div>
+
+    <div id="codeBox"></div>
+  </div>
+  <a class="back-home" href="index.html">← Ana Sayfaya Dön</a>
+</div>
+
+<script src="assets/zy11.js"></script>
+<script>
+const DIST = 300; // metre
+const OBS = [
+  { e: '🪧', msg: 'Direğe çarptı! "Pardon" dedi direğe.' },
+  { e: '🕳️', msg: 'Çukura bastı! "Yer beni itti."' },
+  { e: '🚲', msg: 'Bisiklet! Son anda zıpladı... olmadı.' },
+  { e: '🐈', msg: 'Kedi gördü, sevmek için durdu 🐈' },
+  { e: '🚧', msg: 'Kazı alanı! Konuşmaya o kadar dalmıştı ki...' },
+];
+const road = document.getElementById('road');
+const walker = document.getElementById('walker');
+const hint = document.getElementById('hint');
+const startBtn = document.getElementById('startBtn');
+const distEl = document.getElementById('dist');
+const livesEl = document.getElementById('lives');
+const prog = document.getElementById('prog');
+const statusEl = document.getElementById('gameStatus');
+
+let lane = 1, running = false, obs = [], walked = 0, lives = 3, lastT = 0, spawnT = 0, raf = null, invuln = 0, off = 0;
+
+function placeWalker() { walker.style.left = ((lane + 0.5) / 3 * 100) + '%'; }
+function shift(d) { if (!running) return; lane = Math.max(0, Math.min(2, lane + d)); placeWalker(); }
+document.getElementById('leftBtn').addEventListener('click', () => shift(-1));
+document.getElementById('rightBtn').addEventListener('click', () => shift(1));
+road.addEventListener('pointerdown', e => {
+  const r = road.getBoundingClientRect();
+  shift(e.clientX - r.left < r.width / 2 ? -1 : 1);
+});
+document.addEventListener('keydown', e => {
+  if (!running) return;
+  if (e.key === 'ArrowLeft') { shift(-1); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { shift(1); e.preventDefault(); }
+});
+
+function clearObs() { obs.forEach(o => o.el.remove()); obs = []; }
+function hud() {
+  distEl.textContent = Math.max(0, Math.ceil(DIST - walked));
+  livesEl.textContent = '❤️'.repeat(lives) + '🤍'.repeat(3 - lives);
+  prog.style.width = Math.min(100, walked / DIST * 100) + '%';
+}
+
+function init() {
+  running = false; cancelAnimationFrame(raf); clearObs();
+  lane = 1; walked = 0; lives = 3; placeWalker(); hud();
+  hint.style.display = 'flex'; hint.textContent = 'Başlamak için düğmeye bas 👇';
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🚶‍♀️ Yürüyüşe Başla';
+  statusEl.textContent = '';
+}
+
+function start() {
+  clearObs(); lane = 1; walked = 0; lives = 3; placeWalker(); hud();
+  running = true; startBtn.disabled = true; hint.style.display = 'none';
+  statusEl.textContent = '"Ya bak ne diyeceğim..." 🗣️';
+  lastT = performance.now(); spawnT = 0; invuln = 0;
+  raf = requestAnimationFrame(loop);
+}
+
+function spawn() {
+  const speed = 150 + walked * 0.9;
+  // bazen iki şerit birden dolu, ama her zaman bir çıkış var
+  const lanes = ZY.shuffle([0, 1, 2]).slice(0, Math.random() < Math.min(0.45, walked / 400) ? 2 : 1);
+  lanes.forEach(l => {
+    const t = OBS[Math.floor(Math.random() * OBS.length)];
+    const el = document.createElement('div');
+    el.className = 'obs'; el.textContent = t.e;
+    el.style.left = ((l + 0.5) / 3 * 100) + '%';
+    road.appendChild(el);
+    obs.push({ el, lane: l, y: -40, v: speed, t });
+  });
+}
+
+function bubble(text) {
+  const b = document.createElement('div');
+  b.className = 'bubble'; b.textContent = text; b.style.left = walker.style.left;
+  road.appendChild(b); setTimeout(() => b.remove(), 1000);
+}
+
+function loop(t) {
+  if (!running) return;
+  const dt = Math.min(0.05, (t - lastT) / 1000); lastT = t;
+  const pace = 22 + walked * 0.05; // m/sn
+  walked += pace * dt * 0.55;
+  off = (off + (150 + walked * 0.9) * dt) % 44;
+  road.style.setProperty('--off', off + 'px');
+  invuln = Math.max(0, invuln - dt);
+  spawnT -= dt;
+  if (spawnT <= 0) { spawn(); spawnT = Math.max(0.55, 1.1 - walked / 500); }
+  const H = road.clientHeight, wy = H - 50;
+  for (let i = obs.length - 1; i >= 0; i--) {
+    const o = obs[i];
+    o.y += o.v * dt;
+    o.el.style.top = o.y + 'px';
+    if (!invuln && o.lane === lane && o.y > wy - 30 && o.y < wy + 20) {
+      o.el.remove(); obs.splice(i, 1);
+      lives--; invuln = 1; hud();
+      walker.classList.remove('hit'); void walker.offsetWidth; walker.classList.add('hit');
+      ZY.beep(140, 0.25, 'square');
+      statusEl.textContent = o.t.msg;
+      bubble(o.t.e === '🐈' ? 'pisi pisi 🥺' : 'ayy!');
+      if (lives <= 0) return lose();
+    } else if (o.y > H + 20) {
+      o.el.remove(); obs.splice(i, 1);
+    }
+  }
+  hud();
+  if (walked >= DIST) return winRound();
+  raf = requestAnimationFrame(loop);
+}
+
+function lose() {
+  running = false; clearObs();
+  hint.style.display = 'flex'; hint.textContent = '🤕 Zanlı yine yerde. Ama gülüyor. Tekrar dene!';
+  startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Dene';
+}
+
+function winRound() {
+  running = false; clearObs();
+  walker.textContent = '🏠';
+  hint.style.display = 'flex'; hint.textContent = '🏠 Eve vardı! Tarihte ilk kez sıfır hasarla... neredeyse.';
+  startBtn.style.display = 'none';
+  statusEl.textContent = lives === 3 ? 'Kusursuz eskort! Hiç tökezlemedi 🏅' : 'Birkaç tökezleme oldu ama kolundan hiç bırakmadın 💛';
+  ZY.win(7, '🎉 Zanlıyı eve sağ salim ulaştırdın, kod artık senin!');
+  setTimeout(() => { walker.textContent = '🚶‍♀️'; }, 3000);
+}
+
+startBtn.addEventListener('click', start);
+ZY.page(7, { init });
+</script>
+</body>
+</html>
