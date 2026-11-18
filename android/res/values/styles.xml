@@ -6,7 +6,7 @@
         <item name="android:navigationBarColor">@color/bg_dark</item>
         <item name="android:colorAccent">@color/pink</item>
     </style>
-    <color name="bg">#FF1A1145</color>
-    <color name="bg_dark">#FF0F0A26</color>
+    <color name="bg">#FF2B2013</color>
+    <color name="bg_dark">#FF2B2013</color>
     <color name="pink">#FFFF4D9D</color>
 </resources>
