@@ -4,8 +4,8 @@
 
   const CASES = [
     { n: 1,  tag: 'Davranış Kaydı',    alias: 'Hırsız Kedi',           emoji: '🐱', code: '26', grad: 'linear-gradient(135deg,#ff4d9d,#ff8a3d)', glow: 'rgba(255,77,157,.4)' },
-    { n: 2,  tag: 'Enerji Raporu',     alias: 'Spastik',               emoji: '⚡', code: '03', grad: 'linear-gradient(135deg,#ffe066,#ff8a3d)', glow: 'rgba(255,210,63,.4)' },
-    { n: 3,  tag: 'Stil Analizi',      alias: 'Çakma Gotik',           emoji: '🖤', code: '07', grad: 'linear-gradient(135deg,#9b6bff,#ff4d9d)', glow: 'rgba(155,107,255,.45)' },
+    { n: 2,  tag: 'Enerji Raporu',     alias: 'Spastik',               emoji: '⚡', code: '04', grad: 'linear-gradient(135deg,#ffe066,#ff8a3d)', glow: 'rgba(255,210,63,.4)' },
+    { n: 3,  tag: 'Stil Analizi',      alias: 'Çakma Gotik',           emoji: '🖤', code: '08', grad: 'linear-gradient(135deg,#9b6bff,#ff4d9d)', glow: 'rgba(155,107,255,.45)' },
     { n: 4,  tag: 'Davranış Kaydı',    alias: 'Lolcu Köpek',           emoji: '🐶', code: '18', grad: 'linear-gradient(135deg,#33e1ff,#4d7cff)', glow: 'rgba(51,225,255,.4)' },
     { n: 5,  tag: 'İştah Raporu',      alias: 'Doymayan',              emoji: '🍗', code: '11', grad: 'linear-gradient(135deg,#ff8a3d,#ff4d5e)', glow: 'rgba(255,138,61,.4)' },
     { n: 6,  tag: 'Lakap Dosyası',     alias: 'Midesiz',               emoji: '🌶️', code: '13', grad: 'linear-gradient(135deg,#ff4d5e,#ff4d9d)', glow: 'rgba(255,77,94,.4)' },
