@@ -43,7 +43,7 @@ function render() {
     '<div style="color:var(--text-dim);font-weight:700;font-size:.85rem;margin-bottom:10px">Seviye ' + L.lvl + ' / ' + ZY.RANKS.length + (L.need ? ' · sonraki rütbeye ' + (L.need - L.into) + ' XP' : ' · MAKSİMUM') + '</div>' +
     '<div class="xpbar"><div style="width:' + L.pct + '%"></div></div>';
   const T = [['📂', ZY.solvedCount() + '/11', 'Vaka'], ['⭐', ZY.totalStars() + '/30', 'Yıldız'], ['🐾', p.patis, 'Pati'], ['🔥', p.streak.best, 'En iyi seri'], ['📅', s.daily || 0, 'Günlük görev'], ['🎮', s.plays || 0, 'Oyun'],
-    ['🐱', s.cats || 0, 'Kedi yakalandı'], ['🍕', s.foods || 0, 'Yemek yendi'], ['🚶‍♀️', (s.meters || 0) + ' m', 'Yürüyüş'], ['📒', Object.keys(p.owned.cats).length + '/' + ZY.CATS.length, 'Kedi albümü'], ['🏆', Object.keys(p.arcade).length + '/' + ZY.ARCADES.length, 'Rekor modu'], ['✨', p.xp, 'Toplam XP']];
+    ['🐱', s.cats || 0, 'Kedi yakalandı'], ['🍕', s.foods || 0, 'Yemek yendi'], ['🚶‍♀️', (s.meters || 0) + ' m', 'Yürüyüş'], ['📒', Object.keys(p.owned.cats).length + '/' + ZY.CATS.length, 'Kedi albümü'], ['🏆', Object.keys(p.arcade).length + '/' + ZY.ARCADES.length, 'Rekor modu'], ['✨', p.xp, 'Toplam XP'], ['⏱', ZY.fmtTime(s.secs), 'Oyun süresi']];
   $('#stats').innerHTML = T.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
   const got = ZY.ACH.filter(a => p.ach[a.id]).length;
   $('#achCount').textContent = got + '/' + ZY.ACH.length;

@@ -15,6 +15,7 @@ OUT="${OUT:-$ROOT/apk/ZeynepKim.apk}"
 rm -rf "$BUILD"
 mkdir -p "$BUILD/www" "$BUILD/gen" "$BUILD/classes" "$(dirname "$OUT")"
 
+bash "$ROOT/tools/making-stats.sh"
 echo "• Oyun dosyaları kopyalanıyor"
 cp "$ROOT"/index.html "$ROOT"/vaka*.html "$ROOT"/rekor.html "$ROOT"/magaza.html "$ROOT"/profil.html "$BUILD/www/"
 cp -r "$ROOT/assets" "$BUILD/www/assets"

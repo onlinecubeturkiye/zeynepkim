@@ -578,6 +578,18 @@
       '<button class="icon-btn" id="soundBtn" aria-label="Ses">' + (soundOn() ? '🔊' : '🔇') + '</button></div>';
   }
 
+  // oyunda geçirilen süre: sayfa görünürken her 10 sn'de bir eklenir
+  let lastTick = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    if (!document.hidden) { const p = prof(); p.stats.secs = (p.stats.secs || 0) + Math.min(15, Math.round((now - lastTick) / 1000)); saveProf(p); }
+    lastTick = now;
+  }, 10000);
+  function fmtTime(secs) {
+    const m = Math.floor((secs || 0) / 60), h = Math.floor(m / 60);
+    return h ? h + ' sa ' + (m % 60) + ' dk' : m + ' dk';
+  }
+
   // sayfa açılır açılmaz tema uygula
   applyTheme();
 
@@ -588,6 +600,6 @@
     soundOn, setSound, beep, sfx, buzz, burst, burstAt, confetti, toast, shake, floatText, shuffle, wait, $,
     starsHtml, countdown, arenaMsg, onHidden, modal, confirmBox, page, complete, appbar, bindSound,
     prof, saveProf, levelInfo, reward, stat, checkAch, checkIn, dailyTask, dailyText, dailyHref, applyTheme, refreshHud,
-    arcadeEnd, arcadeAvailable, buy, openBox, catHtml, queueNote, tabbar, hubBar,
+    arcadeEnd, arcadeAvailable, buy, openBox, catHtml, queueNote, tabbar, hubBar, fmtTime,
   };
 })();
