@@ -269,8 +269,7 @@ async function behindTheScenes() {
   const box = $('#bts'); box.classList.add('on');
   $('#codeLine').innerHTML = ZY.MAIN.map(c => '<span>' + c.code + '</span>').join('');
   $('#secrets').innerHTML = SECRETS.map(s => '<div class="secret' + (s.codes.length > 1 ? ' wide' : '') + '"><div class="num">' + s.codes.join(' · ') + '</div><div><b>' + s.e + ' ' + s.t + '</b><small>' + s.d + '</small></div></div>').join('');
-  const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'],
-    ['🗓️', M.workDays + ' gün', 'Üzerinde çalışıldı'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka · 15 oyun', 'İçinde']];
+  const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka · 15 oyun', 'İçinde']];
   if (MAKER_HOURS) tiles.splice(2, 0, ['⌛', '~' + MAKER_HOURS + ' saat', 'Harcanan emek']);
   $('#makingTiles').innerHTML = tiles.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b style="font-size:.98rem">' + v + '</b><small>' + l + '</small></div>').join('');
   $('#timeline').innerHTML = [
