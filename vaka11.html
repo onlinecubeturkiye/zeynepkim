@@ -59,7 +59,7 @@
 .secret-tease { margin-top: 16px; text-align: center; padding: 14px; border-radius: 16px; border: 1px dashed rgba(51,225,255,.5); background: rgba(51,225,255,.08); }
 .cipher { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; perspective: 700px; margin-bottom: 14px; }
 .ck { aspect-ratio: 3 / 4; position: relative; cursor: pointer; }
-.ck .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,1.3,.6,1); }
+.ck .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 1.1s cubic-bezier(.3,1.3,.6,1); }
 .ck.open .in { transform: rotateY(180deg); }
 .ck .f { position: absolute; inset: 0; border-radius: 12px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4px; }
 .ck .fr { background: var(--grad-gold); color: #3a2400; font-family: var(--font-mono); font-weight: 700; font-size: 1.35rem; box-shadow: 0 4px 0 rgba(0,0,0,.18); }
@@ -73,7 +73,10 @@
 .ck-detail .num { flex: none; font-family: var(--font-mono); font-weight: 700; font-size: 1.9rem; color: var(--pink); min-width: 56px; text-align: center; }
 .ck-detail b { display: block; font-family: var(--font-head); font-size: 1.2rem; line-height: 1.15; }
 .ck-detail small { color: var(--text-dim); font-weight: 700; }
-.ck-detail .pair { font-family: var(--font-mono); font-size: .75rem; color: var(--text-faint); display: block; margin-top: 2px; }
+.ck-detail { align-items: flex-start; min-height: 120px; }
+.ck-detail .txt { animation: fadeUp .7s ease both; }
+.ck-detail p { margin: 4px 0 0; color: var(--text-dim); font-weight: 600; font-size: .95rem; line-height: 1.5; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } }
 .timeline { margin-top: 16px; padding-left: 16px; border-left: 2px dashed rgba(255,255,255,.18); }
 .timeline div { position: relative; padding: 0 0 12px 10px; font-size: .9rem; color: var(--text-dim); line-height: 1.4; }
 .timeline div::before { content: ''; position: absolute; left: -23px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--grad-hot); box-shadow: 0 0 10px rgba(255,77,157,.6); }
@@ -160,16 +163,16 @@ const SIGN = '— Dosyayı hazırlayan, en sadık dedektifin 🐾';
 
 // ✏️ Şifredeki her kodun anlamı (Perde Arkası bölümünde gösterilir)
 const SECRETS = [
-  { code: '26', e: '💛', t: 'Tanıştığımız gün', s: 'Tanıştık', d: '26 Haziran · günü' },
-  { code: '04', e: '🎂', t: 'Doğum günün', s: 'Doğum günü', d: '4 Ağustos · günü' },
-  { code: '08', e: '🎂', t: 'Doğum ayın', s: 'Doğum ayı', d: '4 Ağustos · ayı' },
-  { code: '18', e: '🎈', t: 'Yaşın', d: 'Koca 18' },
-  { code: '11', e: '✨', t: 'En sevdiğin sayı', s: 'Sevdiği sayı', d: 'Her zaman 11' },
-  { code: '13', e: '🌶️', t: 'Midesiz', d: 'Bir şey olmaz ya' },
-  { code: '12', e: '🎸', t: 'Şebnem Ferah', s: 'Şebnem', d: '12 Nisan doğumlu' },
-  { code: '06', e: '💛', t: 'Tanıştığımız ay', s: 'Tanıştık', d: '26 Haziran · ayı' },
-  { code: '20', e: '🖤', t: 'Apocalypse', d: '20 Mart 2017\'de çıktı' },
-  { code: '55', e: '👕', t: 'Forma numaran', s: 'Forma no', d: 'Sahadaki 55' },
+  { code: '26', e: '💛', t: 'Tanıştığımız gün', s: 'Tanıştık', d: '26 Haziran\'da tanıştık. Şifrenin ilk kodu, her şeyin başladığı gün. O günden beri bu dosya yavaş yavaş doldu.' },
+  { code: '04', e: '🎂', t: 'Doğum günün', s: 'Doğum günü', d: '4 Ağustos, senin günün. Dünyanın biraz daha eğlenceli, biraz daha gürültülü bir yer olmaya başladığı gün.' },
+  { code: '08', e: '🎂', t: 'Doğum ayın', s: 'Doğum ayı', d: 'Ağustos. 04 ile 08 yan yana gelince doğum günün çıkıyor: 04.08. Kasanın ikinci ve üçüncü kilidi sana ait.' },
+  { code: '18', e: '🎈', t: 'Yaşın', d: '18 yaş. Bu dosyadaki bütün o hırsızlık, spastiklik ve sevimlilik tam 18 yıllık bir birikimin ürünü.' },
+  { code: '11', e: '✨', t: 'En sevdiğin sayı', s: 'Sevdiği sayı', d: 'En sevdiğin sayı. Kasanın tam ortasında duruyor, çünkü en sevdiğin şey en ortada olmalı.' },
+  { code: '13', e: '🌶️', t: 'Midesiz', d: 'Turşuya çikolata, kahvaltıya soğuk pizza, gece yarısı acılı dürüm... Bu kod, midesi bulunamayan zanlıya saygı duruşu.' },
+  { code: '12', e: '🎸', t: 'Şebnem Ferah', s: 'Şebnem', d: 'Şebnem Ferah 12 Nisan 1972\'de doğdu. Sevdiğin seslerden biri şifrenin içinde kendine bir yer buldu.' },
+  { code: '06', e: '💛', t: 'Tanıştığımız ay', s: 'Tanıştık', d: 'Haziran, tanıştığımız ay. Şifrenin ilk kodu 26 ile bu kod birleşince o gün ortaya çıkıyor: 26.06.' },
+  { code: '20', e: '🖤', t: 'Apocalypse', d: 'Cigarettes After Sex\'in Apocalypse şarkısı 20 Mart 2017\'de çıktı. Şifredeki en karanlık, ama belki de en güzel kod.' },
+  { code: '55', e: '👕', t: 'Forma numaran', s: 'Forma no', d: 'Sahadaki numaran. Kasanın son kilidi bu sayıyla kapandı; dosya da onunla mühürlendi.' },
 ];
 // ✏️ İstersen bu oyuna harcadığın yaklaşık saati yaz (ör. 40). Boş bırakırsan gösterilmez.
 const MAKER_HOURS = null;
@@ -273,10 +276,8 @@ const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'
 const trDate = iso => { const [y, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1] + ' ' + y; };
 function showSecret(i) {
   const x = SECRETS[i];
-  const pair = { '26': '06', '06': '26', '04': '08', '08': '04' }[x.code];
   document.querySelectorAll('.ck').forEach(el => el.classList.toggle('sel', +el.dataset.i === i));
-  $('#ckDetail').innerHTML = '<div class="num">' + x.code + '</div><div><b>' + x.e + ' ' + x.t + '</b><small>' + x.d + '</small>' +
-    (pair ? '<span class="pair">' + (x.code === '26' || x.code === '06' ? '26 · 06' : '04 · 08') + ' birlikte: ' + (x.code === '26' || x.code === '06' ? '26 Haziran' : '4 Ağustos') + '</span>' : '') + '</div>';
+  $('#ckDetail').innerHTML = '<div class="num">' + x.code + '</div><div class="txt"><b>' + x.e + ' ' + x.t + '</b><p>' + x.d + '</p></div>';
 }
 let btsShown = false;
 async function behindTheScenes() {
@@ -287,7 +288,7 @@ async function behindTheScenes() {
   $('#cipher').innerHTML = SECRETS.map((x, i) => '<div class="ck" data-i="' + i + '"><div class="in"><div class="f fr">' + x.code + '<small>' + (i + 1) + '. kod</small></div>' +
     '<div class="f bk"><span class="e">' + x.e + '</span><span class="c">' + x.code + '</span><span class="t">' + (x.s || x.t) + '</span></div></div></div>').join('');
   document.querySelectorAll('.ck').forEach(el => el.onclick = () => { if (!el.classList.contains('open')) { el.classList.add('open'); ZY.sfx.tap(); } showSecret(+el.dataset.i); });
-  $('#ckDetail').innerHTML = '<small>Kodlar sırayla açılıyor...</small>';
+  $('#ckDetail').innerHTML = '<div class="txt"><p>Kodlar birazdan sırayla açılacak...</p></div>';
   const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka', 'Her birinde bir görev']];
   if (MAKER_HOURS) tiles.splice(2, 0, ['⌛', '~' + MAKER_HOURS + ' saat', 'Harcanan emek']);
   $('#makingTiles').innerHTML = tiles.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b style="font-size:.98rem">' + v + '</b><small>' + l + '</small></div>').join('');
@@ -303,7 +304,21 @@ async function behindTheScenes() {
     .map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
   $('#outro').innerHTML = '<div style="font-size:2.4rem">💛</div><p>Sen bu dosyaya <b>' + ZY.fmtTime(st.secs) + '</b> ayırdın.<br>Bu dosya da <b>' + days + ' gündür</b> senin için hazırlanıyor.<br><br>Her vaka, her kod, her kedi... hepsi tek bir cümle için:<br><b>İyi ki varsın.</b></p>';
   await ZY.wait(400);
-  for (const el of document.querySelectorAll('.ck')) { el.classList.add('open'); showSecret(+el.dataset.i); ZY.beep(600 + Math.random() * 400, .06, 'triangle', .07); await ZY.wait(850); }
+  // kartlar, bölüm ekrana gelince sırayla ve yavaşça açılır; dokunulursa otomatik akış durur
+  let auto = true;
+  document.querySelectorAll('.ck').forEach(el => el.addEventListener('click', () => { auto = false; }));
+  await new Promise(res => {
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); res(); } }, { threshold: 0.6 });
+    io.observe($('#cipher'));
+  });
+  await ZY.wait(600);
+  for (const el of document.querySelectorAll('.ck')) {
+    if (!auto) break;
+    el.classList.add('open'); ZY.beep(600 + Math.random() * 300, .08, 'triangle', .07);
+    await ZY.wait(700); if (!auto) break;
+    showSecret(+el.dataset.i);
+    await ZY.wait(4300);
+  }
 }
 
 async function typeLetter() {
