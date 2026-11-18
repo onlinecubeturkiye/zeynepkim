@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="pano">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2b2013">
 <title>Vaka 11 · Son Dosya — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
-<script data-theme-boot>try{var _p=JSON.parse(localStorage.getItem("zy11_profile")||"{}");document.documentElement.dataset.theme=_p.themeV===2&&_p.theme?_p.theme:"pano"}catch(e){document.documentElement.dataset.theme="pano"}</script>
 <style>
 .stage { display: none; } .stage.on { display: block; animation: rise .5s ease both; }
 .st-title { font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; text-align: center; }
@@ -269,19 +268,18 @@ async function behindTheScenes() {
   const box = $('#bts'); box.classList.add('on');
   $('#codeLine').innerHTML = ZY.MAIN.map(c => '<span>' + c.code + '</span>').join('');
   $('#secrets').innerHTML = SECRETS.map(s => '<div class="secret' + (s.codes.length > 1 ? ' wide' : '') + '"><div class="num">' + s.codes.join(' · ') + '</div><div><b>' + s.e + ' ' + s.t + '</b><small>' + s.d + '</small></div></div>').join('');
-  const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka · 15 oyun', 'İçinde']];
+  const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka', 'Her birinde bir görev']];
   if (MAKER_HOURS) tiles.splice(2, 0, ['⌛', '~' + MAKER_HOURS + ' saat', 'Harcanan emek']);
   $('#makingTiles').innerHTML = tiles.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b style="font-size:.98rem">' + v + '</b><small>' + l + '</small></div>').join('');
   $('#timeline').innerHTML = [
     ['' + trDate(M.start), 'İlk dosya açıldı: "Zeynep Gerçekten Kim?" 🕵️‍♀️'],
     ['Sonra', 'Hırsız Kedi\'den Doymayan\'a ilk 5 vaka yazıldı'],
     ['Ardından', 'Kalan vakalar, son dosya ve mektup eklendi'],
-    ['Sonra', 'Yıldızlar, gizli dosya, dükkan, kedi albümü ve bu uygulama geldi'],
+    ['Sonra', 'Yıldızlar, gizli 12. dosya ve bu uygulama geldi'],
     [trDate(M.last), 'Şifre son halini aldı: her kodu sana ait bir şey'],
   ].map(([w, t]) => '<div><b>' + w + '</b> · ' + t + '</div>').join('');
-  const p = ZY.prof(), st = p.stats;
-  $('#youTiles').innerHTML = [['⏱', ZY.fmtTime(st.secs), 'Oyunda geçen süre'], ['🎮', st.plays || 0, 'Oyun oynadın'], ['⭐', ZY.totalStars() + '/30', 'Yıldız topladın'],
-    ['🐱', st.cats || 0, 'Kedi yakaladın'], ['🍕', st.foods || 0, 'Yemek yedin'], ['🔥', p.streak.best, 'Gün üst üste geldin']]
+  const st = ZY.prof().stats;
+  $('#youTiles').innerHTML = [['⏱', ZY.fmtTime(st.secs), 'Oyunda geçen süre'], ['🎮', st.plays || 0, 'Görev bitirdin'], ['⭐', ZY.totalStars() + '/30', 'Yıldız topladın']]
     .map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
   $('#outro').innerHTML = '<div style="font-size:2.4rem">💛</div><p>Sen bu dosyaya <b>' + ZY.fmtTime(st.secs) + '</b> ayırdın.<br>Bu dosya da <b>' + days + ' gündür</b> senin için hazırlanıyor.<br><br>Her vaka, her kod, her kedi... hepsi tek bir cümle için:<br><b>İyi ki varsın.</b></p>';
   await ZY.wait(400);
