@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>Vaka 1 · Hırsız Kedi — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .roof { height: 320px; }
 .roof .moon { position: absolute; top: 16px; right: 22px; width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff8d6, #ffd23f); box-shadow: 0 0 40px rgba(255,210,63,0.6); }
@@ -32,7 +33,7 @@
 <template id="mission">
   <div class="hud">
     <span class="pill">⏱ <b id="time">20</b>s</span>
-    <span class="pill">🐱 <b id="score">0</b>/12</span>
+    <span class="pill">🐱 <b id="score">0</b><span id="scoreMax">/12</span></span>
   </div>
   <div class="bar"><div id="timeBar" style="width:100%"></div></div>
   <div class="arena roof" id="arena">
@@ -44,27 +45,30 @@
 
 <script src="assets/zy11.js"></script>
 <script>
-const TARGET = 12, SECONDS = 20, CATS = ['🐱','🐈','😼','🙀','🐈‍⬛'];
+let ARC = null, TARGET = 12, SECONDS = 20; const CATS = ['🐱','🐈','😼','🙀','🐈‍⬛'];
 let arena, timeEl, scoreEl, bar, startBtn, statusEl, comboEl;
-let running = false, score = 0, left = SECONDS, tick = null, spawnT = null, combo = 0, lastHit = 0;
+let running = false, score = 0, left = SECONDS, tick = null, spawnT = null, combo = 0, lastHit = 0, caughtCats = 0;
 
-function init() {
+function init(arc) {
+  if (arc !== undefined) ARC = arc;
+  TARGET = ARC ? Infinity : 12; SECONDS = ARC ? 30 : 20;
   arena = ZY.$('#arena'); timeEl = ZY.$('#time'); scoreEl = ZY.$('#score'); bar = ZY.$('#timeBar');
   startBtn = ZY.$('#startBtn'); statusEl = ZY.$('#status'); comboEl = ZY.$('#combo');
   stop(); score = 0; left = SECONDS; hud();
-  ZY.arenaMsg(arena, '😼', 'Hırsız kedi çatılarda!', 'Kedilere dokun, 💣 bombalardan uzak dur');
+  ZY.$('#scoreMax').textContent = ARC ? '' : '/12';
+  ZY.arenaMsg(arena, '😼', ARC ? '30 saniye, sonsuz kedi!' : 'Hırsız kedi çatılarda!', 'Kedilere dokun, 💣 bombalardan uzak dur');
   startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🐾 Yakalamaya Başla';
   startBtn.onclick = start; statusEl.textContent = '';
 }
-function hud() { timeEl.textContent = left; scoreEl.textContent = Math.min(score, TARGET); bar.style.width = (left / SECONDS * 100) + '%'; }
+function hud() { timeEl.textContent = left; scoreEl.textContent = ARC ? score : Math.min(score, TARGET); bar.style.width = (left / SECONDS * 100) + '%'; }
 function stop() { running = false; clearInterval(tick); clearTimeout(spawnT); arena && arena.querySelectorAll('.target').forEach(t => t.remove()); }
 
 async function start() {
   startBtn.disabled = true; ZY.arenaMsg(arena);
-  score = 0; left = SECONDS; combo = 0; hud();
+  score = 0; left = SECONDS; combo = 0; caughtCats = 0; hud();
   await ZY.countdown(arena);
   running = true; startBtn.style.display = 'none';
-  tick = setInterval(() => { left--; hud(); if (left <= 3 && left > 0) ZY.sfx.tick(); if (left <= 0) lose('⌛', 'Süre bitti, zanlı kaçtı!', score + '/' + TARGET + ' kedi yakaladın'); }, 1000);
+  tick = setInterval(() => { left--; hud(); if (left <= 3 && left > 0) ZY.sfx.tick(); if (left <= 0) { if (ARC) return arcadeOver('⌛', 'Süre doldu!'); lose('⌛', 'Süre bitti, zanlı kaçtı!', score + '/' + TARGET + ' kedi yakaladın'); } }, 1000);
   spawn();
 }
 
@@ -87,10 +91,11 @@ function spawn() {
     if (type === 'bomb') {
       ZY.burst(rect.left + x, rect.top + y, { colors: ['#ff4d5e', '#ff8a3d', '#ffd23f', '#333'], count: 40, speed: 8 });
       ZY.sfx.bad(); ZY.buzz(200); ZY.shake(arena);
+      if (ARC) return arcadeOver('💥', 'BOOM!');
       return lose('💥', 'BOOM! Bombaya bastın.', 'Baştan başla');
     }
     const now = performance.now(); combo = now - lastHit < 900 ? combo + 1 : 1; lastHit = now;
-    const pts = type === 'heart' ? 2 : 1; score += pts; hud();
+    const pts = type === 'heart' ? 2 : 1; score += pts; caughtCats++; hud();
     ZY.burst(rect.left + x, rect.top + y, { colors: type === 'heart' ? ['#ffd23f', '#fff'] : ['#33e1ff', '#ff4d9d', '#fff'], count: 16 });
     ZY.floatText(arena, x, y, '+' + pts);
     ZY.beep(520 + combo * 60, 0.08, 'triangle'); ZY.buzz(15);
@@ -102,14 +107,22 @@ function spawn() {
   spawnT = setTimeout(spawn, 560 + (left / SECONDS) * 380);
 }
 
+function arcadeOver(big, text) {
+  stop(); comboEl.classList.remove('on');
+  ZY.arenaMsg(arena, big, text, score + ' kedi');
+  startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar';
+  ZY.stat('cats', caughtCats);
+  ZY.arcadeEnd(score);
+}
 function lose(big, text, small) {
+  ZY.stat('cats', caughtCats); caughtCats = 0;
   stop(); comboEl.classList.remove('on');
   ZY.arenaMsg(arena, big, text, small);
   startBtn.style.display = ''; startBtn.disabled = false; startBtn.textContent = '🔁 Tekrar Dene';
 }
 
 function win() {
-  const remaining = left; stop(); comboEl.classList.remove('on');
+  const remaining = left; stop(); comboEl.classList.remove('on'); ZY.stat('cats', caughtCats); caughtCats = 0;
   ZY.arenaMsg(arena, '😼', 'Yakalandı!', 'Gülümsemeleri iade etmeyi reddediyor');
   ZY.complete({ stars: remaining >= 8 ? 3 : remaining >= 4 ? 2 : 1, stats: '🐱 12 kedi · ⏱ ' + remaining + ' sn kala', msg: 'Zanlıyı suçüstü yakaladın!' });
 }

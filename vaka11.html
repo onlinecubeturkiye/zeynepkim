@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>Vaka 11 · Son Dosya — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .stage { display: none; } .stage.on { display: block; animation: rise .5s ease both; }
 .st-title { font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; text-align: center; }
@@ -53,6 +54,29 @@
 .closed.on { opacity: 1; transform: rotate(-6deg) scale(1); }
 .end { display: none; } .end.on { display: flex; }
 .secret-tease { margin-top: 16px; text-align: center; padding: 14px; border-radius: 16px; border: 1px dashed rgba(51,225,255,.5); background: rgba(51,225,255,.08); }
+#bts { display: none; margin-top: 8px; } #bts.on { display: block; animation: rise .6s ease both; }
+.bts-intro { text-align: center; }
+.bts-clap { font-size: 3rem; display: inline-block; animation: clap 1.6s ease-in-out infinite; }
+@keyframes clap { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(4deg); } }
+.code-line { text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; letter-spacing: 1px; margin-bottom: 14px; line-height: 1.8; }
+.code-line span { display: inline-block; padding: 1px 6px; margin: 2px; border-radius: 8px; background: rgba(255,210,63,.12); color: var(--yellow); border: 1px solid rgba(255,210,63,.3); }
+.secrets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.secret { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line);
+  opacity: 0; transform: translateY(14px) scale(.95); transition: all .45s cubic-bezier(.3,1.4,.6,1); }
+.secret.on { opacity: 1; transform: none; }
+.secret.wide { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(255,77,157,.18), rgba(255,210,63,.12)); border-color: rgba(255,77,157,.45); }
+.secret .num { flex: none; min-width: 52px; padding: 6px 4px; text-align: center; border-radius: 12px; font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem; color: #1a1145; background: var(--grad-gold); }
+.secret.wide .num { min-width: 92px; background: var(--grad-hot); color: #fff; }
+.secret b { display: block; font-family: var(--font-head); font-size: .98rem; line-height: 1.15; }
+.secret small { color: var(--text-dim); font-weight: 700; font-size: .75rem; }
+.timeline { margin-top: 16px; padding-left: 16px; border-left: 2px dashed rgba(255,255,255,.18); }
+.timeline div { position: relative; padding: 0 0 12px 10px; font-size: .9rem; color: var(--text-dim); line-height: 1.4; }
+.timeline div::before { content: ''; position: absolute; left: -23px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--grad-hot); box-shadow: 0 0 10px rgba(255,77,157,.6); }
+.timeline b { color: var(--text); font-family: var(--font-head); }
+.outro { text-align: center; padding: 26px 20px; margin-top: 16px; background: linear-gradient(135deg, rgba(255,77,157,.16), rgba(155,107,255,.16)); border-color: rgba(255,77,157,.4); }
+.outro p { font-size: 1.05rem; line-height: 1.6; }
+.outro b { color: var(--yellow); }
+@media (max-width: 480px) { .secrets { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .aliases { grid-template-columns: 1fr 1fr; } .vc input { font-size: 1.15rem; letter-spacing: 1px; } }
 </style>
 </head>
@@ -85,10 +109,37 @@
       <div class="btn-row end" id="end"><a class="btn cool" href="index.html">🗺 Haritaya Dön</a><button class="btn ghost" id="replay">💌 Tekrar oku</button></div>
       <div class="secret-tease" id="tease" style="display:none"></div>
     </div>
+    <div id="bts">
+      <div class="section-label">🎬 Perde Arkası</div>
+      <div class="card bts-intro">
+        <div class="bts-clap">🎬</div>
+        <div class="st-title">Bu dosyanın hikâyesi</div>
+        <p class="st-sub">Oyun bitti ama dosyanın arkasında anlatılmamış birkaç şey daha var.</p>
+      </div>
+
+      <div class="section-label">🔐 Şifrenin Sırrı</div>
+      <div class="card">
+        <p class="st-sub" style="margin-bottom:12px">Kasayı açtığın o 20 haneli şifre rastgele değildi. Her kod sana ait bir şeydi:</p>
+        <div class="code-line" id="codeLine"></div>
+        <div class="secrets" id="secrets"></div>
+      </div>
+
+      <div class="section-label">🛠 Bu Dosya Nasıl Yapıldı</div>
+      <div class="card">
+        <div class="grid3" id="makingTiles"></div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+
+      <div class="section-label">⏱ Senin Ayırdığın Vakit</div>
+      <div class="card"><div class="grid3" id="youTiles"></div></div>
+
+      <div class="card outro" id="outro"></div>
+    </div>
   </div>
 </template>
 
 <script src="assets/zy11.js"></script>
+<script src="assets/making.js"></script>
 <script>
 // ✏️ Son mektup — buradaki metni istediğin gibi değiştirebilirsin.
 const LETTER = `Sevgili Zeynep,
@@ -102,6 +153,20 @@ Bir kedi, bir köpek, bir uzaylı, bir abi... ve hepsinden önce, hayatımızda 
 
 İyi ki varsın. 💛`;
 const SIGN = '— Dosyayı hazırlayan, en sadık dedektifin 🐾';
+
+// ✏️ Şifredeki her kodun anlamı (Perde Arkası bölümünde gösterilir)
+const SECRETS = [
+  { codes: ['26', '06'], e: '💛', t: 'Tanıştığımız gün', d: '26 Haziran · Vaka 1 ve Vaka 8' },
+  { codes: ['04', '08'], e: '🎂', t: 'Doğum günün', d: '4 Ağustos · Vaka 2 ve Vaka 3' },
+  { codes: ['18'], e: '🎈', t: 'Yaşın', d: 'Vaka 4 · Lolcu Köpek' },
+  { codes: ['11'], e: '✨', t: 'En sevdiğin sayı', d: 'Vaka 5 · Doymayan' },
+  { codes: ['13'], e: '🌶️', t: 'Midesiz', d: 'Vaka 6 · tabii ki' },
+  { codes: ['12'], e: '🎸', t: 'Şebnem Ferah', d: '12 Nisan doğumlu · Vaka 7' },
+  { codes: ['20'], e: '🖤', t: 'Apocalypse', d: '20 Mart 2017\'de çıktı · Vaka 9' },
+  { codes: ['55'], e: '👕', t: 'Forma numaran', d: 'Vaka 10 · Sevimli Kedi' },
+];
+// ✏️ İstersen bu oyuna harcadığın yaklaşık saati yaz (ör. 40). Boş bırakırsan gösterilmez.
+const MAKER_HOURS = null;
 
 const TRUE = ['Gülümsemeleri çalıp yerine huzur bırakan', 'Herkesin gününü kurtaran bulaşıcı enerji', 'Kıştan kışa gotik, her mevsim rengârenk', 'Gecenin 3\'ünde bile sadık, bitmeyen neşe', 'Hayattan tat almayı en iyi bilen', '"Bir şey olmaz ya" cesareti', 'Düşse bile ilk gülen', 'Farklı olmaktan korkmayan, herkesi seven', 'Pati kadar yumuşak, kaya kadar sağlam', 'Ölçülemeyecek kadar sevimli'];
 const QUIZ = [
@@ -194,6 +259,35 @@ async function reveal() {
   await typeLetter();
   if (first) ZY.toast('⭐ Son sorgu: ' + ZY.stars(11) + ' yıldız');
 }
+const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+const trDate = iso => { const [y, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1] + ' ' + y; };
+let btsShown = false;
+async function behindTheScenes() {
+  if (btsShown) return; btsShown = true;
+  const M = window.ZY_MAKING || { start: '2026-09-05', commits: 0, workDays: 0, lines: 0 };
+  const days = Math.max(1, Math.round((Date.now() - Date.parse(M.start + 'T00:00:00')) / 864e5));
+  const box = $('#bts'); box.classList.add('on');
+  $('#codeLine').innerHTML = ZY.MAIN.map(c => '<span>' + c.code + '</span>').join('');
+  $('#secrets').innerHTML = SECRETS.map(s => '<div class="secret' + (s.codes.length > 1 ? ' wide' : '') + '"><div class="num">' + s.codes.join(' · ') + '</div><div><b>' + s.e + ' ' + s.t + '</b><small>' + s.d + '</small></div></div>').join('');
+  const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka · 15 oyun', 'İçinde']];
+  if (MAKER_HOURS) tiles.splice(2, 0, ['⌛', '~' + MAKER_HOURS + ' saat', 'Harcanan emek']);
+  $('#makingTiles').innerHTML = tiles.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b style="font-size:.98rem">' + v + '</b><small>' + l + '</small></div>').join('');
+  $('#timeline').innerHTML = [
+    ['' + trDate(M.start), 'İlk dosya açıldı: "Zeynep Gerçekten Kim?" 🕵️‍♀️'],
+    ['Sonra', 'Hırsız Kedi\'den Doymayan\'a ilk 5 vaka yazıldı'],
+    ['Ardından', 'Kalan vakalar, son dosya ve mektup eklendi'],
+    ['Sonra', 'Yıldızlar, gizli dosya, dükkan, kedi albümü ve bu uygulama geldi'],
+    [trDate(M.last), 'Şifre son halini aldı: her kodu sana ait bir şey'],
+  ].map(([w, t]) => '<div><b>' + w + '</b> · ' + t + '</div>').join('');
+  const p = ZY.prof(), st = p.stats;
+  $('#youTiles').innerHTML = [['⏱', ZY.fmtTime(st.secs), 'Oyunda geçen süre'], ['🎮', st.plays || 0, 'Oyun oynadın'], ['⭐', ZY.totalStars() + '/30', 'Yıldız topladın'],
+    ['🐱', st.cats || 0, 'Kedi yakaladın'], ['🍕', st.foods || 0, 'Yemek yedin'], ['🔥', p.streak.best, 'Gün üst üste geldin']]
+    .map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
+  $('#outro').innerHTML = '<div style="font-size:2.4rem">💛</div><p>Sen bu dosyaya <b>' + ZY.fmtTime(st.secs) + '</b> ayırdın.<br>Bu dosya da <b>' + days + ' gündür</b> senin için hazırlanıyor.<br><br>Her vaka, her kod, her kedi... hepsi tek bir cümle için:<br><b>İyi ki varsın.</b></p>';
+  await ZY.wait(400);
+  for (const el of document.querySelectorAll('.secret')) { el.classList.add('on'); ZY.beep(600 + Math.random() * 400, .06, 'triangle', .07); await ZY.wait(260); }
+}
+
 async function typeLetter() {
   const body = $('#lbody'); body.textContent = '';
   ['#lsign', '#closed', '#end'].forEach(s => $(s).classList.remove('on'));
@@ -206,6 +300,7 @@ async function typeLetter() {
   $('#lsign').textContent = SIGN; $('#lsign').classList.add('on'); await ZY.wait(600);
   $('#closed').classList.add('on'); ZY.beep(220, .3, 'triangle'); ZY.buzz(80); ZY.confetti(160); await ZY.wait(500);
   $('#end').classList.add('on');
+  behindTheScenes();
   const t = $('#tease'), total = ZY.totalStars();
   t.style.display = 'block';
   t.innerHTML = total >= ZY.STARS_NEEDED

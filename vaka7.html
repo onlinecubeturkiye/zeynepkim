@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>Vaka 7 · Yolda Yürüyemeyen Kız — ZY-11</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .street { height: 380px; max-width: 340px; background: linear-gradient(90deg, #3a2f6b 0 9%, #2a2350 9% 91%, #3a2f6b 91%); touch-action: none; }
 .street .lanes { position: absolute; inset: 0 9%; background:
@@ -26,7 +27,7 @@
 <body>
 <div class="app" id="app"></div>
 <template id="mission">
-  <div class="hud"><span class="pill">🏠 <b id="dist">300</b> m</span><span class="pill" id="lives">❤️❤️❤️</span></div>
+  <div class="hud"><span class="pill"><span id="distLbl">🏠</span> <b id="dist">300</b> m</span><span class="pill" id="lives">❤️❤️❤️</span></div>
   <div class="bar"><div id="prog"></div></div>
   <div class="arena street" id="arena"><div class="lanes" id="lanes"></div><div class="home" id="home">🏠</div><div class="walker" id="walker">🚶‍♀️</div></div>
   <div class="ctrl-row"><button class="ctrl" id="lBtn">◀</button><button class="ctrl" id="rBtn">▶</button></div>
@@ -36,7 +37,7 @@
 
 <script src="assets/zy11.js"></script>
 <script>
-const DIST = 300;
+let ARC = null, DIST = 300;
 const OBS = [
   { e: '🪧', m: 'Direğe çarptı! "Pardon" dedi direğe.' }, { e: '🕳️', m: 'Çukura bastı! "Yer beni itti."' },
   { e: '🚲', m: 'Bisiklet! Son anda zıpladı... olmadı.' }, { e: '🐈', m: 'Kedi gördü, sevmek için durdu 🐈' },
@@ -45,7 +46,8 @@ const OBS = [
 let arena, walker, statusEl, lane, run = false, obs = [], walked, lives, last, spawnT, raf, inv, off;
 const laneX = l => (9 + (l + .5) * 82 / 3) + '%';
 
-function init() {
+function init(arc) {
+  if (arc !== undefined) ARC = arc; DIST = ARC ? Infinity : 300;
   arena = ZY.$('#arena'); walker = ZY.$('#walker'); statusEl = ZY.$('#status');
   run = false; cancelAnimationFrame(raf); obs.forEach(o => o.el.remove()); obs = [];
   lane = 1; walked = 0; lives = 3; walker.style.left = laneX(1); walker.textContent = '🚶‍♀️'; ZY.$('#home').style.opacity = 0; hud();
@@ -59,9 +61,10 @@ function init() {
 function shift(d) { if (!run) return; const n = Math.max(0, Math.min(2, lane + d)); if (n !== lane) { lane = n; walker.style.left = laneX(lane); ZY.beep(500, .03, 'triangle', .05); } }
 document.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') shift(-1); if (e.key === 'ArrowRight') shift(1); });
 function hud() {
-  ZY.$('#dist').textContent = Math.max(0, Math.ceil(DIST - walked));
+  ZY.$('#dist').textContent = ARC ? Math.floor(walked) : Math.max(0, Math.ceil(DIST - walked));
+  ZY.$('#distLbl').textContent = ARC ? '📏' : '🏠';
   ZY.$('#lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
-  ZY.$('#prog').style.width = Math.min(100, walked / DIST * 100) + '%';
+  ZY.$('#prog').style.width = (ARC ? (walked % 100) : Math.min(100, walked / DIST * 100)) + '%';
 }
 async function start() {
   const b = ZY.$('#startBtn'); b.disabled = true; ZY.arenaMsg(arena);
@@ -71,8 +74,8 @@ async function start() {
   raf = requestAnimationFrame(loop);
 }
 function spawn() {
-  const speed = 160 + walked * .9;
-  const n = Math.random() < Math.min(.5, walked / 380) ? 2 : 1;
+  const speed = 160 + Math.min(walked, 700) * .9;
+  const n = Math.random() < Math.min(ARC ? .62 : .5, walked / 380) ? 2 : 1;
   ZY.shuffle([0, 1, 2]).slice(0, n).forEach(l => {
     const t = OBS[Math.floor(Math.random() * OBS.length)], el = document.createElement('div');
     el.className = 'obs'; el.textContent = t.e; el.style.left = laneX(l); arena.appendChild(el);
@@ -83,10 +86,10 @@ function bubble(txt) { const b = document.createElement('div'); b.className = 'b
 function loop(t) {
   if (!run) return;
   const dt = Math.min(.05, (t - last) / 1000); last = t;
-  walked += (12 + walked * .03) * dt;
-  off = (off + (160 + walked * .9) * dt) % 48; ZY.$('#lanes').style.setProperty('--off', off + 'px');
+  walked += (12 + Math.min(walked, 600) * (ARC ? .02 : .03)) * dt;
+  off = (off + (160 + Math.min(walked, 700) * .9) * dt) % 48; ZY.$('#lanes').style.setProperty('--off', off + 'px');
   inv = Math.max(0, inv - dt); walker.classList.toggle('inv', inv > 0);
-  spawnT -= dt; if (spawnT <= 0 && walked < DIST - 25) { spawn(); spawnT = Math.max(.55, 1.1 - walked / 500); }
+  spawnT -= dt; if (spawnT <= 0 && walked < DIST - 25) { spawn(); spawnT = Math.max(ARC ? .42 : .55, 1.1 - walked / 500); }
   if (walked > DIST - 40) ZY.$('#home').style.opacity = 1;
   const H = arena.clientHeight, wy = H - 60, rect = arena.getBoundingClientRect();
   for (let i = obs.length - 1; i >= 0; i--) {
@@ -106,6 +109,8 @@ function loop(t) {
 function end(won) {
   run = false; cancelAnimationFrame(raf); obs.forEach(o => o.el.remove()); obs = [];
   const b = ZY.$('#startBtn');
+  ZY.stat('meters', Math.floor(walked));
+  if (ARC) { ZY.arenaMsg(arena, '🤕', Math.floor(walked) + ' metre!', 'Zanlı yine yerde ama gülüyor'); b.style.display = ''; b.disabled = false; b.textContent = '🔁 Tekrar'; return ZY.arcadeEnd(walked); }
   if (!won) { ZY.arenaMsg(arena, '🤕', 'Zanlı yine yerde', 'Ama gülüyor. Tekrar dene!'); b.style.display = ''; b.disabled = false; b.textContent = '🔁 Tekrar Dene'; return; }
   walker.textContent = '🏃‍♀️'; ZY.arenaMsg(arena, '🏠', 'Eve vardı!', lives === 3 ? 'Tarihte ilk kez sıfır hasar!' : 'Birkaç tökezleme, ama sağ salim');
   ZY.complete({ stars: lives, stats: '❤️ ' + lives + ' can · 🚶‍♀️ 300 m', msg: lives === 3 ? 'Kusursuz eskort! Hiç tökezlemedi 🏅' : 'Kolundan hiç bırakmadın 💛' });

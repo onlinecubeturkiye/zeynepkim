@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1a1145">
 <title>ZY-11 · Zeynep Gerçekten Kim?</title>
 <link rel="stylesheet" href="assets/style.css">
+<script data-theme-boot>try{document.documentElement.dataset.theme=JSON.parse(localStorage.getItem("zy11_profile")||"{}").theme||"gece"}catch(e){}</script>
 <style>
 .logo { font-family: var(--font-head); font-weight: 800; font-size: 1.25rem; flex: 1; letter-spacing: .5px; }
 .logo span { background: var(--grad-hot); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -62,12 +63,7 @@
 </head>
 <body>
 <div class="app">
-  <div class="appbar">
-    <div class="logo">ZY<span>-11</span> 🕵️‍♀️</div>
-    <span class="pill gold" id="starPill">⭐ 0/30</span>
-    <button class="icon-btn" id="soundBtn" aria-label="Ses">🔊</button>
-    <button class="icon-btn" id="menuBtn" aria-label="Ayarlar">⚙️</button>
-  </div>
+  <div id="bar"></div>
 
   <div class="card">
     <div class="hero-home">
@@ -84,6 +80,9 @@
     </div>
     <div class="how"><span>🔎 Kanıtları oku</span><span>🎮 Görevi bitir</span><span>⭐ Yıldız topla</span><span>🔑 Kodla sonrakini aç</span></div>
   </div>
+
+  <div class="section-label">📅 Bugün</div>
+  <div class="card" id="dailyCard"></div>
 
   <div class="card ending" id="ending">🎉 <b>Dosya kapandı!</b> Zeynep'in kim olduğunu artık biliyorsun.<br><a class="btn small cool" style="margin-top:10px" href="vaka11.html">💌 Cevabı tekrar gör</a></div>
 
@@ -109,12 +108,23 @@ function nodeState(c) {
   return ZY.isSolved(c.n - 1) ? 'locked ready' : 'locked';
 }
 
+function renderDaily() {
+  const p = ZY.prof(), d = ZY.dailyTask(), cyc = ((Math.max(1, p.streak.count) - 1) % 7);
+  const row = ZY.STREAK_REWARD.map((r, i) => '<div class="' + (i < cyc || (i === cyc && p.streak.count) ? 'got' : '') + (i === cyc ? ' today' : '') + '"><b>' + (i === 6 ? '🎁' : r) + '</b>' + (i + 1) + '. gün</div>').join('');
+  $('#dailyCard').innerHTML =
+    '<div class="daily' + (d.done ? ' done' : '') + '"><div class="ic">' + (d.done ? '✅' : '📅') + '</div><div class="tx"><small>GÜNLÜK GÖREV · +60 🐾 +50 XP</small><b>' + ZY.dailyText(d.task) + '</b></div>' +
+    (d.done ? '<span class="pill" style="color:var(--lime)">Tamam</span>' : '<a class="btn small" href="' + ZY.dailyHref(d.task) + '">Git</a>') + '</div>' +
+    '<div style="display:flex;justify-content:space-between;margin-top:14px;font-weight:800;font-size:.85rem"><span>🔥 ' + p.streak.count + ' günlük seri</span><span style="color:var(--text-faint)">en iyi: ' + p.streak.best + '</span></div>' +
+    '<div class="streak-row">' + row + '</div>';
+}
+
 function render() {
+  $('#bar').innerHTML = ZY.hubBar(); ZY.bindSound();
+  renderDaily();
+  const p0 = ZY.prof(); $('#face').textContent = p0.avatar;
   const total = ZY.totalStars(), solved = ZY.MAIN.filter(c => ZY.isSolved(c.n)).length + (ZY.isSolved(11) ? 1 : 0);
-  $('#starPill').textContent = '⭐ ' + total + '/' + ZY.STARS_NEEDED;
+  
   $('#ring').style.strokeDashoffset = 314.2 * (1 - solved / 11);
-  const faces = ['🐱','⚡','🖤','🐶','🍗','🌶️','🚶‍♀️','👽','😼','😻','💛'];
-  $('#face').textContent = faces[Math.min(solved, 10)];
   $('#goldBadge').style.display = ZY.isSolved(12) ? 'block' : 'none';
   $('#caseTag').textContent = ZY.isSolved(12) ? '🏅 ALTIN DEDEKTİF' : 'DOSYA ZY-11 · GİZLİ';
   $('#heroText').textContent = solved === 0 ? '10 dosya, 10 lakap, 10 kod. Hepsini çöz, son dosyayı aç.' : solved >= 11 ? 'Soruşturma tamamlandı! ' + (total < 30 ? 'Gizli dosya için ' + (30 - total) + ' yıldız daha...' : '30 yıldız: gizli dosya açık! 🌌') : solved + '/11 dosya çözüldü. Devam et dedektif!';
@@ -176,15 +186,15 @@ function askCode(i) {
   inp.onkeydown = e => { if (e.key === 'Enter') ok(); };
 }
 
-$('#soundBtn').textContent = ZY.soundOn() ? '🔊' : '🔇';
-$('#soundBtn').onclick = () => { ZY.setSound(!ZY.soundOn()); $('#soundBtn').textContent = ZY.soundOn() ? '🔊' : '🔇'; ZY.sfx.tap(); };
-$('#menuBtn').onclick = () => {
-  const md = ZY.modal('<h2>⚙️ Ayarlar</h2><p>Toplam yıldız: <b>' + ZY.totalStars() + '/30</b></p><div class="btn-row" style="flex-direction:column"><button class="btn ghost block" id="rs">🗑 İlerlemeyi sıfırla</button><button class="btn block" id="cl">Kapat</button></div>');
-  $('#cl').onclick = () => md.el.remove();
-  $('#rs').onclick = async () => { md.el.remove(); if (await ZY.confirmBox('Emin misin?', 'Tüm ilerleme, kodlar ve yıldızlar silinecek.', 'Sıfırla')) { ZY.resetAll(); render(); ZY.toast('Soruşturma sıfırlandı 🕵️'); } };
-};
 render();
-addEventListener('pageshow', render);
+ZY.tabbar('index');
+const ci = ZY.checkIn();
+if (ci) {
+  const md = ZY.modal('<div style="font-size:3.2rem">' + (ci.day === 7 ? '🎁' : '🔥') + '</div><div class="tag">GÜNLÜK GİRİŞ</div><h2 style="margin-top:8px">' + ci.count + '. gün!</h2>' +
+    '<p>Seri ödülün: <b>+' + ci.amt + ' 🐾</b>' + (ci.day === 7 ? '<br>7. gün büyük ödülü! 🎉' : '<br>Yarın da gel, ödül büyüsün.') + '</p><button class="btn block" id="ciOk">Topla</button>');
+  ZY.$('#ciOk').onclick = () => { md.close(); ZY.sfx.win(); ZY.confetti(70); render(); ZY.checkAch(); };
+}
+addEventListener('pageshow', e => { if (e.persisted) render(); });
 let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(render, 200); });
 </script>
 </body>
