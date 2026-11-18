@@ -12,7 +12,7 @@
     { n: 7,  tag: 'Saha Gözlemi',      alias: 'Yolda Yürüyemeyen Kız', emoji: '🚶‍♀️', code: '12', grad: 'linear-gradient(135deg,#a6ff4d,#33e1ff)', glow: 'rgba(166,255,77,.35)' },
     { n: 8,  tag: 'Sosyal Anomali',    alias: 'Uzaylı Kedi',           emoji: '👽', code: '06', grad: 'linear-gradient(135deg,#3ddc84,#9b6bff)', glow: 'rgba(61,220,132,.4)' },
     { n: 9,  tag: 'Karakter Analizi',  alias: 'Pisicik Abi',           emoji: '😼', code: '20', grad: 'linear-gradient(135deg,#ff8a3d,#9b6bff)', glow: 'rgba(255,138,61,.35)' },
-    { n: 10, tag: 'Sevimlilik Ölçümü', alias: 'Sevimli Kedi',          emoji: '😻', code: '01', grad: 'linear-gradient(135deg,#ff9ed2,#ff4d9d)', glow: 'rgba(255,158,210,.45)' },
+    { n: 10, tag: 'Sevimlilik Ölçümü', alias: 'Sevimli Kedi',          emoji: '😻', code: '55', grad: 'linear-gradient(135deg,#ff9ed2,#ff4d9d)', glow: 'rgba(255,158,210,.45)' },
     { n: 11, tag: 'Şifre Çözümü',      alias: 'Son Dosya',             emoji: '🗝️', code: null, grad: 'linear-gradient(135deg,#ffe066,#ffb627)', glow: 'rgba(255,210,63,.45)' },
     { n: 12, tag: 'Gizli Dosya',       alias: 'Yıldız Haritası',       emoji: '🌌', code: null, grad: 'linear-gradient(135deg,#33e1ff,#9b6bff,#ff4d9d)', glow: 'rgba(51,225,255,.45)', secret: true },
   ];
