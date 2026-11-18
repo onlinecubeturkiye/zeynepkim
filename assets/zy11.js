@@ -209,6 +209,7 @@
   ];
 
   const THEMES = [
+    { id: 'pano',    name: 'Dedektif Panosu', price: 0, sw: ['#b6875b', '#f7f0dc', '#b5252c'] },
     { id: 'gece',    name: 'Gece Ajansı',   price: 0,   sw: ['#1a1145', '#ff4d9d', '#33e1ff'] },
     { id: 'seker',   name: 'Pembe Şeker',   price: 150, sw: ['#3d1238', '#ff7ac6', '#ffd23f'] },
     { id: 'gotik',   name: 'Kıştan Kışa Gotik', price: 200, sw: ['#0d0a12', '#b31b3c', '#9b6bff'] },
@@ -239,8 +240,14 @@
     p.patis = p.patis || 0; p.xp = p.xp || 0;
     p.streak = p.streak || { last: null, count: 0, best: 0 };
     p.daily = p.daily || {}; p.stats = p.stats || {}; p.ach = p.ach || {}; p.arcade = p.arcade || {};
-    p.owned = p.owned || {}; p.owned.themes = p.owned.themes || ['gece']; p.owned.avatars = p.owned.avatars || ['🐱']; p.owned.cats = p.owned.cats || {};
-    p.theme = p.theme || 'gece'; p.avatar = p.avatar || '🐱';
+    p.owned = p.owned || {}; p.owned.themes = p.owned.themes || ['pano', 'gece']; p.owned.avatars = p.owned.avatars || ['🐱']; p.owned.cats = p.owned.cats || {};
+    p.theme = p.theme || 'pano'; p.avatar = p.avatar || '🐱';
+    // v2: varsayılan görünüm dedektif panosu oldu; herkes bir kereliğine ona geçer
+    if (p.themeV !== 2) {
+      p.themeV = 2; p.theme = 'pano';
+      ['pano', 'gece'].forEach(t => { if (!p.owned.themes.includes(t)) p.owned.themes.push(t); });
+      store.set(K_PROF, JSON.stringify(p));
+    }
     return p;
   }
   function saveProf(p) { store.set(K_PROF, JSON.stringify(p)); }

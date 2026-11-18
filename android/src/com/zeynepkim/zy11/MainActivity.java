@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         web = new WebView(this);
-        web.setBackgroundColor(0xFF1A1145);
+        web.setBackgroundColor(0xFFB6875B);
         web.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
         WebSettings s = web.getSettings();
