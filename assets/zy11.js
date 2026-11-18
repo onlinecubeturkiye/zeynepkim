@@ -265,7 +265,7 @@
     if (tpl) (cfg.mission ? $('#missionBody') : $('#custom')).appendChild(tpl.content.cloneNode(true));
     bindSound();
     renderCode(); renderFooter();
-    if (!isUnlocked(n)) lockVeil(c);
+    if (!isUnlocked(n) && n !== 11) lockVeil(c);
     if (cfg.init) cfg.init();
   }
 

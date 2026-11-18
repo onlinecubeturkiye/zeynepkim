@@ -52,22 +52,28 @@
   font-family: var(--font-mono); font-weight: 700; letter-spacing: 3px; transform: rotate(-6deg) scale(2.2); opacity: 0; transition: all .45s cubic-bezier(.3,1.6,.6,1); }
 .closed.on { opacity: 1; transform: rotate(-6deg) scale(1); }
 .end { display: none; } .end.on { display: flex; }
-.secret-tease { margin-top: 16px; text-align: center; padding: 14px; border-radius: 16px; border: 1px dashed rgba(51,225,255,.5); background: rgba(51,225,255,.08); }
 #bts { display: none; margin-top: 8px; } #bts.on { display: block; animation: rise .6s ease both; }
 .bts-intro { text-align: center; }
 .bts-clap { font-size: 3rem; display: inline-block; animation: clap 1.6s ease-in-out infinite; }
 @keyframes clap { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-14deg); } 80% { transform: rotate(4deg); } }
-.code-line { text-align: center; font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; letter-spacing: 1px; margin-bottom: 14px; line-height: 1.8; }
-.code-line span { display: inline-block; padding: 1px 6px; margin: 2px; border-radius: 8px; background: rgba(255,210,63,.12); color: var(--yellow); border: 1px solid rgba(255,210,63,.3); }
-.secrets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.secret { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line);
-  opacity: 0; transform: translateY(14px) scale(.95); transition: all .45s cubic-bezier(.3,1.4,.6,1); }
-.secret.on { opacity: 1; transform: none; }
-.secret.wide { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(255,77,157,.18), rgba(255,210,63,.12)); border-color: rgba(255,77,157,.45); }
-.secret .num { flex: none; min-width: 52px; padding: 6px 4px; text-align: center; border-radius: 12px; font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem; color: #1a1145; background: var(--grad-gold); }
-.secret.wide .num { min-width: 92px; background: var(--grad-hot); color: #fff; }
-.secret b { display: block; font-family: var(--font-head); font-size: .98rem; line-height: 1.15; }
-.secret small { color: var(--text-dim); font-weight: 700; font-size: .75rem; }
+.secret-tease { margin-top: 16px; text-align: center; padding: 14px; border-radius: 16px; border: 1px dashed rgba(51,225,255,.5); background: rgba(51,225,255,.08); }
+.cipher { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; perspective: 700px; margin-bottom: 14px; }
+.ck { aspect-ratio: 3 / 4; position: relative; cursor: pointer; }
+.ck .in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3,1.3,.6,1); }
+.ck.open .in { transform: rotateY(180deg); }
+.ck .f { position: absolute; inset: 0; border-radius: 12px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 4px; }
+.ck .fr { background: var(--grad-gold); color: #3a2400; font-family: var(--font-mono); font-weight: 700; font-size: 1.35rem; box-shadow: 0 4px 0 rgba(0,0,0,.18); }
+.ck .fr small { font-size: .55rem; opacity: .65; margin-top: 2px; }
+.ck .bk { transform: rotateY(180deg); background: #fff; border: 2px solid var(--pink); box-shadow: 0 4px 0 rgba(0,0,0,.12); }
+.ck .bk .e { font-size: 1.3rem; line-height: 1; }
+.ck .bk .c { font-family: var(--font-mono); font-weight: 700; font-size: .8rem; color: var(--pink); margin-top: 2px; }
+.ck .bk .t { font-size: .62rem; font-weight: 800; line-height: 1.1; margin-top: 2px; color: var(--text); }
+.ck.sel .bk { background: var(--pink); } .ck.sel .bk .c, .ck.sel .bk .t { color: #fff; }
+.ck-detail { display: flex; gap: 14px; align-items: center; min-height: 76px; padding: 12px 16px; border-radius: 16px; background: rgba(181,37,44,.07); border: 1.5px dashed var(--pink); }
+.ck-detail .num { flex: none; font-family: var(--font-mono); font-weight: 700; font-size: 1.9rem; color: var(--pink); min-width: 56px; text-align: center; }
+.ck-detail b { display: block; font-family: var(--font-head); font-size: 1.2rem; line-height: 1.15; }
+.ck-detail small { color: var(--text-dim); font-weight: 700; }
+.ck-detail .pair { font-family: var(--font-mono); font-size: .75rem; color: var(--text-faint); display: block; margin-top: 2px; }
 .timeline { margin-top: 16px; padding-left: 16px; border-left: 2px dashed rgba(255,255,255,.18); }
 .timeline div { position: relative; padding: 0 0 12px 10px; font-size: .9rem; color: var(--text-dim); line-height: 1.4; }
 .timeline div::before { content: ''; position: absolute; left: -23px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--grad-hot); box-shadow: 0 0 10px rgba(255,77,157,.6); }
@@ -75,7 +81,6 @@
 .outro { text-align: center; padding: 26px 20px; margin-top: 16px; background: linear-gradient(135deg, rgba(255,77,157,.16), rgba(155,107,255,.16)); border-color: rgba(255,77,157,.4); }
 .outro p { font-size: 1.05rem; line-height: 1.6; }
 .outro b { color: var(--yellow); }
-@media (max-width: 480px) { .secrets { grid-template-columns: 1fr; } }
 @media (max-width: 480px) { .aliases { grid-template-columns: 1fr 1fr; } .vc input { font-size: 1.15rem; letter-spacing: 1px; } }
 </style>
 </head>
@@ -118,9 +123,9 @@
 
       <div class="section-label">🔐 Şifrenin Sırrı</div>
       <div class="card">
-        <p class="st-sub" style="margin-bottom:12px">Kasayı açtığın o 20 haneli şifre rastgele değildi. Her kod sana ait bir şeydi:</p>
-        <div class="code-line" id="codeLine"></div>
-        <div class="secrets" id="secrets"></div>
+        <p class="st-sub" style="margin-bottom:12px">Kasayı açtığın o 20 haneli şifre rastgele değildi. Her kod sana ait bir şeydi. Bir koda dokun:</p>
+        <div class="cipher" id="cipher"></div>
+        <div class="ck-detail" id="ckDetail"></div>
       </div>
 
       <div class="section-label">🛠 Bu Dosya Nasıl Yapıldı</div>
@@ -155,14 +160,16 @@ const SIGN = '— Dosyayı hazırlayan, en sadık dedektifin 🐾';
 
 // ✏️ Şifredeki her kodun anlamı (Perde Arkası bölümünde gösterilir)
 const SECRETS = [
-  { codes: ['26', '06'], e: '💛', t: 'Tanıştığımız gün', d: '26 Haziran · Vaka 1 ve Vaka 8' },
-  { codes: ['04', '08'], e: '🎂', t: 'Doğum günün', d: '4 Ağustos · Vaka 2 ve Vaka 3' },
-  { codes: ['18'], e: '🎈', t: 'Yaşın', d: 'Vaka 4 · Lolcu Köpek' },
-  { codes: ['11'], e: '✨', t: 'En sevdiğin sayı', d: 'Vaka 5 · Doymayan' },
-  { codes: ['13'], e: '🌶️', t: 'Midesiz', d: 'Vaka 6 · tabii ki' },
-  { codes: ['12'], e: '🎸', t: 'Şebnem Ferah', d: '12 Nisan doğumlu · Vaka 7' },
-  { codes: ['20'], e: '🖤', t: 'Apocalypse', d: '20 Mart 2017\'de çıktı · Vaka 9' },
-  { codes: ['55'], e: '👕', t: 'Forma numaran', d: 'Vaka 10 · Sevimli Kedi' },
+  { code: '26', e: '💛', t: 'Tanıştığımız gün', s: 'Tanıştık', d: '26 Haziran · günü' },
+  { code: '04', e: '🎂', t: 'Doğum günün', s: 'Doğum günü', d: '4 Ağustos · günü' },
+  { code: '08', e: '🎂', t: 'Doğum ayın', s: 'Doğum ayı', d: '4 Ağustos · ayı' },
+  { code: '18', e: '🎈', t: 'Yaşın', d: 'Koca 18' },
+  { code: '11', e: '✨', t: 'En sevdiğin sayı', s: 'Sevdiği sayı', d: 'Her zaman 11' },
+  { code: '13', e: '🌶️', t: 'Midesiz', d: 'Bir şey olmaz ya' },
+  { code: '12', e: '🎸', t: 'Şebnem Ferah', s: 'Şebnem', d: '12 Nisan doğumlu' },
+  { code: '06', e: '💛', t: 'Tanıştığımız ay', s: 'Tanıştık', d: '26 Haziran · ayı' },
+  { code: '20', e: '🖤', t: 'Apocalypse', d: '20 Mart 2017\'de çıktı' },
+  { code: '55', e: '👕', t: 'Forma numaran', s: 'Forma no', d: 'Sahadaki 55' },
 ];
 // ✏️ İstersen bu oyuna harcadığın yaklaşık saati yaz (ör. 40). Boş bırakırsan gösterilmez.
 const MAKER_HOURS = null;
@@ -210,6 +217,10 @@ function init() {
   }
 }
 function check() {
+  if (inputs.every(i => /^0{1,2}$/.test(i.value))) {
+    for (let k = 0; k <= 10; k++) ZY.unlock(k);
+    ZY.MAIN.forEach((c, i) => { ZY.markSolved(c.n); ZY.setStars(c.n, 3); inputs[i].value = c.code; });
+  }
   let ok = true;
   ZY.MAIN.forEach((c, i) => { const g = inputs[i].value === c.code; inputs[i].classList.toggle('good', g); inputs[i].classList.toggle('bad', !g); if (!g) ok = false; });
   const st = $('#codeStatus');
@@ -260,14 +271,23 @@ async function reveal() {
 }
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 const trDate = iso => { const [y, m, d] = iso.split('-').map(Number); return d + ' ' + MONTHS[m - 1] + ' ' + y; };
+function showSecret(i) {
+  const x = SECRETS[i];
+  const pair = { '26': '06', '06': '26', '04': '08', '08': '04' }[x.code];
+  document.querySelectorAll('.ck').forEach(el => el.classList.toggle('sel', +el.dataset.i === i));
+  $('#ckDetail').innerHTML = '<div class="num">' + x.code + '</div><div><b>' + x.e + ' ' + x.t + '</b><small>' + x.d + '</small>' +
+    (pair ? '<span class="pair">' + (x.code === '26' || x.code === '06' ? '26 · 06' : '04 · 08') + ' birlikte: ' + (x.code === '26' || x.code === '06' ? '26 Haziran' : '4 Ağustos') + '</span>' : '') + '</div>';
+}
 let btsShown = false;
 async function behindTheScenes() {
   if (btsShown) return; btsShown = true;
   const M = window.ZY_MAKING || { start: '2026-09-05', commits: 0, workDays: 0, lines: 0 };
   const days = Math.max(1, Math.round((Date.now() - Date.parse(M.start + 'T00:00:00')) / 864e5));
   const box = $('#bts'); box.classList.add('on');
-  $('#codeLine').innerHTML = ZY.MAIN.map(c => '<span>' + c.code + '</span>').join('');
-  $('#secrets').innerHTML = SECRETS.map(s => '<div class="secret' + (s.codes.length > 1 ? ' wide' : '') + '"><div class="num">' + s.codes.join(' · ') + '</div><div><b>' + s.e + ' ' + s.t + '</b><small>' + s.d + '</small></div></div>').join('');
+  $('#cipher').innerHTML = SECRETS.map((x, i) => '<div class="ck" data-i="' + i + '"><div class="in"><div class="f fr">' + x.code + '<small>' + (i + 1) + '. kod</small></div>' +
+    '<div class="f bk"><span class="e">' + x.e + '</span><span class="c">' + x.code + '</span><span class="t">' + (x.s || x.t) + '</span></div></div></div>').join('');
+  document.querySelectorAll('.ck').forEach(el => el.onclick = () => { if (!el.classList.contains('open')) { el.classList.add('open'); ZY.sfx.tap(); } showSecret(+el.dataset.i); });
+  $('#ckDetail').innerHTML = '<small>Kodlar sırayla açılıyor...</small>';
   const tiles = [['📅', trDate(M.start), 'İlk satır yazıldı'], ['⏳', days + ' gün', 'Dosya o günden beri var'], ['🔁', M.commits, 'Güncelleme'], ['🧑‍💻', M.lines.toLocaleString('tr-TR'), 'Satır kod'], ['🎮', '12 vaka', 'Her birinde bir görev']];
   if (MAKER_HOURS) tiles.splice(2, 0, ['⌛', '~' + MAKER_HOURS + ' saat', 'Harcanan emek']);
   $('#makingTiles').innerHTML = tiles.map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b style="font-size:.98rem">' + v + '</b><small>' + l + '</small></div>').join('');
@@ -283,7 +303,7 @@ async function behindTheScenes() {
     .map(([e, v, l]) => '<div class="tile"><div class="big" style="font-size:1.4rem">' + e + '</div><b>' + v + '</b><small>' + l + '</small></div>').join('');
   $('#outro').innerHTML = '<div style="font-size:2.4rem">💛</div><p>Sen bu dosyaya <b>' + ZY.fmtTime(st.secs) + '</b> ayırdın.<br>Bu dosya da <b>' + days + ' gündür</b> senin için hazırlanıyor.<br><br>Her vaka, her kod, her kedi... hepsi tek bir cümle için:<br><b>İyi ki varsın.</b></p>';
   await ZY.wait(400);
-  for (const el of document.querySelectorAll('.secret')) { el.classList.add('on'); ZY.beep(600 + Math.random() * 400, .06, 'triangle', .07); await ZY.wait(260); }
+  for (const el of document.querySelectorAll('.ck')) { el.classList.add('open'); showSecret(+el.dataset.i); ZY.beep(600 + Math.random() * 400, .06, 'triangle', .07); await ZY.wait(850); }
 }
 
 async function typeLetter() {
